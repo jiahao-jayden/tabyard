@@ -1,10 +1,13 @@
 import { createFileRoute, Link, notFound, Outlet, useLocation } from '@tanstack/react-router';
+import { authClient } from '~/auth-client';
 import { dictionaries, INSTALL_URL, localeFromParam } from '~/i18n';
+import { fetchSession } from '~/server/fns';
 
 export const Route = createFileRoute('/{-$locale}')({
   beforeLoad: ({ params }) => {
     if (params.locale !== undefined && params.locale !== 'en') throw notFound();
   },
+  loader: () => fetchSession(),
   component: Layout,
 });
 
@@ -12,6 +15,7 @@ function Layout() {
   const { locale: param } = Route.useParams();
   const locale = localeFromParam(param);
   const t = dictionaries[locale];
+  const user = Route.useLoaderData();
   const { pathname } = useLocation();
   const switchHref =
     locale === 'en' ? pathname.replace(/^\/en/, '') || '/' : `/en${pathname === '/' ? '' : pathname}`;
@@ -48,6 +52,31 @@ function Layout() {
           >
             {t.language}
           </a>
+          {user ? (
+            <button
+              type="button"
+              onClick={() => authClient.signOut().then(() => location.reload())}
+              title={t.signOut}
+              className="frost flex h-8 items-center gap-2 rounded-full pr-3 pl-1 transition hover:bg-white/80 dark:hover:bg-white/10"
+            >
+              {user.image ? (
+                <img src={user.image} alt="" className="size-6 rounded-full" />
+              ) : (
+                <span className="flex size-6 items-center justify-center rounded-full bg-ink text-xs text-white">
+                  {user.name.slice(0, 1).toUpperCase()}
+                </span>
+              )}
+              {t.signOut}
+            </button>
+          ) : (
+            <Link
+              to="/{-$locale}/login"
+              params={{ locale: param }}
+              className="frost rounded-full px-4 py-1.5 transition hover:bg-white/80 dark:hover:bg-white/10"
+            >
+              {t.signIn}
+            </Link>
+          )}
           <a
             href={INSTALL_URL}
             className="rounded-full bg-ink px-4 py-1.5 text-white transition hover:bg-ink/85 active:scale-[0.98] dark:bg-slate-100 dark:text-ink"

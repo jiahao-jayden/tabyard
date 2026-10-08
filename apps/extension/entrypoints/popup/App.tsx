@@ -21,12 +21,15 @@ export default function App() {
   const refresh = useCallback(async () => {
     const { settings } = await loadConfig();
     setEnabled(settings.enabled);
-    try {
-      const res = (await browser.runtime.sendMessage({ type: 'getStats' })) as (Stats & { ok: boolean }) | undefined;
-      if (res?.ok) setStats({ tabCount: res.tabCount, groupedCount: res.groupedCount, groupCount: res.groupCount });
-    } catch {
-      /* 后台未就绪 */
-    }
+    const [tabs, groups] = await Promise.all([
+      browser.tabs.query({ currentWindow: true }),
+      browser.tabGroups.query({ windowId: browser.windows.WINDOW_ID_CURRENT }),
+    ]);
+    setStats({
+      tabCount: tabs.length,
+      groupedCount: tabs.filter((tab) => tab.groupId !== -1).length,
+      groupCount: groups.length,
+    });
   }, []);
 
   useEffect(() => {
@@ -59,13 +62,7 @@ export default function App() {
 
   return (
     <div className="w-72 bg-background text-foreground">
-      <header
-        className="flex items-end gap-3 bg-cover bg-[50%_40%] px-4 pt-10 pb-3"
-        style={{
-          backgroundImage:
-            "linear-gradient(to bottom, rgb(255 255 255 / 0.05), var(--background) 92%), url('/bg.webp')",
-        }}
-      >
+      <header className="flex items-center gap-3 px-4 pt-4 pb-3">
         <img src="/logo.svg" alt="" className="size-9 shrink-0" />
         <div className="min-w-0 flex-1">
           <div className="text-base font-medium leading-tight">{t('app.title')}</div>
@@ -80,8 +77,11 @@ export default function App() {
       <div className="space-y-3 px-4 pb-4">
         <div className="grid grid-cols-3 gap-2">
           {statItems.map(({ label, value }) => (
-            <div key={label} className="rounded-xl bg-white/80 px-2 py-2.5 text-center shadow-[0_4px_14px_rgb(42_95_145/0.1)]">
-              <div className="text-lg font-medium leading-none tabular-nums">{value ?? '–'}</div>
+            <div
+              key={label}
+              className="flex flex-col items-center rounded-xl bg-white/80 px-2 py-2.5 shadow-[0_4px_14px_rgb(42_95_145/0.1)]"
+            >
+              <div className="text-lg font-medium leading-none">{value ?? '–'}</div>
               <div className="mt-1.5 text-[11px] text-muted-foreground">{label}</div>
             </div>
           ))}

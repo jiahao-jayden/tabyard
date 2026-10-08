@@ -12,7 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as Char123LocaleChar125RouteRouteImport } from './routes/{-$locale}/route'
 import { Route as ApiPublishRouteImport } from './routes/api/publish'
 import { Route as Char123LocaleChar125IndexRouteImport } from './routes/{-$locale}/index'
+import { Route as Char123LocaleChar125LoginRouteImport } from './routes/{-$locale}/login'
 import { Route as Char123LocaleChar125PacksRouteImport } from './routes/{-$locale}/packs'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as ApiPacksCodeRouteImport } from './routes/api/packs.$code'
 import { Route as Char123LocaleChar125PCodeRouteImport } from './routes/{-$locale}/p.$code'
 
@@ -33,12 +35,23 @@ const Char123LocaleChar125IndexRoute =
     path: '/',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
+const Char123LocaleChar125LoginRoute =
+  Char123LocaleChar125LoginRouteImport.update({
+    id: '/login',
+    path: '/login',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
 const Char123LocaleChar125PacksRoute =
   Char123LocaleChar125PacksRouteImport.update({
     id: '/packs',
     path: '/packs',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPacksCodeRoute = ApiPacksCodeRouteImport.update({
   id: '/api/packs/$code',
   path: '/api/packs/$code',
@@ -54,15 +67,19 @@ const Char123LocaleChar125PCodeRoute =
 export interface FileRoutesByFullPath {
   '/{-$locale}': typeof Char123LocaleChar125RouteRouteWithChildren
   '/api/publish': typeof ApiPublishRoute
+  '/{-$locale}/login': typeof Char123LocaleChar125LoginRoute
   '/{-$locale}/packs': typeof Char123LocaleChar125PacksRoute
   '/{-$locale}/': typeof Char123LocaleChar125IndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/packs/$code': typeof ApiPacksCodeRoute
   '/{-$locale}/p/$code': typeof Char123LocaleChar125PCodeRoute
 }
 export interface FileRoutesByTo {
   '/api/publish': typeof ApiPublishRoute
+  '/{-$locale}/login': typeof Char123LocaleChar125LoginRoute
   '/{-$locale}/packs': typeof Char123LocaleChar125PacksRoute
   '/{-$locale}': typeof Char123LocaleChar125IndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/packs/$code': typeof ApiPacksCodeRoute
   '/{-$locale}/p/$code': typeof Char123LocaleChar125PCodeRoute
 }
@@ -70,8 +87,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/{-$locale}': typeof Char123LocaleChar125RouteRouteWithChildren
   '/api/publish': typeof ApiPublishRoute
+  '/{-$locale}/login': typeof Char123LocaleChar125LoginRoute
   '/{-$locale}/packs': typeof Char123LocaleChar125PacksRoute
   '/{-$locale}/': typeof Char123LocaleChar125IndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/packs/$code': typeof ApiPacksCodeRoute
   '/{-$locale}/p/$code': typeof Char123LocaleChar125PCodeRoute
 }
@@ -80,23 +99,29 @@ export interface FileRouteTypes {
   fullPaths:
     | '/{-$locale}'
     | '/api/publish'
+    | '/{-$locale}/login'
     | '/{-$locale}/packs'
     | '/{-$locale}/'
+    | '/api/auth/$'
     | '/api/packs/$code'
     | '/{-$locale}/p/$code'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/api/publish'
+    | '/{-$locale}/login'
     | '/{-$locale}/packs'
     | '/{-$locale}'
+    | '/api/auth/$'
     | '/api/packs/$code'
     | '/{-$locale}/p/$code'
   id:
     | '__root__'
     | '/{-$locale}'
     | '/api/publish'
+    | '/{-$locale}/login'
     | '/{-$locale}/packs'
     | '/{-$locale}/'
+    | '/api/auth/$'
     | '/api/packs/$code'
     | '/{-$locale}/p/$code'
   fileRoutesById: FileRoutesById
@@ -104,6 +129,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   Char123LocaleChar125RouteRoute: typeof Char123LocaleChar125RouteRouteWithChildren
   ApiPublishRoute: typeof ApiPublishRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiPacksCodeRoute: typeof ApiPacksCodeRoute
 }
 
@@ -130,12 +156,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125IndexRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
+    '/{-$locale}/login': {
+      id: '/{-$locale}/login'
+      path: '/login'
+      fullPath: '/{-$locale}/login'
+      preLoaderRoute: typeof Char123LocaleChar125LoginRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
     '/{-$locale}/packs': {
       id: '/{-$locale}/packs'
       path: '/packs'
       fullPath: '/{-$locale}/packs'
       preLoaderRoute: typeof Char123LocaleChar125PacksRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/packs/$code': {
       id: '/api/packs/$code'
@@ -155,6 +195,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface Char123LocaleChar125RouteRouteChildren {
+  Char123LocaleChar125LoginRoute: typeof Char123LocaleChar125LoginRoute
   Char123LocaleChar125PacksRoute: typeof Char123LocaleChar125PacksRoute
   Char123LocaleChar125IndexRoute: typeof Char123LocaleChar125IndexRoute
   Char123LocaleChar125PCodeRoute: typeof Char123LocaleChar125PCodeRoute
@@ -162,6 +203,7 @@ interface Char123LocaleChar125RouteRouteChildren {
 
 const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChildren =
   {
+    Char123LocaleChar125LoginRoute: Char123LocaleChar125LoginRoute,
     Char123LocaleChar125PacksRoute: Char123LocaleChar125PacksRoute,
     Char123LocaleChar125IndexRoute: Char123LocaleChar125IndexRoute,
     Char123LocaleChar125PCodeRoute: Char123LocaleChar125PCodeRoute,
@@ -175,6 +217,7 @@ const Char123LocaleChar125RouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   Char123LocaleChar125RouteRoute: Char123LocaleChar125RouteRouteWithChildren,
   ApiPublishRoute: ApiPublishRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiPacksCodeRoute: ApiPacksCodeRoute,
 }
 export const routeTree = rootRouteImport

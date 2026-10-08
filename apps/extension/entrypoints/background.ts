@@ -194,19 +194,6 @@ export default defineBackground(() => {
       void regroupAll().then(() => sendResponse({ ok: true }));
       return true;
     }
-    if (msg && (msg as { type?: string }).type === 'getStats') {
-      void (async () => {
-        const tabs = await browser.tabs.query({});
-        const groups = await browser.tabGroups.query({});
-        sendResponse({
-          ok: true,
-          tabCount: tabs.length,
-          groupedCount: tabs.filter((t) => t.groupId !== -1).length,
-          groupCount: groups.length,
-        });
-      })();
-      return true;
-    }
   });
 
   console.log('[tabyard] background loaded');

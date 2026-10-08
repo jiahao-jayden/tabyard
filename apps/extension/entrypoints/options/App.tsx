@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { browser } from 'wxt/browser';
-import { Check, Download, Share2, Upload } from 'lucide-react';
+import { Check, Crown, Download, Share2, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle,
@@ -252,7 +252,11 @@ export default function App() {
                 {t('fallback.domain')}
               </Label>
               {plan === 'free' && (
-                <span title={t('fallback.proHint')} className="rounded bg-primary px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground">
+                <span
+                  title={t('fallback.proHint')}
+                  className="inline-flex items-center gap-1 rounded-full bg-linear-to-r from-[#2a5f91] to-[#4f8fcf] px-2.5 py-0.5 text-xs font-semibold text-white shadow-[0_2px_10px_rgb(42_95_145/0.35)] ring-1 ring-white/40"
+                >
+                  <Crown className="size-3.5" />
                   Pro
                 </span>
               )}

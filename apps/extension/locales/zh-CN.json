@@ -106,7 +106,7 @@
     "tabs": "标签页",
     "grouped": "已分组",
     "groups": "分组",
-    "scope": "统计范围：所有窗口",
+    "scope": "统计范围：当前窗口",
     "regroup": "立即整理所有标签页",
     "regrouping": "整理中…",
     "settings": "规则设置",

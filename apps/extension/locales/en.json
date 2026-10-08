@@ -106,7 +106,7 @@
     "tabs": "Tabs",
     "grouped": "Grouped",
     "groups": "Groups",
-    "scope": "Counts across all windows",
+    "scope": "Counts for this window",
     "regroup": "Organize all tabs now",
     "regrouping": "Organizing…",
     "settings": "Rule settings",
