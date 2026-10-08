@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { browser } from 'wxt/browser';
-import { Check, Crown, Download, Share2, Upload } from 'lucide-react';
+import { Check, ChevronDown, Crown, Download, Library, Share2, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle,
@@ -16,8 +16,9 @@ import { Switch } from '@/components/ui/switch';
 import { setLanguagePref } from '@/utils/i18n';
 import { packToGroups, parsePack, toPack, type RulePack } from '@/utils/pack';
 import type { Group } from '@tabyard/shared';
-import { API_URL } from '@/utils/api';
+import { API_URL, packsUrl } from '@/utils/api';
 import { AccountButton } from './AccountButton';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { enabledCount, FREE_GROUP_LIMIT, getPlan, refreshPlan, type Plan } from '@/utils/plan';
 import {
   DEFAULT_SETTINGS,
@@ -38,7 +39,7 @@ type RulesView = 'groups' | 'table' | 'json';
 const VIEWS: RulesView[] = ['groups', 'table', 'json'];
 
 export default function App() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [settings, setSettings] = useState<GroupSettings>(DEFAULT_SETTINGS);
   const [groups, setGroups] = useState<Group[]>([]);
   const [plan, setPlan] = useState<Plan>('free');
@@ -291,10 +292,33 @@ export default function App() {
           <CardTitle>{t('rules.title')}</CardTitle>
           <CardDescription>{t('rules.desc')}</CardDescription>
           <CardAction className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={openImport}>
-              <Upload />
-              {t('rules.import')}
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Library />
+                  {t('rules.packs')}
+                  <ChevronDown />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onSelect={() => void browser.tabs.create({ url: packsUrl(i18n.language) })}>
+                  <Library />
+                  {t('rules.browse')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={openImport}>
+                  <Upload />
+                  {t('rules.import')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={exportJson}>
+                  <Download />
+                  {t('rules.export')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={openPublish}>
+                  <Share2 />
+                  {t('rules.publish')}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <input
               ref={fileInputRef}
               type="file"
@@ -306,14 +330,6 @@ export default function App() {
                 if (file) void importFile(file);
               }}
             />
-            <Button variant="outline" size="sm" onClick={exportJson}>
-              <Download />
-              {t('rules.export')}
-            </Button>
-            <Button variant="outline" size="sm" onClick={openPublish}>
-              <Share2 />
-              {t('rules.publish')}
-            </Button>
             <div className="flex rounded-full border bg-white/60 p-0.5">
               {VIEWS.map((v) => (
                 <Button

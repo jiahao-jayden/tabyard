@@ -40,7 +40,9 @@
     "overLimit": "免费版最多启用 {{limit}} 个分组，请先停用多余的分组或升级 Pro",
     "jsonLabel": "规则包 JSON",
     "publish": "发布",
-    "importFromFile": "选择文件"
+    "importFromFile": "选择文件",
+    "browse": "浏览规则包",
+    "packs": "规则包"
   },
   "kind": {
     "path": "路径",
@@ -69,12 +71,13 @@
     "alsoIn": "也在「{{names}}」中",
     "confirmDelete": "确定删除分组「{{name}}」及其 {{count}} 条模式？",
     "patternCount": "{{count}} 条模式",
-    "expand": "展开",
     "collapse": "收起",
     "empty": "还没有分组。新建一个，或导入规则包。",
     "enableGroup": "启用分组",
     "deleteGroup": "删除分组",
-    "deletePattern": "删除模式"
+    "deletePattern": "删除模式",
+    "expandAll": "展开全部 {{count}} 条",
+    "expand": "展开"
   },
   "table": {
     "pattern": "匹配模式",
@@ -86,19 +89,15 @@
   },
   "import": {
     "title": "导入规则包",
-    "step1": "「{{name}}」包含 {{count}} 个分组。为每个分组选择去向：",
-    "slots": "还可新建 {{n}} 个分组",
-    "mapNew": "新建分组",
-    "mapSkip": "跳过",
-    "next": "下一步",
-    "back": "上一步",
-    "step2": "新增 {{n}} 条模式，已跳过 {{d}} 条重复。",
-    "conflictTitle": "冲突：这些模式已在其他分组中，勾选表示移动到导入的分组",
-    "alreadyIn": "已在「{{name}}」",
-    "normalTitle": "新增模式",
-    "selectAll": "全选",
+    "alreadyIn": "已在「{{name}}」，勾选会移过来",
     "confirm": "导入 {{n}} 条",
-    "nothing": "没有可导入的新模式"
+    "nothing": "没有可导入的新模式",
+    "summary": "「{{name}}」包含 {{count}} 个分组，勾选要导入的规则。",
+    "toExisting": "并入已有的「{{name}}」",
+    "full": "免费版分组数已满，不导入",
+    "duplicates": "{{n}} 条已存在，已自动跳过",
+    "selectAll": "全选",
+    "selectNone": "全不选"
   },
   "popup": {
     "on": "自动分组已开启",
@@ -114,17 +113,18 @@
   },
   "importSource": {
     "title": "导入规则包",
-    "desc": "输入规则包短码，或选择本地 JSON 文件。",
-    "codeLabel": "短码",
+    "desc": "输入规则包分享码，或选择本地 JSON 文件。",
+    "codeLabel": "分享码",
     "codePlaceholder": "例如 K7M2X9AB",
     "fetch": "获取",
     "fetching": "获取中…",
     "file": "选择本地文件",
-    "by": "作者 {{author}} · 版本 {{version}}"
+    "by": "作者 {{author}} · 版本 {{version}}",
+    "browse": "还没有分享码？去逛逛规则包"
   },
   "publish": {
     "title": "发布规则包",
-    "desc": "选择要分享的分组或其中几条模式，发布后会得到一个短码。",
+    "desc": "选择要分享的分组或其中几条模式，发布后会得到一个分享码。",
     "selected": "已选 {{n}} 条模式",
     "selectAll": "全选",
     "name": "名称",
@@ -136,8 +136,8 @@
     "submit": "发布",
     "submitting": "发布中…",
     "doneTitle": "发布成功",
-    "doneDesc": "「{{name}}」v{{version}}，把短码发给别人即可导入。",
-    "copy": "复制短码",
+    "doneDesc": "「{{name}}」v{{version}}，把分享码发给别人即可导入。",
+    "copy": "复制分享码",
     "copied": "已复制",
     "done": "完成",
     "expandHint": "展开模式",
@@ -145,7 +145,7 @@
   },
   "errors": {
     "network": "无法连接服务器，请检查网络",
-    "invalid_code": "短码格式不正确",
+    "invalid_code": "分享码格式不正确",
     "not_found": "没有找到这个规则包",
     "invalid_pack": "规则包内容无效：{{msg}}",
     "too_large": "规则包过大",

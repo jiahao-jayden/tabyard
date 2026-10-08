@@ -6,7 +6,8 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { fetchPack, type RemotePack } from '@/utils/api';
+import { browser } from 'wxt/browser';
+import { fetchPack, packsUrl, type RemotePack } from '@/utils/api';
 import { errorMessage } from './errors';
 
 interface Props {
@@ -17,7 +18,7 @@ interface Props {
 }
 
 export function ImportSourceDialog({ open, onClose, onLoaded, onPickFile }: Props) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -61,7 +62,10 @@ export function ImportSourceDialog({ open, onClose, onLoaded, onPickFile }: Prop
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
         </form>
-        <DialogFooter>
+        <DialogFooter className="sm:justify-between">
+          <Button variant="link" className="px-0" onClick={() => void browser.tabs.create({ url: packsUrl(i18n.language) })}>
+            {t('importSource.browse')}
+          </Button>
           <Button variant="outline" onClick={onPickFile}>{t('importSource.file')}</Button>
         </DialogFooter>
       </DialogContent>

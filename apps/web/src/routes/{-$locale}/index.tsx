@@ -16,7 +16,7 @@ function Landing() {
 
   return (
     <>
-      <section className="grid min-h-[calc(100dvh-8rem)] items-center gap-12 py-10 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
+      <section className="grid min-h-[calc(100dvh-8rem)] grid-cols-[minmax(0,1fr)] items-center gap-10 py-8 sm:py-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-16">
         <div className="max-w-md">
           <h1 className="rise text-4xl font-medium leading-[1.15] tracking-tight md:text-5xl" style={{ '--i': 0 } as React.CSSProperties}>
             {t.heroTitle}
@@ -42,7 +42,7 @@ function Landing() {
           </div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-4 sm:grid-cols-2">
           <NativeCard t={t} />
           <SpecificCard t={t} />
           <ShareCard t={t} />

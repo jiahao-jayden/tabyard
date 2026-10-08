@@ -40,7 +40,9 @@
     "overLimit": "The free plan allows {{limit}} enabled groups. Disable some or upgrade to Pro",
     "jsonLabel": "Rule pack JSON",
     "publish": "Publish",
-    "importFromFile": "Choose file"
+    "importFromFile": "Choose file",
+    "browse": "Browse packs",
+    "packs": "Packs"
   },
   "kind": {
     "path": "Path",
@@ -69,12 +71,13 @@
     "alsoIn": "Also in \"{{names}}\"",
     "confirmDelete": "Delete group \"{{name}}\" and its {{count}} patterns?",
     "patternCount": "{{count}} patterns",
-    "expand": "Expand",
     "collapse": "Collapse",
     "empty": "No groups yet. Create one or import a rule pack.",
     "enableGroup": "Enable group",
     "deleteGroup": "Delete group",
-    "deletePattern": "Delete pattern"
+    "deletePattern": "Delete pattern",
+    "expandAll": "Show all {{count}}",
+    "expand": "Expand"
   },
   "table": {
     "pattern": "Pattern",
@@ -86,19 +89,15 @@
   },
   "import": {
     "title": "Import rule pack",
-    "step1": "\"{{name}}\" contains {{count}} groups. Choose where each one goes:",
-    "slots": "{{n}} more groups can be created",
-    "mapNew": "New group",
-    "mapSkip": "Skip",
-    "next": "Next",
-    "back": "Back",
-    "step2": "{{n}} new patterns, {{d}} duplicates skipped.",
-    "conflictTitle": "Conflicts: these patterns are already in other groups. Check to move them to the imported group",
-    "alreadyIn": "Already in \"{{name}}\"",
-    "normalTitle": "New patterns",
-    "selectAll": "Select all",
+    "alreadyIn": "In \"{{name}}\" — check to move here",
     "confirm": "Import {{n}}",
-    "nothing": "No new patterns to import"
+    "nothing": "No new patterns to import",
+    "summary": "\"{{name}}\" has {{count}} groups. Check the rules you want to import.",
+    "toExisting": "Merge into your \"{{name}}\"",
+    "full": "Free plan group limit reached, not imported",
+    "duplicates": "{{n}} already exist and were skipped",
+    "selectAll": "Select all",
+    "selectNone": "Select none"
   },
   "popup": {
     "on": "Auto grouping is on",
@@ -114,17 +113,18 @@
   },
   "importSource": {
     "title": "Import rule pack",
-    "desc": "Enter a rule pack short code, or choose a local JSON file.",
-    "codeLabel": "Short code",
+    "desc": "Enter a rule pack share code, or choose a local JSON file.",
+    "codeLabel": "Share code",
     "codePlaceholder": "e.g. K7M2X9AB",
     "fetch": "Fetch",
     "fetching": "Fetching…",
     "file": "Choose local file",
-    "by": "By {{author}} · v{{version}}"
+    "by": "By {{author}} · v{{version}}",
+    "browse": "No code yet? Browse rule packs"
   },
   "publish": {
     "title": "Publish rule pack",
-    "desc": "Pick groups or individual patterns to share. You will get a short code.",
+    "desc": "Pick groups or individual patterns to share. You will get a share code.",
     "selected": "{{n}} patterns selected",
     "selectAll": "Select all",
     "name": "Name",
@@ -145,7 +145,7 @@
   },
   "errors": {
     "network": "Cannot reach the server. Check your connection.",
-    "invalid_code": "Invalid short code",
+    "invalid_code": "Invalid share code",
     "not_found": "Rule pack not found",
     "invalid_pack": "Invalid rule pack: {{msg}}",
     "too_large": "Rule pack is too large",

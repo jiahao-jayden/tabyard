@@ -69,6 +69,30 @@ function Detail() {
           {detail.description && (
             <p className="mt-4 max-w-[60ch] leading-relaxed text-slate-700 dark:text-slate-300">{detail.description}</p>
           )}
+
+          <div className="mt-8 grid grid-cols-[repeat(auto-fit,minmax(18rem,1fr))] items-start gap-4">
+            {detail.pack.groups.map((g, i) => (
+              <section key={i} className="frost rounded-[20px] p-5">
+                <h2 className="flex items-center gap-2 font-medium">
+                  <span className="size-2.5 rounded-full" style={{ background: GROUP_HEX[g.color] }} />
+                  {g.name}
+                  <span className="ml-auto text-xs font-normal text-slate-500">
+                    {g.patterns.length} {t.patterns}
+                  </span>
+                </h2>
+                <div className="mt-4 flex flex-wrap gap-1.5">
+                  {g.patterns.map((p) => (
+                    <span
+                      key={p}
+                      className="rounded-full bg-white/80 px-2.5 py-1 font-mono text-[11px] text-slate-600 dark:bg-white/10 dark:text-slate-300"
+                    >
+                      {p}
+                    </span>
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
         </div>
 
         <aside className="frost rounded-[20px] p-5 lg:sticky lg:top-6">
@@ -83,30 +107,6 @@ function Detail() {
           </button>
           <p className="mt-4 text-xs leading-relaxed text-slate-600 dark:text-slate-400">{t.howToImport}</p>
         </aside>
-      </div>
-
-      <div className="mt-10 columns-1 gap-4 sm:columns-2 lg:columns-3">
-        {detail.pack.groups.map((g, i) => (
-          <section key={i} className="frost mb-4 break-inside-avoid rounded-[20px] p-5">
-            <h2 className="flex items-center gap-2 font-medium">
-              <span className="size-2.5 rounded-full" style={{ background: GROUP_HEX[g.color] }} />
-              {g.name}
-              <span className="ml-auto text-xs font-normal text-slate-500">
-                {g.patterns.length} {t.patterns}
-              </span>
-            </h2>
-            <div className="mt-4 flex flex-wrap gap-1.5">
-              {g.patterns.map((p) => (
-                <span
-                  key={p}
-                  className="rounded-full bg-white/80 px-2.5 py-1 font-mono text-[11px] text-slate-600 dark:bg-white/10 dark:text-slate-300"
-                >
-                  {p}
-                </span>
-              ))}
-            </div>
-          </section>
-        ))}
       </div>
     </div>
   );

@@ -31,20 +31,20 @@ function Layout() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#f4f0e6]/40 via-transparent to-[#f4f0e6]/60 dark:from-[#121820]/80 dark:via-[#121820]/75 dark:to-[#121820]/90" />
       </div>
 
-      <header className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5 md:px-8">
+      <header className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-2 px-4 md:px-8">
         <Link
           to="/{-$locale}"
           params={{ locale: param }}
-          className="flex items-center gap-2.5 text-[15px] font-medium tracking-wide text-ink/80 dark:text-slate-200"
+          className="flex shrink-0 items-center gap-2 whitespace-nowrap text-[15px] font-medium tracking-wide text-ink/80 dark:text-slate-200"
         >
           <img src="/logo.svg" alt="" className="size-7" />
           {t.siteName}
         </Link>
-        <nav className="flex items-center gap-2 text-sm">
+        <nav className="flex items-center gap-1.5 whitespace-nowrap text-sm sm:gap-2">
           <Link
             to="/{-$locale}/packs"
             params={{ locale: param }}
-            className="frost rounded-full px-4 py-1.5 transition hover:bg-white/80 dark:hover:bg-white/10"
+            className="frost rounded-full px-3 py-1.5 transition hover:bg-white/80 sm:px-4 dark:hover:bg-white/10"
           >
             {t.navPacks}
           </Link>
@@ -100,25 +100,25 @@ function Layout() {
             <Link
               to="/{-$locale}/login"
               params={{ locale: param }}
-              className="frost rounded-full px-4 py-1.5 transition hover:bg-white/80 dark:hover:bg-white/10"
+              className="frost rounded-full px-3 py-1.5 transition hover:bg-white/80 sm:px-4 dark:hover:bg-white/10"
             >
               {t.signIn}
             </Link>
           )}
           <a
             href={INSTALL_URL}
-            className="rounded-full bg-ink px-4 py-1.5 text-white transition hover:bg-ink/85 active:scale-[0.98] dark:bg-slate-100 dark:text-ink"
+            className="hidden rounded-full bg-ink px-4 py-1.5 text-white sm:block transition hover:bg-ink/85 active:scale-[0.98] dark:bg-slate-100 dark:text-ink"
           >
             {t.install}
           </a>
         </nav>
       </header>
 
-      <main className="mx-auto w-full max-w-6xl flex-1 px-5 md:px-8">
+      <main className="mx-auto w-full max-w-6xl min-w-0 flex-1 px-4 md:px-8">
         <Outlet />
       </main>
 
-      <footer className="mx-auto w-full max-w-6xl px-5 py-8 text-xs text-ink/50 md:px-8 dark:text-slate-500">
+      <footer className="mx-auto w-full max-w-6xl px-4 py-8 text-xs text-ink/50 md:px-8 dark:text-slate-500">
         {t.footer}
       </footer>
     </div>

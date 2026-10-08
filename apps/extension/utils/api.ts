@@ -21,6 +21,10 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return body as T;
 }
 
+export function packsUrl(language: string): string {
+  return `${API_URL}${language.startsWith('zh') ? '' : '/en'}/packs`;
+}
+
 export interface AccountUser {
   name: string;
   image: string | null;

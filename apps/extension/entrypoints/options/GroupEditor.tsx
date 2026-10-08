@@ -13,6 +13,7 @@ import { uid } from '@/utils/rules';
 import { COLOR_DOT } from './colors';
 
 const COLLAPSE_THRESHOLD = 10;
+const PREVIEW_COUNT = 6;
 
 interface Props {
   groups: Group[];
@@ -69,64 +70,65 @@ export function GroupEditor({ groups, plan, onChange }: Props) {
         const collapsed = g.patterns.length > COLLAPSE_THRESHOLD && !expanded.has(g.id);
         const collapsible = g.patterns.length > COLLAPSE_THRESHOLD;
         return (
-          <div
-            key={g.id}
-            className={`flex flex-col gap-4 rounded-lg border p-4 sm:flex-row ${g.enabled ? '' : 'opacity-60'}`}
-          >
-            <div className="w-full shrink-0 space-y-2 sm:w-56">
-              <div className="flex items-center gap-2">
-                <Select value={g.color} onValueChange={(v) => patch(g.id, { color: v as GroupColor })}>
-                  <SelectTrigger className="w-20 shrink-0">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {GROUP_COLORS.map((c) => (
-                      <SelectItem key={c} value={c}>
-                        <span className="flex items-center gap-2">
-                          <span className={`inline-block size-3 rounded-full ${COLOR_DOT[c]}`} />
-                          {t(`color.${c}`)}
-                        </span>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Input
-                  value={g.name}
-                  placeholder={t('editor.groupName')}
-                  onChange={(e) => patch(g.id, { name: e.target.value })}
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <Switch
-                  checked={g.enabled}
-                  disabled={!g.enabled && !canAdd}
-                  onCheckedChange={(v) => patch(g.id, { enabled: v })}
-                  aria-label={t('editor.enableGroup')}
-                />
-                <div className="flex items-center gap-1">
-                  <span className="text-xs text-muted-foreground">
-                    {t('editor.patternCount', { count: g.patterns.length })}
-                  </span>
-                  {collapsible && (
-                    <Button variant="ghost" size="xs" onClick={() => toggleExpanded(g.id)}>
-                      {collapsed ? t('editor.expand') : t('editor.collapse')}
-                    </Button>
-                  )}
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    className="text-destructive hover:text-destructive"
-                    onClick={() => removeGroup(g)}
-                    aria-label={t('editor.deleteGroup')}
-                  >
-                    <Trash2 />
-                  </Button>
-                </div>
-              </div>
+          <div key={g.id} className={`space-y-3 rounded-lg border p-4 ${g.enabled ? '' : 'opacity-60'}`}>
+            <div className="flex items-center gap-2">
+              <Select value={g.color} onValueChange={(v) => patch(g.id, { color: v as GroupColor })}>
+                <SelectTrigger className="w-24 shrink-0">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {GROUP_COLORS.map((c) => (
+                    <SelectItem key={c} value={c}>
+                      <span className="flex items-center gap-2">
+                        <span className={`inline-block size-3 rounded-full ${COLOR_DOT[c]}`} />
+                        {t(`color.${c}`)}
+                      </span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Input
+                className="min-w-0 flex-1"
+                value={g.name}
+                placeholder={t('editor.groupName')}
+                onChange={(e) => patch(g.id, { name: e.target.value })}
+              />
+              <span className="shrink-0 text-xs text-muted-foreground">
+                {t('editor.patternCount', { count: g.patterns.length })}
+              </span>
+              <Switch
+                checked={g.enabled}
+                disabled={!g.enabled && !canAdd}
+                onCheckedChange={(v) => patch(g.id, { enabled: v })}
+                aria-label={t('editor.enableGroup')}
+              />
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                className="text-destructive hover:text-destructive"
+                onClick={() => removeGroup(g)}
+                aria-label={t('editor.deleteGroup')}
+              >
+                <Trash2 />
+              </Button>
             </div>
 
+            {collapsed && (
+              <div className="flex flex-wrap items-center gap-1.5">
+                {g.patterns.slice(0, PREVIEW_COUNT).map((p, i) => (
+                  <span key={i} className="rounded-full bg-muted px-2.5 py-0.5 font-mono text-xs text-muted-foreground">
+                    {p}
+                  </span>
+                ))}
+                <Button variant="ghost" size="xs" onClick={() => toggleExpanded(g.id)}>
+                  {t('editor.expandAll', { count: g.patterns.length })}
+                </Button>
+              </div>
+            )}
+
             {!collapsed && (
-              <div className="min-w-0 flex-1 space-y-2">
+              <div className="space-y-2">
+                <div className={`space-y-2 ${collapsible ? 'max-h-72 overflow-y-auto pr-2' : ''}`}>
                 {g.patterns.map((raw, i) => {
                   const parsed = parsePattern(raw);
                   const others = (owners.get(parsed.value) ?? []).filter((o) => o.id !== g.id);
@@ -173,17 +175,25 @@ export function GroupEditor({ groups, plan, onChange }: Props) {
                     </div>
                   );
                 })}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    patch(g.id, { patterns: [...g.patterns, ''] });
-                    focusPattern(g.id, g.patterns.length);
-                  }}
-                >
-                  <Plus />
-                  {t('editor.addPattern')}
-                </Button>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      patch(g.id, { patterns: [...g.patterns, ''] });
+                      focusPattern(g.id, g.patterns.length);
+                    }}
+                  >
+                    <Plus />
+                    {t('editor.addPattern')}
+                  </Button>
+                  {collapsible && (
+                    <Button variant="ghost" size="sm" onClick={() => toggleExpanded(g.id)}>
+                      {t('editor.collapse')}
+                    </Button>
+                  )}
+                </div>
               </div>
             )}
           </div>
