@@ -70,9 +70,9 @@ function Detail() {
             <p className="mt-4 max-w-[60ch] leading-relaxed text-slate-700 dark:text-slate-300">{detail.description}</p>
           )}
 
-          <div className="mt-8 grid grid-cols-[repeat(auto-fit,minmax(18rem,1fr))] items-start gap-4">
+          <div className="mt-8 columns-[18rem] gap-4">
             {detail.pack.groups.map((g, i) => (
-              <section key={i} className="frost rounded-[20px] p-5">
+              <section key={i} className="frost mb-4 break-inside-avoid rounded-[20px] p-5">
                 <h2 className="flex items-center gap-2 font-medium">
                   <span className="size-2.5 rounded-full" style={{ background: GROUP_HEX[g.color] }} />
                   {g.name}
