@@ -55,6 +55,16 @@ export async function fetchPack(input: string): Promise<RemotePack> {
   return request<RemotePack>(`/api/packs/${code}`);
 }
 
+export interface OfficialPack {
+  code: string;
+  name: string;
+  patternCount: number;
+}
+
+export function fetchOfficialPacks(): Promise<OfficialPack[]> {
+  return request<OfficialPack[]>('/api/packs');
+}
+
 export interface PublishResult {
   code: string;
   version: number;

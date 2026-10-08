@@ -4,6 +4,7 @@ export const INSTALL_URL = 'https://chromewebstore.google.com/';
 
 const zh = {
   siteName: 'Tabyard 归处',
+  docTitle: 'Tabyard 归处 · 标签自动分组',
   navPacks: '规则包',
   install: '安装扩展',
   signIn: '登录',
@@ -49,6 +50,7 @@ type Dict = { [K in keyof typeof zh]: string };
 
 const en: Dict = {
   siteName: 'Tabyard',
+  docTitle: 'Tabyard · Automatic tab grouping',
   navPacks: 'Packs',
   install: 'Install',
   signIn: 'Sign in',

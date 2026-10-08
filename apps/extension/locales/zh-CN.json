@@ -43,7 +43,9 @@
     "publish": "发布",
     "importFromFile": "选择文件",
     "browse": "浏览规则包",
-    "packs": "规则包"
+    "packs": "规则包",
+    "official": "官方规则包",
+    "officialFailed": "加载失败"
   },
   "kind": {
     "path": "路径",

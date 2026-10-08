@@ -74,7 +74,7 @@ export function GroupEditor({ groups, plan, onChange }: Props) {
           <div key={g.id} className={`space-y-3 rounded-lg border p-4 ${g.enabled ? '' : 'opacity-60'}`}>
             <div className="flex items-center gap-2">
               <Select value={g.color} onValueChange={(v) => patch(g.id, { color: v as GroupColor })}>
-                <SelectTrigger className="w-24 shrink-0">
+                <SelectTrigger className="w-32 shrink-0">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

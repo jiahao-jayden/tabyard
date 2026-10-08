@@ -16,9 +16,11 @@ import { Switch } from '@/components/ui/switch';
 import { setLanguagePref } from '@/utils/i18n';
 import { packToGroups, parsePack, toPack, type RulePack } from '@/utils/pack';
 import type { Group } from '@tabyard/shared';
-import { API_URL, packsUrl } from '@/utils/api';
+import { API_URL, fetchOfficialPacks, fetchPack, packsUrl, type OfficialPack } from '@/utils/api';
 import { AccountButton } from './AccountButton';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { enabledCount, FREE_GROUP_LIMIT, getPlan, refreshPlan, type Plan } from '@/utils/plan';
 import {
   DEFAULT_OTHER_NAME,
@@ -54,6 +56,7 @@ export default function App() {
   const [jsonError, setJsonError] = useState('');
   const [importing, setImporting] = useState<{ pack: RulePack; base: Group[]; version?: number } | null>(null);
   const [sourceOpen, setSourceOpen] = useState(false);
+  const [officialPacks, setOfficialPacks] = useState<OfficialPack[] | null>(null);
   const [publishing, setPublishing] = useState<Group[] | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -172,6 +175,19 @@ export default function App() {
     setSourceOpen(false);
     setImporting({ pack, base, version });
   }, [resolveGroups]);
+
+  const loadOfficial = useCallback((open: boolean) => {
+    if (open) void fetchOfficialPacks().then(setOfficialPacks, () => setOfficialPacks([]));
+  }, []);
+
+  const importOfficial = useCallback(async (code: string) => {
+    try {
+      const remote = await fetchPack(code);
+      startImport(remote.pack, remote.version);
+    } catch (error) {
+      flash(t('rules.importFailed', { msg: (error as Error).message }));
+    }
+  }, [startImport, flash, t]);
 
   const importFile = useCallback(async (file: File) => {
     try {
@@ -312,7 +328,7 @@ export default function App() {
           <CardTitle>{t('rules.title')}</CardTitle>
           <CardDescription>{t('rules.desc')}</CardDescription>
           <CardAction className="flex items-center gap-2">
-            <DropdownMenu>
+            <DropdownMenu onOpenChange={loadOfficial}>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm">
                   <Library />
@@ -320,7 +336,19 @@ export default function App() {
                   <ChevronDown />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent align="end">
+                {officialPacks && officialPacks.length > 0 && (
+                  <>
+                    <DropdownMenuLabel>{t('rules.official')}</DropdownMenuLabel>
+                    {officialPacks.map((p) => (
+                      <DropdownMenuItem key={p.code} onSelect={() => void importOfficial(p.code)}>
+                        <span className="flex-1">{p.name}</span>
+                        <span className="text-xs text-muted-foreground">{p.patternCount}</span>
+                      </DropdownMenuItem>
+                    ))}
+                    <DropdownMenuSeparator />
+                  </>
+                )}
                 <DropdownMenuItem onSelect={() => void browser.tabs.create({ url: packsUrl(i18n.language) })}>
                   <Library />
                   {t('rules.browse')}

@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as Char123LocaleChar125RouteRouteImport } from './routes/{-$locale}/route'
 import { Route as ApiCheckoutRouteImport } from './routes/api/checkout'
+import { Route as ApiPacksRouteImport } from './routes/api/packs'
 import { Route as ApiPlanRouteImport } from './routes/api/plan'
 import { Route as ApiPublishRouteImport } from './routes/api/publish'
 import { Route as ApiSyncRouteImport } from './routes/api/sync'
@@ -37,6 +38,11 @@ const Char123LocaleChar125RouteRoute =
 const ApiCheckoutRoute = ApiCheckoutRouteImport.update({
   id: '/api/checkout',
   path: '/api/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPacksRoute = ApiPacksRouteImport.update({
+  id: '/api/packs',
+  path: '/api/packs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPlanRoute = ApiPlanRouteImport.update({
@@ -83,9 +89,9 @@ const ApiCreemWebhookRoute = ApiCreemWebhookRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPacksCodeRoute = ApiPacksCodeRouteImport.update({
-  id: '/api/packs/$code',
-  path: '/api/packs/$code',
-  getParentRoute: () => rootRouteImport,
+  id: '/$code',
+  path: '/$code',
+  getParentRoute: () => ApiPacksRoute,
 } as any)
 const Char123LocaleChar125PCodeRoute =
   Char123LocaleChar125PCodeRouteImport.update({
@@ -98,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/{-$locale}': typeof Char123LocaleChar125RouteRouteWithChildren
   '/admin': typeof AdminRoute
   '/api/checkout': typeof ApiCheckoutRoute
+  '/api/packs': typeof ApiPacksRouteWithChildren
   '/api/plan': typeof ApiPlanRoute
   '/api/publish': typeof ApiPublishRoute
   '/api/sync': typeof ApiSyncRoute
@@ -112,6 +119,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/api/checkout': typeof ApiCheckoutRoute
+  '/api/packs': typeof ApiPacksRouteWithChildren
   '/api/plan': typeof ApiPlanRoute
   '/api/publish': typeof ApiPublishRoute
   '/api/sync': typeof ApiSyncRoute
@@ -128,6 +136,7 @@ export interface FileRoutesById {
   '/{-$locale}': typeof Char123LocaleChar125RouteRouteWithChildren
   '/admin': typeof AdminRoute
   '/api/checkout': typeof ApiCheckoutRoute
+  '/api/packs': typeof ApiPacksRouteWithChildren
   '/api/plan': typeof ApiPlanRoute
   '/api/publish': typeof ApiPublishRoute
   '/api/sync': typeof ApiSyncRoute
@@ -145,6 +154,7 @@ export interface FileRouteTypes {
     | '/{-$locale}'
     | '/admin'
     | '/api/checkout'
+    | '/api/packs'
     | '/api/plan'
     | '/api/publish'
     | '/api/sync'
@@ -159,6 +169,7 @@ export interface FileRouteTypes {
   to:
     | '/admin'
     | '/api/checkout'
+    | '/api/packs'
     | '/api/plan'
     | '/api/publish'
     | '/api/sync'
@@ -174,6 +185,7 @@ export interface FileRouteTypes {
     | '/{-$locale}'
     | '/admin'
     | '/api/checkout'
+    | '/api/packs'
     | '/api/plan'
     | '/api/publish'
     | '/api/sync'
@@ -190,12 +202,12 @@ export interface RootRouteChildren {
   Char123LocaleChar125RouteRoute: typeof Char123LocaleChar125RouteRouteWithChildren
   AdminRoute: typeof AdminRoute
   ApiCheckoutRoute: typeof ApiCheckoutRoute
+  ApiPacksRoute: typeof ApiPacksRouteWithChildren
   ApiPlanRoute: typeof ApiPlanRoute
   ApiPublishRoute: typeof ApiPublishRoute
   ApiSyncRoute: typeof ApiSyncRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiCreemWebhookRoute: typeof ApiCreemWebhookRoute
-  ApiPacksCodeRoute: typeof ApiPacksCodeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -219,6 +231,13 @@ declare module '@tanstack/react-router' {
       path: '/api/checkout'
       fullPath: '/api/checkout'
       preLoaderRoute: typeof ApiCheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/packs': {
+      id: '/api/packs'
+      path: '/api/packs'
+      fullPath: '/api/packs'
+      preLoaderRoute: typeof ApiPacksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/plan': {
@@ -279,10 +298,10 @@ declare module '@tanstack/react-router' {
     }
     '/api/packs/$code': {
       id: '/api/packs/$code'
-      path: '/api/packs/$code'
+      path: '/$code'
       fullPath: '/api/packs/$code'
       preLoaderRoute: typeof ApiPacksCodeRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof ApiPacksRoute
     }
     '/{-$locale}/p/$code': {
       id: '/{-$locale}/p/$code'
@@ -314,16 +333,28 @@ const Char123LocaleChar125RouteRouteWithChildren =
     Char123LocaleChar125RouteRouteChildren,
   )
 
+interface ApiPacksRouteChildren {
+  ApiPacksCodeRoute: typeof ApiPacksCodeRoute
+}
+
+const ApiPacksRouteChildren: ApiPacksRouteChildren = {
+  ApiPacksCodeRoute: ApiPacksCodeRoute,
+}
+
+const ApiPacksRouteWithChildren = ApiPacksRoute._addFileChildren(
+  ApiPacksRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   Char123LocaleChar125RouteRoute: Char123LocaleChar125RouteRouteWithChildren,
   AdminRoute: AdminRoute,
   ApiCheckoutRoute: ApiCheckoutRoute,
+  ApiPacksRoute: ApiPacksRouteWithChildren,
   ApiPlanRoute: ApiPlanRoute,
   ApiPublishRoute: ApiPublishRoute,
   ApiSyncRoute: ApiSyncRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiCreemWebhookRoute: ApiCreemWebhookRoute,
-  ApiPacksCodeRoute: ApiPacksCodeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

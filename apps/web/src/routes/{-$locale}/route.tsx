@@ -10,6 +10,7 @@ export const Route = createFileRoute('/{-$locale}')({
     if (params.locale !== undefined && params.locale !== 'en') throw notFound();
   },
   loader: () => fetchSession(),
+  head: ({ params }) => ({ meta: [{ title: dictionaries[localeFromParam(params.locale)].docTitle }] }),
   component: Layout,
 });
 

@@ -43,7 +43,9 @@
     "publish": "Publish",
     "importFromFile": "Choose file",
     "browse": "Browse packs",
-    "packs": "Packs"
+    "packs": "Packs",
+    "official": "Official packs",
+    "officialFailed": "Failed to load"
   },
   "kind": {
     "path": "Path",
