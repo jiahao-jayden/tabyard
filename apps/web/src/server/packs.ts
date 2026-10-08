@@ -5,6 +5,7 @@ import {
   LIMITS,
   normalizeCode,
   validatePack,
+  type GroupColor,
   type RulePack,
 } from '@tabyard/shared';
 
@@ -186,4 +187,45 @@ export async function publishPack(
     if (res.meta.changes === 1) return { code, version: 1, md5, editToken };
   }
   throw new HttpError(500, 'code_generation_failed');
+}
+
+export interface OfficialPackEdit {
+  code: string;
+  name: string;
+  color: GroupColor;
+  patterns: string[];
+}
+
+/** 官方包都是单分组：包名即分组名 */
+export async function listOfficialPacks(): Promise<OfficialPackEdit[]> {
+  const { results } = await env.DB.prepare(
+    'SELECT code, content FROM packs WHERE official = 1 ORDER BY updated_at DESC',
+  ).all<Pick<PackRow, 'code' | 'content'>>();
+  return results.map((r) => {
+    const group = (JSON.parse(r.content) as RulePack).groups[0]!;
+    return { code: r.code, name: group.name, color: group.color, patterns: group.patterns };
+  });
+}
+
+export async function updateOfficialPack(edit: OfficialPackEdit): Promise<void> {
+  const row = await env.DB.prepare('SELECT content, version FROM packs WHERE code = ? AND official = 1')
+    .bind(edit.code)
+    .first<Pick<PackRow, 'content' | 'version'>>();
+  if (!row) throw new HttpError(404, 'not_found');
+
+  const old = JSON.parse(row.content) as RulePack;
+  const pack = validatePack({
+    ...old,
+    meta: { ...old.meta, name: edit.name },
+    groups: [{ ...old.groups[0], name: edit.name, color: edit.color, patterns: edit.patterns }],
+  });
+  const content = JSON.stringify(pack);
+  await env.DB.prepare(
+    `UPDATE packs SET name=?, version=?, md5=?, content=?, pattern_count=?, updated_at=? WHERE code=?`,
+  )
+    .bind(
+      pack.meta.name, row.version + 1, await digestHex('MD5', content), content,
+      pack.groups[0]!.patterns.length, Date.now(), edit.code,
+    )
+    .run();
 }

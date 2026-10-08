@@ -3,7 +3,8 @@ import { getRequestHeaders } from '@tanstack/react-start/server';
 import { auth } from './auth';
 import { z } from 'zod';
 import { createDiscount, deleteDiscount, isAdmin, isPro, listDiscounts, listOrders } from './billing';
-import { getPack, listPacks } from './packs';
+import { GROUP_COLORS } from '@tabyard/shared';
+import { getPack, listOfficialPacks, listPacks, updateOfficialPack } from './packs';
 
 export const fetchPacks = createServerFn({ method: 'GET' })
   .validator((q: string) => q)
@@ -28,8 +29,8 @@ async function requireAdmin() {
 export const fetchAdmin = createServerFn({ method: 'GET' }).handler(async () => {
   const session = await auth.api.getSession({ headers: getRequestHeaders() });
   if (!session?.user || !isAdmin(session.user.email)) return null;
-  const [orders, discounts] = await Promise.all([listOrders(), listDiscounts()]);
-  return { orders, discounts };
+  const [orders, discounts, packs] = await Promise.all([listOrders(), listDiscounts(), listOfficialPacks()]);
+  return { orders, discounts, packs };
 });
 
 const newDiscountSchema = z.object({
@@ -53,4 +54,18 @@ export const removeDiscount = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     await requireAdmin();
     await deleteDiscount(data);
+  });
+
+const officialPackSchema = z.object({
+  code: z.string().min(1),
+  name: z.string().trim().min(1),
+  color: z.enum(GROUP_COLORS),
+  patterns: z.array(z.string()),
+});
+
+export const saveOfficialPack = createServerFn({ method: 'POST' })
+  .validator((d: unknown) => officialPackSchema.parse(d))
+  .handler(async ({ data }) => {
+    await requireAdmin();
+    await updateOfficialPack(data);
   });

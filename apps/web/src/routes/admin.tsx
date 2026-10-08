@@ -1,7 +1,9 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { useState } from 'react';
 import type { Discount, OrderRow } from '~/server/billing';
-import { addDiscount, fetchAdmin, removeDiscount } from '~/server/fns';
+import { GROUP_COLORS } from '@tabyard/shared';
+import type { OfficialPackEdit } from '~/server/packs';
+import { addDiscount, fetchAdmin, removeDiscount, saveOfficialPack } from '~/server/fns';
 
 export const Route = createFileRoute('/admin')({
   loader: () => fetchAdmin(),
@@ -19,13 +21,14 @@ function Admin() {
       </p>
     );
   }
-  const { orders, discounts } = data;
+  const { orders, discounts, packs } = data;
   const unpaid = orders.filter((o) => !o.paid);
   const paid = orders.filter((o) => o.paid);
 
   return (
     <div className="mx-auto max-w-4xl space-y-10 px-5 py-10">
       <h1 className="text-3xl font-medium tracking-tight">后台</h1>
+      <OfficialPacks packs={packs} />
       <Discounts discounts={discounts} />
       <Orders title={`已下单未付款（${unpaid.length}）`} rows={unpaid} />
       <Orders title={`已付款（${paid.length}）`} rows={paid} />
@@ -177,5 +180,72 @@ function Orders({ title, rows }: { title: string; rows: OrderRow[] }) {
         )}
       </div>
     </section>
+  );
+}
+
+function OfficialPacks({ packs }: { packs: OfficialPackEdit[] }) {
+  return (
+    <section>
+      <h2 className="mb-3 text-lg font-medium">官方规则包</h2>
+      <div className="space-y-4">
+        {packs.map((p) => (
+          <PackEditor key={p.code} pack={p} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function PackEditor({ pack }: { pack: OfficialPackEdit }) {
+  const router = useRouter();
+  const [name, setName] = useState(pack.name);
+  const [color, setColor] = useState(pack.color);
+  const [text, setText] = useState(pack.patterns.join('\n'));
+  const [state, setState] = useState<'idle' | 'busy' | 'saved' | 'error'>('idle');
+
+  async function save() {
+    setState('busy');
+    try {
+      const patterns = [...new Set(text.split('\n').map((l) => l.trim()).filter(Boolean))];
+      await saveOfficialPack({ data: { code: pack.code, name, color, patterns } });
+      await router.invalidate();
+      setState('saved');
+    } catch {
+      setState('error');
+    }
+  }
+
+  return (
+    <div className="frost space-y-3 rounded-[20px] p-5">
+      <div className="flex items-center gap-3">
+        <input value={name} onChange={(e) => setName(e.target.value)} className={`${input} max-w-60`} aria-label="名称" />
+        <select value={color} onChange={(e) => setColor(e.target.value as typeof color)} className={`${input} max-w-32`}>
+          {GROUP_COLORS.map((c) => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
+        <span className="ml-auto font-mono text-sm text-ink/50">{pack.code}</span>
+      </div>
+      <textarea
+        value={text}
+        onChange={(e) => { setText(e.target.value); setState('idle'); }}
+        rows={8}
+        spellCheck={false}
+        className="w-full rounded-2xl bg-white/70 px-4 py-3 font-mono text-sm outline-none ring-1 ring-white/70 focus:ring-lake"
+        aria-label="匹配模式，每行一个"
+      />
+      <div className="flex items-center gap-3">
+        <button
+          onClick={save}
+          disabled={state === 'busy'}
+          className="rounded-full bg-ink px-5 py-2 text-sm text-white transition hover:bg-ink/85 disabled:opacity-50"
+        >
+          保存
+        </button>
+        <span className="text-sm text-ink/50">每行一个模式 · 保存后版本号加一</span>
+        {state === 'saved' && <span className="text-sm text-green-700">已保存</span>}
+        {state === 'error' && <span className="text-sm text-red-600">保存失败，请检查模式是否合法</span>}
+      </div>
+    </div>
   );
 }
