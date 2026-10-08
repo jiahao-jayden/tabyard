@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as Char123LocaleChar125RouteRouteImport } from './routes/{-$locale}/route'
 import { Route as ApiCheckoutRouteImport } from './routes/api/checkout'
 import { Route as ApiPlanRouteImport } from './routes/api/plan'
@@ -21,6 +22,11 @@ import { Route as ApiCreemWebhookRouteImport } from './routes/api/creem.webhook'
 import { Route as ApiPacksCodeRouteImport } from './routes/api/packs.$code'
 import { Route as Char123LocaleChar125PCodeRouteImport } from './routes/{-$locale}/p.$code'
 
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Char123LocaleChar125RouteRoute =
   Char123LocaleChar125RouteRouteImport.update({
     id: '/{-$locale}',
@@ -84,6 +90,7 @@ const Char123LocaleChar125PCodeRoute =
 
 export interface FileRoutesByFullPath {
   '/{-$locale}': typeof Char123LocaleChar125RouteRouteWithChildren
+  '/admin': typeof AdminRoute
   '/api/checkout': typeof ApiCheckoutRoute
   '/api/plan': typeof ApiPlanRoute
   '/api/publish': typeof ApiPublishRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/p/$code': typeof Char123LocaleChar125PCodeRoute
 }
 export interface FileRoutesByTo {
+  '/admin': typeof AdminRoute
   '/api/checkout': typeof ApiCheckoutRoute
   '/api/plan': typeof ApiPlanRoute
   '/api/publish': typeof ApiPublishRoute
@@ -110,6 +118,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/{-$locale}': typeof Char123LocaleChar125RouteRouteWithChildren
+  '/admin': typeof AdminRoute
   '/api/checkout': typeof ApiCheckoutRoute
   '/api/plan': typeof ApiPlanRoute
   '/api/publish': typeof ApiPublishRoute
@@ -125,6 +134,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/{-$locale}'
+    | '/admin'
     | '/api/checkout'
     | '/api/plan'
     | '/api/publish'
@@ -137,6 +147,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/p/$code'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/admin'
     | '/api/checkout'
     | '/api/plan'
     | '/api/publish'
@@ -150,6 +161,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/{-$locale}'
+    | '/admin'
     | '/api/checkout'
     | '/api/plan'
     | '/api/publish'
@@ -164,6 +176,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   Char123LocaleChar125RouteRoute: typeof Char123LocaleChar125RouteRouteWithChildren
+  AdminRoute: typeof AdminRoute
   ApiCheckoutRoute: typeof ApiCheckoutRoute
   ApiPlanRoute: typeof ApiPlanRoute
   ApiPublishRoute: typeof ApiPublishRoute
@@ -174,6 +187,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/{-$locale}': {
       id: '/{-$locale}'
       path: '/{-$locale}'
@@ -276,6 +296,7 @@ const Char123LocaleChar125RouteRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   Char123LocaleChar125RouteRoute: Char123LocaleChar125RouteRouteWithChildren,
+  AdminRoute: AdminRoute,
   ApiCheckoutRoute: ApiCheckoutRoute,
   ApiPlanRoute: ApiPlanRoute,
   ApiPublishRoute: ApiPublishRoute,
