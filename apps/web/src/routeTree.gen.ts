@@ -20,6 +20,7 @@ import { Route as ApiSyncRouteImport } from './routes/api/sync'
 import { Route as Char123LocaleChar125IndexRouteImport } from './routes/{-$locale}/index'
 import { Route as Char123LocaleChar125LoginRouteImport } from './routes/{-$locale}/login'
 import { Route as Char123LocaleChar125PacksRouteImport } from './routes/{-$locale}/packs'
+import { Route as Char123LocaleChar125PricingRouteImport } from './routes/{-$locale}/pricing'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as ApiCreemWebhookRouteImport } from './routes/api/creem.webhook'
 import { Route as ApiPacksCodeRouteImport } from './routes/api/packs.$code'
@@ -84,6 +85,12 @@ const Char123LocaleChar125PacksRoute =
     path: '/packs',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
+const Char123LocaleChar125PricingRoute =
+  Char123LocaleChar125PricingRouteImport.update({
+    id: '/pricing',
+    path: '/pricing',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -117,6 +124,7 @@ export interface FileRoutesByFullPath {
   '/api/sync': typeof ApiSyncRoute
   '/{-$locale}/login': typeof Char123LocaleChar125LoginRoute
   '/{-$locale}/packs': typeof Char123LocaleChar125PacksRoute
+  '/{-$locale}/pricing': typeof Char123LocaleChar125PricingRoute
   '/{-$locale}/': typeof Char123LocaleChar125IndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/creem/webhook': typeof ApiCreemWebhookRoute
@@ -133,6 +141,7 @@ export interface FileRoutesByTo {
   '/api/sync': typeof ApiSyncRoute
   '/{-$locale}/login': typeof Char123LocaleChar125LoginRoute
   '/{-$locale}/packs': typeof Char123LocaleChar125PacksRoute
+  '/{-$locale}/pricing': typeof Char123LocaleChar125PricingRoute
   '/{-$locale}': typeof Char123LocaleChar125IndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/creem/webhook': typeof ApiCreemWebhookRoute
@@ -151,6 +160,7 @@ export interface FileRoutesById {
   '/api/sync': typeof ApiSyncRoute
   '/{-$locale}/login': typeof Char123LocaleChar125LoginRoute
   '/{-$locale}/packs': typeof Char123LocaleChar125PacksRoute
+  '/{-$locale}/pricing': typeof Char123LocaleChar125PricingRoute
   '/{-$locale}/': typeof Char123LocaleChar125IndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/creem/webhook': typeof ApiCreemWebhookRoute
@@ -170,6 +180,7 @@ export interface FileRouteTypes {
     | '/api/sync'
     | '/{-$locale}/login'
     | '/{-$locale}/packs'
+    | '/{-$locale}/pricing'
     | '/{-$locale}/'
     | '/api/auth/$'
     | '/api/creem/webhook'
@@ -186,6 +197,7 @@ export interface FileRouteTypes {
     | '/api/sync'
     | '/{-$locale}/login'
     | '/{-$locale}/packs'
+    | '/{-$locale}/pricing'
     | '/{-$locale}'
     | '/api/auth/$'
     | '/api/creem/webhook'
@@ -203,6 +215,7 @@ export interface FileRouteTypes {
     | '/api/sync'
     | '/{-$locale}/login'
     | '/{-$locale}/packs'
+    | '/{-$locale}/pricing'
     | '/{-$locale}/'
     | '/api/auth/$'
     | '/api/creem/webhook'
@@ -302,6 +315,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125PacksRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
+    '/{-$locale}/pricing': {
+      id: '/{-$locale}/pricing'
+      path: '/pricing'
+      fullPath: '/{-$locale}/pricing'
+      preLoaderRoute: typeof Char123LocaleChar125PricingRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -336,6 +356,7 @@ declare module '@tanstack/react-router' {
 interface Char123LocaleChar125RouteRouteChildren {
   Char123LocaleChar125LoginRoute: typeof Char123LocaleChar125LoginRoute
   Char123LocaleChar125PacksRoute: typeof Char123LocaleChar125PacksRoute
+  Char123LocaleChar125PricingRoute: typeof Char123LocaleChar125PricingRoute
   Char123LocaleChar125IndexRoute: typeof Char123LocaleChar125IndexRoute
   Char123LocaleChar125PCodeRoute: typeof Char123LocaleChar125PCodeRoute
 }
@@ -344,6 +365,7 @@ const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChil
   {
     Char123LocaleChar125LoginRoute: Char123LocaleChar125LoginRoute,
     Char123LocaleChar125PacksRoute: Char123LocaleChar125PacksRoute,
+    Char123LocaleChar125PricingRoute: Char123LocaleChar125PricingRoute,
     Char123LocaleChar125IndexRoute: Char123LocaleChar125IndexRoute,
     Char123LocaleChar125PCodeRoute: Char123LocaleChar125PCodeRoute,
   }

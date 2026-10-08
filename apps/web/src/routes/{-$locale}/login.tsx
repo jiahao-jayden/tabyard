@@ -3,12 +3,18 @@ import { createFileRoute } from '@tanstack/react-router';
 import { authClient } from '~/auth-client';
 import { dictionaries, localeFromParam } from '~/i18n';
 
-export const Route = createFileRoute('/{-$locale}/login')({ component: Login });
+export const Route = createFileRoute('/{-$locale}/login')({
+  // 只接受站内路径，防止开放重定向
+  validateSearch: (s: Record<string, unknown>): { redirect?: string } =>
+    typeof s.redirect === 'string' && /^\/(?![/\\])/.test(s.redirect) ? { redirect: s.redirect } : {},
+  component: Login,
+});
 
 function Login() {
   const { locale: param } = Route.useParams();
+  const { redirect } = Route.useSearch();
   const t = dictionaries[localeFromParam(param)];
-  const callbackURL = param === 'zh' ? '/zh' : '/';
+  const callbackURL = redirect ?? (param === 'zh' ? '/zh' : '/');
 
   const buttons = [
     { provider: 'github', label: t.withGithub, Icon: GithubLogo },

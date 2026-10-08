@@ -192,18 +192,22 @@ export async function publishPack(
 export interface OfficialPackEdit {
   code: string;
   name: string;
-  color: GroupColor;
-  patterns: string[];
+  description: string;
+  groups: { name: string; color: GroupColor; patterns: string[] }[];
 }
 
-/** 官方包都是单分组：包名即分组名 */
 export async function listOfficialPacks(): Promise<OfficialPackEdit[]> {
   const { results } = await env.DB.prepare(
-    'SELECT code, content FROM packs WHERE official = 1 ORDER BY updated_at DESC',
+    'SELECT code, content FROM packs WHERE official = 1 ORDER BY created_at, code',
   ).all<Pick<PackRow, 'code' | 'content'>>();
   return results.map((r) => {
-    const group = (JSON.parse(r.content) as RulePack).groups[0]!;
-    return { code: r.code, name: group.name, color: group.color, patterns: group.patterns };
+    const { meta, groups } = JSON.parse(r.content) as RulePack;
+    return {
+      code: r.code,
+      name: meta.name,
+      description: meta.description ?? '',
+      groups: groups.map(({ name, color, patterns }) => ({ name, color, patterns })),
+    };
   });
 }
 
@@ -216,16 +220,17 @@ export async function updateOfficialPack(edit: OfficialPackEdit): Promise<void> 
   const old = JSON.parse(row.content) as RulePack;
   const pack = validatePack({
     ...old,
-    meta: { ...old.meta, name: edit.name },
-    groups: [{ ...old.groups[0], name: edit.name, color: edit.color, patterns: edit.patterns }],
+    meta: { ...old.meta, name: edit.name, description: edit.description || undefined },
+    groups: edit.groups,
   });
   const content = JSON.stringify(pack);
   await env.DB.prepare(
-    `UPDATE packs SET name=?, version=?, md5=?, content=?, pattern_count=?, updated_at=? WHERE code=?`,
+    `UPDATE packs SET name=?, description=?, version=?, md5=?, content=?, group_count=?, pattern_count=?, updated_at=?
+     WHERE code=?`,
   )
     .bind(
-      pack.meta.name, row.version + 1, await digestHex('MD5', content), content,
-      pack.groups[0]!.patterns.length, Date.now(), edit.code,
+      pack.meta.name, pack.meta.description ?? '', row.version + 1, await digestHex('MD5', content), content,
+      pack.groups.length, pack.groups.reduce((n, g) => n + g.patterns.length, 0), Date.now(), edit.code,
     )
     .run();
 }

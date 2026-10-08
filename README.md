@@ -88,4 +88,5 @@ npm run cf-typegen                       # 修改 wrangler.jsonc 后更新类型
 ## 其他
 
 - 管理后台在 `/admin`,仅 `ADMIN_EMAILS` 里的邮箱可进入,可查看订单和管理折扣码。
-- 官方规则包的种子数据在 `apps/web/migrations/0002_seed_official.sql`。
+- 官方规则包是按主题划分的多分组包，种子数据在 `apps/web/migrations/0008_official_multi_group.sql`，上线后在 `/admin` 里编辑。
+- 价格页在 `/pricing`，价格实时读取 Creem 商品（`CREEM_PRODUCT_ID`）。

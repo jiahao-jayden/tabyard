@@ -106,6 +106,19 @@ async function creem<T>(path: string, init?: RequestInit): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+export interface Price {
+  /** 单位：分 */
+  amount: number;
+  currency: string;
+}
+
+export async function getPrice(): Promise<Price> {
+  const { price, currency } = await creem<{ price: number; currency: string }>(
+    `/v1/products/${encodeURIComponent(env.CREEM_PRODUCT_ID)}`,
+  );
+  return { amount: price, currency };
+}
+
 export async function listDiscounts(): Promise<Discount[]> {
   const { items } = await creem<{ items: Record<string, any>[] }>('/v1/discounts/search?page_size=100');
   return items

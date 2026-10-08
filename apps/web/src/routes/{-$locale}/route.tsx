@@ -39,7 +39,7 @@ function Layout() {
           className="flex shrink-0 items-center gap-2 whitespace-nowrap text-[15px] font-medium tracking-wide text-ink/80 dark:text-slate-200"
         >
           <img src="/logo.svg" alt="" className="size-7" />
-          {t.siteName}
+          <span className="max-sm:sr-only">{t.siteName}</span>
         </Link>
         <nav className="flex items-center gap-1.5 whitespace-nowrap text-sm sm:gap-2">
           <Link
@@ -48,6 +48,13 @@ function Layout() {
             className="frost rounded-full px-3 py-1.5 transition hover:bg-white/80 sm:px-4 dark:hover:bg-white/10"
           >
             {t.navPacks}
+          </Link>
+          <Link
+            to="/{-$locale}/pricing"
+            params={{ locale: param }}
+            className="frost rounded-full px-3 py-1.5 transition hover:bg-white/80 sm:px-4 dark:hover:bg-white/10"
+          >
+            {t.navPricing}
           </Link>
           <a
             href={switchHref}

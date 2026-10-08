@@ -1,7 +1,7 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { useState } from 'react';
 import type { Discount, OrderRow } from '~/server/billing';
-import { GROUP_COLORS } from '@tabyard/shared';
+import { GROUP_COLORS, type GroupColor } from '@tabyard/shared';
 import type { OfficialPackEdit } from '~/server/packs';
 import { addDiscount, fetchAdmin, removeDiscount, saveOfficialPack } from '~/server/fns';
 
@@ -196,18 +196,37 @@ function OfficialPacks({ packs }: { packs: OfficialPackEdit[] }) {
   );
 }
 
+type GroupDraft = { name: string; color: GroupColor; text: string };
+
 function PackEditor({ pack }: { pack: OfficialPackEdit }) {
   const router = useRouter();
   const [name, setName] = useState(pack.name);
-  const [color, setColor] = useState(pack.color);
-  const [text, setText] = useState(pack.patterns.join('\n'));
+  const [description, setDescription] = useState(pack.description);
+  const [groups, setGroups] = useState<GroupDraft[]>(() =>
+    pack.groups.map((g) => ({ name: g.name, color: g.color, text: g.patterns.join('\n') })),
+  );
   const [state, setState] = useState<'idle' | 'busy' | 'saved' | 'error'>('idle');
+
+  const updateGroup = (i: number, patch: Partial<GroupDraft>) => {
+    setGroups((gs) => gs.map((g, j) => (j === i ? { ...g, ...patch } : g)));
+    setState('idle');
+  };
 
   async function save() {
     setState('busy');
     try {
-      const patterns = [...new Set(text.split('\n').map((l) => l.trim()).filter(Boolean))];
-      await saveOfficialPack({ data: { code: pack.code, name, color, patterns } });
+      await saveOfficialPack({
+        data: {
+          code: pack.code,
+          name,
+          description,
+          groups: groups.map((g) => ({
+            name: g.name,
+            color: g.color,
+            patterns: [...new Set(g.text.split('\n').map((l) => l.trim()).filter(Boolean))],
+          })),
+        },
+      });
       await router.invalidate();
       setState('saved');
     } catch {
@@ -218,22 +237,54 @@ function PackEditor({ pack }: { pack: OfficialPackEdit }) {
   return (
     <div className="frost space-y-3 rounded-[20px] p-5">
       <div className="flex items-center gap-3">
-        <input value={name} onChange={(e) => setName(e.target.value)} className={`${input} max-w-60`} aria-label="名称" />
-        <select value={color} onChange={(e) => setColor(e.target.value as typeof color)} className={`${input} max-w-32`}>
-          {GROUP_COLORS.map((c) => (
-            <option key={c} value={c}>{c}</option>
-          ))}
-        </select>
+        <input value={name} onChange={(e) => setName(e.target.value)} className={`${input} max-w-60`} aria-label="包名" />
         <span className="ml-auto font-mono text-sm text-ink/50">{pack.code}</span>
       </div>
-      <textarea
-        value={text}
-        onChange={(e) => { setText(e.target.value); setState('idle'); }}
-        rows={8}
-        spellCheck={false}
-        className="w-full rounded-2xl bg-white/70 px-4 py-3 font-mono text-sm outline-none ring-1 ring-white/70 focus:ring-lake"
-        aria-label="匹配模式，每行一个"
+      <input
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        placeholder="描述"
+        className={input}
+        aria-label="描述"
       />
+      <div className="grid gap-3 md:grid-cols-2">
+        {groups.map((g, i) => (
+          <div key={i} className="space-y-2 rounded-2xl bg-white/40 p-3">
+            <div className="flex items-center gap-2">
+              <input
+                value={g.name}
+                onChange={(e) => updateGroup(i, { name: e.target.value })}
+                className={input}
+                aria-label="分组名"
+              />
+              <select
+                value={g.color}
+                onChange={(e) => updateGroup(i, { color: e.target.value as GroupColor })}
+                className={`${input} max-w-28`}
+              >
+                {GROUP_COLORS.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+              <button
+                onClick={() => setGroups((gs) => gs.filter((_, j) => j !== i))}
+                disabled={groups.length === 1}
+                className="shrink-0 px-2 text-sm text-red-600 disabled:opacity-30"
+              >
+                删除
+              </button>
+            </div>
+            <textarea
+              value={g.text}
+              onChange={(e) => updateGroup(i, { text: e.target.value })}
+              rows={8}
+              spellCheck={false}
+              className="w-full rounded-2xl bg-white/70 px-4 py-3 font-mono text-sm outline-none ring-1 ring-white/70 focus:ring-lake"
+              aria-label="匹配模式，每行一个"
+            />
+          </div>
+        ))}
+      </div>
       <div className="flex items-center gap-3">
         <button
           onClick={save}
@@ -242,9 +293,15 @@ function PackEditor({ pack }: { pack: OfficialPackEdit }) {
         >
           保存
         </button>
+        <button
+          onClick={() => setGroups((gs) => [...gs, { name: '', color: 'grey', text: '' }])}
+          className="rounded-full px-4 py-2 text-sm ring-1 ring-ink/20 transition hover:bg-white/70"
+        >
+          添加分组
+        </button>
         <span className="text-sm text-ink/50">每行一个模式 · 保存后版本号加一</span>
         {state === 'saved' && <span className="text-sm text-green-700">已保存</span>}
-        {state === 'error' && <span className="text-sm text-red-600">保存失败，请检查模式是否合法</span>}
+        {state === 'error' && <span className="text-sm text-red-600">保存失败，请检查分组名和模式是否合法</span>}
       </div>
     </div>
   );

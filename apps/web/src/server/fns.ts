@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start';
 import { getRequestHeaders } from '@tanstack/react-start/server';
 import { auth } from './auth';
 import { z } from 'zod';
-import { createDiscount, deleteDiscount, isAdmin, isPro, listDiscounts, listOrders } from './billing';
+import { createDiscount, deleteDiscount, getPrice, isAdmin, isPro, listDiscounts, listOrders } from './billing';
 import { GROUP_COLORS } from '@tabyard/shared';
 import { getPack, listOfficialPacks, listPacks, updateOfficialPack } from './packs';
 
@@ -20,6 +20,14 @@ export const fetchSession = createServerFn({ method: 'GET' }).handler(async () =
   const { name, image, id } = session.user;
   return { name, image: image ?? null, pro: await isPro(id) };
 });
+
+/** Creem 不可用时返回 null，价格页照常渲染，结账页仍会展示价格 */
+export const fetchPrice = createServerFn({ method: 'GET' }).handler(() =>
+  getPrice().catch((e) => {
+    console.error(e);
+    return null;
+  }),
+);
 
 async function requireAdmin() {
   const session = await auth.api.getSession({ headers: getRequestHeaders() });
@@ -59,8 +67,12 @@ export const removeDiscount = createServerFn({ method: 'POST' })
 const officialPackSchema = z.object({
   code: z.string().min(1),
   name: z.string().trim().min(1),
-  color: z.enum(GROUP_COLORS),
-  patterns: z.array(z.string()),
+  description: z.string().trim(),
+  groups: z.array(z.object({
+    name: z.string().trim().min(1),
+    color: z.enum(GROUP_COLORS),
+    patterns: z.array(z.string()),
+  })).min(1),
 });
 
 export const saveOfficialPack = createServerFn({ method: 'POST' })
