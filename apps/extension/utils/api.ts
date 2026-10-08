@@ -1,7 +1,7 @@
 import { normalizeCode, type RulePack } from '@tabyard/shared';
 import { browser } from 'wxt/browser';
 
-const API_URL = import.meta.env.WXT_API_URL;
+export const API_URL = import.meta.env.WXT_API_URL;
 
 export class ApiError extends Error {
   constructor(readonly code: string, message?: string) {
@@ -19,6 +19,23 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const body = await res.json().catch(() => ({}));
   if (!res.ok) throw new ApiError(body.error ?? 'internal', body.message);
   return body as T;
+}
+
+export interface AccountUser {
+  name: string;
+  image: string | null;
+}
+
+export async function fetchAccount(): Promise<AccountUser | null> {
+  try {
+    const session = await request<{ user?: { name: string; image?: string | null } } | null>(
+      '/api/auth/get-session',
+      { credentials: 'include' },
+    );
+    return session?.user ? { name: session.user.name, image: session.user.image ?? null } : null;
+  } catch {
+    return null;
+  }
 }
 
 export interface RemotePack {

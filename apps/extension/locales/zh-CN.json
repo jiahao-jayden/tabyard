@@ -154,5 +154,8 @@
     "conflict": "规则包刚被修改，请重试",
     "invalid_request": "请求无效",
     "internal": "服务器出错，请稍后再试"
+  },
+  "account": {
+    "signIn": "登录"
   }
 }

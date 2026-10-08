@@ -16,6 +16,7 @@ import { Switch } from '@/components/ui/switch';
 import { setLanguagePref } from '@/utils/i18n';
 import { packToGroups, parsePack, toPack, type RulePack } from '@/utils/pack';
 import type { Group } from '@tabyard/shared';
+import { AccountButton } from './AccountButton';
 import { enabledCount, FREE_GROUP_LIMIT, getPlan, type Plan } from '@/utils/plan';
 import {
   DEFAULT_SETTINGS,
@@ -188,8 +189,10 @@ export default function App() {
             <img src="/logo.svg" alt="" className="size-9" />{t('app.title')}</h1>
           <p className="mt-2 max-w-[60ch] text-sm leading-relaxed text-muted-foreground">{t('app.subtitle')}</p>
         </div>
-        <Select value={langPref} onValueChange={(v) => changeLanguage(v as LanguagePref)}>
-          <SelectTrigger className="w-36 shrink-0 rounded-full bg-card backdrop-blur" aria-label={t('app.language')}>
+        <div className="flex shrink-0 items-center gap-2">
+          <AccountButton />
+          <Select value={langPref} onValueChange={(v) => changeLanguage(v as LanguagePref)}>
+          <SelectTrigger className="w-36 rounded-full bg-card backdrop-blur" aria-label={t('app.language')}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -197,7 +200,8 @@ export default function App() {
             <SelectItem value="zh-CN">中文</SelectItem>
             <SelectItem value="en">English</SelectItem>
           </SelectContent>
-        </Select>
+          </Select>
+        </div>
       </div>
 
       <Card>

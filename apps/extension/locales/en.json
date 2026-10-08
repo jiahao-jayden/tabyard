@@ -154,5 +154,8 @@
     "conflict": "The pack was just modified, please retry",
     "invalid_request": "Invalid request",
     "internal": "Server error, try again later"
+  },
+  "account": {
+    "signIn": "Sign in"
   }
 }
