@@ -1,0 +1,5 @@
+CREATE TABLE sync (
+  userId TEXT PRIMARY KEY REFERENCES user (id) ON DELETE CASCADE,
+  data TEXT NOT NULL,
+  modifiedAt INTEGER NOT NULL
+);

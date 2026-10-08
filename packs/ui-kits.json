@@ -3,12 +3,12 @@
   "version": 1,
   "meta": {
     "id": "official-ui-kits",
-    "name": "组件库",
+    "name": "Components",
     "author": "Tabyard"
   },
   "groups": [
     {
-      "name": "组件库",
+      "name": "Components",
       "color": "orange",
       "patterns": [
         "ui.shadcn.com",

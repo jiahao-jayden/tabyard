@@ -3,12 +3,12 @@
   "version": 1,
   "meta": {
     "id": "official-tools",
-    "name": "工具",
+    "name": "Tools",
     "author": "Tabyard"
   },
   "groups": [
     {
-      "name": "工具",
+      "name": "Tools",
       "color": "purple",
       "patterns": [
         "typeset.io",

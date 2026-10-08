@@ -3,12 +3,12 @@
   "version": 1,
   "meta": {
     "id": "official-ai-relay",
-    "name": "AI 中转站",
+    "name": "AI Relay",
     "author": "Tabyard"
   },
   "groups": [
     {
-      "name": "AI 中转站",
+      "name": "AI Relay",
       "color": "yellow",
       "patterns": [
         "openrouter.ai",

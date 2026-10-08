@@ -158,5 +158,19 @@
   "account": {
     "signIn": "Sign in",
     "upgrade": "Upgrade to Pro"
+  },
+  "sync": {
+    "title": "Cloud sync",
+    "proHint": "Pro feature: automatically sync your rules and settings across devices",
+    "signInHint": "Sign in to start syncing automatically",
+    "last": "Synced · {{time}}",
+    "never": "Not synced yet",
+    "now": "Sync now",
+    "syncing": "Syncing…",
+    "failed": "Sync failed, try again later",
+    "conflictTitle": "A cloud config already exists",
+    "conflictDesc": "Both this device and the cloud have rules. Choose which one to keep; the other will be overwritten.",
+    "useRemote": "Overwrite this device with cloud",
+    "useLocal": "Overwrite cloud with this device"
   }
 }

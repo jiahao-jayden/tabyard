@@ -3,12 +3,12 @@
   "version": 1,
   "meta": {
     "id": "official-design",
-    "name": "设计",
+    "name": "Design",
     "author": "Tabyard"
   },
   "groups": [
     {
-      "name": "设计",
+      "name": "Design",
       "color": "purple",
       "patterns": [
         "descript.com",

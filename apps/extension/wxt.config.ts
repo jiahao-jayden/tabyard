@@ -13,7 +13,7 @@ export default defineConfig({
     default_locale: 'en',
     name: '__MSG_extName__',
     description: '__MSG_extDescription__',
-    permissions: ['tabs', 'tabGroups', 'storage'],
+    permissions: ['tabs', 'tabGroups', 'storage', 'alarms'],
     host_permissions: [`${new URL(loadEnv(mode, process.cwd(), 'WXT_').WXT_API_URL!).origin}/*`],
     icons: {
       16: 'icon/16.png',

@@ -54,7 +54,7 @@ const storage = browser.storage.local;
 export const CONFIG_STORAGE_AREA = 'local';
 
 export async function saveConfig(patch: { settings?: GroupSettings; groups?: Group[] }): Promise<void> {
-  await storage.set(patch);
+  await storage.set({ ...patch, modifiedAt: Date.now() });
 }
 
 export async function loadLanguagePref(): Promise<LanguagePref> {

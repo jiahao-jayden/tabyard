@@ -83,8 +83,8 @@ function CardText({ title, desc }: { title: string; desc: string }) {
 }
 
 const TAB_GROUPS = [
-  { name: '开发', color: 'purple', tabs: ['github.com', 'vercel.com'] },
-  { name: '设计', color: 'pink', tabs: ['figma.com'] },
+  { name: 'Dev', color: 'purple', tabs: ['github.com', 'vercel.com'] },
+  { name: 'Design', color: 'pink', tabs: ['figma.com'] },
   { name: 'AI', color: 'cyan', tabs: ['claude.ai', 'chatgpt.com'] },
 ];
 

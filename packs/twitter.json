@@ -3,12 +3,12 @@
   "version": 1,
   "meta": {
     "id": "official-twitter",
-    "name": "推特",
+    "name": "X",
     "author": "Tabyard"
   },
   "groups": [
     {
-      "name": "推特",
+      "name": "X",
       "color": "cyan",
       "patterns": [
         "x.com",

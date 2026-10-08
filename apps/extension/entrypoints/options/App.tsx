@@ -34,6 +34,7 @@ import { ImportPackDialog } from './ImportPackDialog';
 import { ImportSourceDialog } from './ImportSourceDialog';
 import { PublishDialog } from './PublishDialog';
 import { RulesTable } from './RulesTable';
+import { SyncCard } from './SyncCard';
 
 type RulesView = 'groups' | 'table' | 'json';
 const VIEWS: RulesView[] = ['groups', 'table', 'json'];
@@ -67,6 +68,13 @@ export default function App() {
     sync();
     window.addEventListener('focus', sync);
     return () => window.removeEventListener('focus', sync);
+  }, []);
+
+  const reloadConfig = useCallback(() => {
+    void loadConfig().then((cfg) => {
+      setSettings(cfg.settings);
+      setGroups(cfg.groups);
+    });
   }, []);
 
   const flash = useCallback((message: string) => {
@@ -239,6 +247,8 @@ export default function App() {
           </div>
         </CardContent>
       </Card>
+
+      <SyncCard plan={plan} onApplied={reloadConfig} />
 
       <Card>
         <CardHeader>

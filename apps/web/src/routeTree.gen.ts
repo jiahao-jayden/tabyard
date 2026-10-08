@@ -14,6 +14,7 @@ import { Route as Char123LocaleChar125RouteRouteImport } from './routes/{-$local
 import { Route as ApiCheckoutRouteImport } from './routes/api/checkout'
 import { Route as ApiPlanRouteImport } from './routes/api/plan'
 import { Route as ApiPublishRouteImport } from './routes/api/publish'
+import { Route as ApiSyncRouteImport } from './routes/api/sync'
 import { Route as Char123LocaleChar125IndexRouteImport } from './routes/{-$locale}/index'
 import { Route as Char123LocaleChar125LoginRouteImport } from './routes/{-$locale}/login'
 import { Route as Char123LocaleChar125PacksRouteImport } from './routes/{-$locale}/packs'
@@ -46,6 +47,11 @@ const ApiPlanRoute = ApiPlanRouteImport.update({
 const ApiPublishRoute = ApiPublishRouteImport.update({
   id: '/api/publish',
   path: '/api/publish',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSyncRoute = ApiSyncRouteImport.update({
+  id: '/api/sync',
+  path: '/api/sync',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Char123LocaleChar125IndexRoute =
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/api/checkout': typeof ApiCheckoutRoute
   '/api/plan': typeof ApiPlanRoute
   '/api/publish': typeof ApiPublishRoute
+  '/api/sync': typeof ApiSyncRoute
   '/{-$locale}/login': typeof Char123LocaleChar125LoginRoute
   '/{-$locale}/packs': typeof Char123LocaleChar125PacksRoute
   '/{-$locale}/': typeof Char123LocaleChar125IndexRoute
@@ -107,6 +114,7 @@ export interface FileRoutesByTo {
   '/api/checkout': typeof ApiCheckoutRoute
   '/api/plan': typeof ApiPlanRoute
   '/api/publish': typeof ApiPublishRoute
+  '/api/sync': typeof ApiSyncRoute
   '/{-$locale}/login': typeof Char123LocaleChar125LoginRoute
   '/{-$locale}/packs': typeof Char123LocaleChar125PacksRoute
   '/{-$locale}': typeof Char123LocaleChar125IndexRoute
@@ -122,6 +130,7 @@ export interface FileRoutesById {
   '/api/checkout': typeof ApiCheckoutRoute
   '/api/plan': typeof ApiPlanRoute
   '/api/publish': typeof ApiPublishRoute
+  '/api/sync': typeof ApiSyncRoute
   '/{-$locale}/login': typeof Char123LocaleChar125LoginRoute
   '/{-$locale}/packs': typeof Char123LocaleChar125PacksRoute
   '/{-$locale}/': typeof Char123LocaleChar125IndexRoute
@@ -138,6 +147,7 @@ export interface FileRouteTypes {
     | '/api/checkout'
     | '/api/plan'
     | '/api/publish'
+    | '/api/sync'
     | '/{-$locale}/login'
     | '/{-$locale}/packs'
     | '/{-$locale}/'
@@ -151,6 +161,7 @@ export interface FileRouteTypes {
     | '/api/checkout'
     | '/api/plan'
     | '/api/publish'
+    | '/api/sync'
     | '/{-$locale}/login'
     | '/{-$locale}/packs'
     | '/{-$locale}'
@@ -165,6 +176,7 @@ export interface FileRouteTypes {
     | '/api/checkout'
     | '/api/plan'
     | '/api/publish'
+    | '/api/sync'
     | '/{-$locale}/login'
     | '/{-$locale}/packs'
     | '/{-$locale}/'
@@ -180,6 +192,7 @@ export interface RootRouteChildren {
   ApiCheckoutRoute: typeof ApiCheckoutRoute
   ApiPlanRoute: typeof ApiPlanRoute
   ApiPublishRoute: typeof ApiPublishRoute
+  ApiSyncRoute: typeof ApiSyncRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiCreemWebhookRoute: typeof ApiCreemWebhookRoute
   ApiPacksCodeRoute: typeof ApiPacksCodeRoute
@@ -220,6 +233,13 @@ declare module '@tanstack/react-router' {
       path: '/api/publish'
       fullPath: '/api/publish'
       preLoaderRoute: typeof ApiPublishRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/sync': {
+      id: '/api/sync'
+      path: '/api/sync'
+      fullPath: '/api/sync'
+      preLoaderRoute: typeof ApiSyncRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/{-$locale}/': {
@@ -300,6 +320,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCheckoutRoute: ApiCheckoutRoute,
   ApiPlanRoute: ApiPlanRoute,
   ApiPublishRoute: ApiPublishRoute,
+  ApiSyncRoute: ApiSyncRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiCreemWebhookRoute: ApiCreemWebhookRoute,
   ApiPacksCodeRoute: ApiPacksCodeRoute,

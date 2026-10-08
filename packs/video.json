@@ -3,12 +3,12 @@
   "version": 1,
   "meta": {
     "id": "official-video",
-    "name": "视频",
+    "name": "Video",
     "author": "Tabyard"
   },
   "groups": [
     {
-      "name": "视频",
+      "name": "Video",
       "color": "purple",
       "patterns": [
         "lumalabs.ai",

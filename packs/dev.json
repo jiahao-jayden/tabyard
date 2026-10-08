@@ -3,12 +3,12 @@
   "version": 1,
   "meta": {
     "id": "official-dev",
-    "name": "开发",
+    "name": "Dev",
     "author": "Tabyard"
   },
   "groups": [
     {
-      "name": "开发",
+      "name": "Dev",
       "color": "purple",
       "patterns": [
         "modelstudio.cn",
