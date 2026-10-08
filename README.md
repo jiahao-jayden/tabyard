@@ -2,7 +2,7 @@
 
 按规则把标签页自动归入 Chrome 原生分组的浏览器扩展,附带规则包分享网站和 Pro 云同步。
 
-![extension](img/extension.png)
+![官网首页](img/website.webp)
 
 ## 功能
 
@@ -13,11 +13,17 @@
 - **Pro**:不限分组数量、按域名自动分组、多设备云同步。免费版最多启用 3 个分组。
 - **多语言**:中文和英文,界面和默认分组名跟随语言。
 
-| 规则设置 | 规则包 |
-| --- | --- |
-| ![settings](img/rule-pack-2.png) | ![packs](img/rule-pack.png) |
+## 截图
 
-![website](img/website.png)
+扩展设置页:
+
+![扩展设置页](img/extension.webp)
+
+规则包列表与详情:
+
+| 规则包列表 | 规则包详情 |
+| --- | --- |
+| ![规则包列表](img/rule-pack.webp) | ![规则包详情](img/rule-pack-2.webp) |
 
 ## 项目结构
 
