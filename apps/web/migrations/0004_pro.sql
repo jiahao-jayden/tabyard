@@ -1,0 +1,5 @@
+CREATE TABLE pro (
+  userId TEXT PRIMARY KEY REFERENCES user (id) ON DELETE CASCADE,
+  stripeSessionId TEXT NOT NULL UNIQUE,
+  createdAt INTEGER NOT NULL
+);

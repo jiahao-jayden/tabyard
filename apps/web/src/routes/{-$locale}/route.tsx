@@ -1,4 +1,6 @@
 import { createFileRoute, Link, notFound, Outlet, useLocation } from '@tanstack/react-router';
+import { useState } from 'react';
+import { Crown } from '@phosphor-icons/react';
 import { authClient } from '~/auth-client';
 import { dictionaries, INSTALL_URL, localeFromParam } from '~/i18n';
 import { fetchSession } from '~/server/fns';
@@ -16,6 +18,7 @@ function Layout() {
   const locale = localeFromParam(param);
   const t = dictionaries[locale];
   const user = Route.useLoaderData();
+  const [menuOpen, setMenuOpen] = useState(false);
   const { pathname } = useLocation();
   const switchHref =
     locale === 'en' ? pathname.replace(/^\/en/, '') || '/' : `/en${pathname === '/' ? '' : pathname}`;
@@ -53,21 +56,46 @@ function Layout() {
             {t.language}
           </a>
           {user ? (
-            <button
-              type="button"
-              onClick={() => authClient.signOut().then(() => location.reload())}
-              title={t.signOut}
-              className="frost flex h-8 items-center gap-2 rounded-full pr-3 pl-1 transition hover:bg-white/80 dark:hover:bg-white/10"
+            <div
+              className="relative"
+              onBlur={(e) => {
+                if (!e.currentTarget.contains(e.relatedTarget)) setMenuOpen(false);
+              }}
             >
-              {user.image ? (
-                <img src={user.image} alt="" className="size-6 rounded-full" />
-              ) : (
-                <span className="flex size-6 items-center justify-center rounded-full bg-ink text-xs text-white">
-                  {user.name.slice(0, 1).toUpperCase()}
-                </span>
+              <button
+                type="button"
+                onClick={() => setMenuOpen((o) => !o)}
+                aria-label={user.name}
+                aria-expanded={menuOpen}
+                className="frost flex h-8 items-center gap-2 rounded-full pr-1 pl-1 transition hover:bg-white/80 dark:hover:bg-white/10"
+              >
+                {user.image ? (
+                  <img src={user.image} alt="" className="size-6 rounded-full" />
+                ) : (
+                  <span className="flex size-6 items-center justify-center rounded-full bg-ink text-xs text-white">
+                    {user.name.slice(0, 1).toUpperCase()}
+                  </span>
+                )}
+                {user.pro && (
+                  <span className="mr-1 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-[#b8862b] to-[#e8c15a] px-2 py-0.5 text-[11px] font-semibold text-white">
+                    <Crown size={12} weight="fill" />
+                    Pro
+                  </span>
+                )}
+              </button>
+              {menuOpen && (
+                <div className="frost absolute right-0 z-10 mt-2 w-44 rounded-2xl p-1.5 text-sm">
+                  <div className="truncate px-3 py-2 text-ink/60 dark:text-slate-400">{user.name}</div>
+                  <button
+                    type="button"
+                    onClick={() => authClient.signOut().then(() => location.reload())}
+                    className="w-full rounded-xl px-3 py-2 text-left transition hover:bg-white/70 dark:hover:bg-white/10"
+                  >
+                    {t.signOut}
+                  </button>
+                </div>
               )}
-              {t.signOut}
-            </button>
+            </div>
           ) : (
             <Link
               to="/{-$locale}/login"

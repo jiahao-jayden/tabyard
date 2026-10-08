@@ -1,15 +1,31 @@
 import { browser } from 'wxt/browser';
 import type { Group } from '@tabyard/shared';
+import { API_URL } from './api';
 import { loadConfig, type GroupSettings } from './rules';
 
 export type Plan = 'free' | 'pro';
 
 export const FREE_GROUP_LIMIT = 3;
 
-/** 目前只读本地标记，后续接入服务端校验 */
+/** 读取缓存的套餐；缓存由 refreshPlan 从服务端同步 */
 export async function getPlan(): Promise<Plan> {
   const { plan } = await browser.storage.local.get('plan');
   return plan === 'pro' ? 'pro' : 'free';
+}
+
+/** 以网站登录态向服务端确认套餐；网络失败时沿用缓存 */
+export async function refreshPlan(): Promise<Plan> {
+  try {
+    const res = await fetch(`${API_URL}/api/plan`, { credentials: 'include' });
+    if (res.ok) {
+      const { plan } = (await res.json()) as { plan: Plan };
+      await browser.storage.local.set({ plan });
+      return plan;
+    }
+  } catch {
+    /* 离线时使用缓存 */
+  }
+  return getPlan();
 }
 
 export function groupLimit(plan: Plan): number {

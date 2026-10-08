@@ -3,7 +3,7 @@ import { browser, type Browser } from 'wxt/browser';
 import { defineBackground } from 'wxt/utils/define-background';
 import type { Group } from '@tabyard/shared';
 import { findBestGroup } from '@/utils/match';
-import { loadActiveConfig } from '@/utils/plan';
+import { loadActiveConfig, refreshPlan } from '@/utils/plan';
 import {
   CONFIG_STORAGE_AREA,
   fallbackGroupFor,
@@ -196,5 +196,6 @@ export default defineBackground(() => {
     }
   });
 
+  void refreshPlan();
   console.log('[tabyard] background loaded');
 });

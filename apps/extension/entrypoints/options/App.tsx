@@ -16,8 +16,9 @@ import { Switch } from '@/components/ui/switch';
 import { setLanguagePref } from '@/utils/i18n';
 import { packToGroups, parsePack, toPack, type RulePack } from '@/utils/pack';
 import type { Group } from '@tabyard/shared';
+import { API_URL } from '@/utils/api';
 import { AccountButton } from './AccountButton';
-import { enabledCount, FREE_GROUP_LIMIT, getPlan, type Plan } from '@/utils/plan';
+import { enabledCount, FREE_GROUP_LIMIT, getPlan, refreshPlan, type Plan } from '@/utils/plan';
 import {
   DEFAULT_SETTINGS,
   loadConfig,
@@ -61,6 +62,10 @@ export default function App() {
       setLangPref(lang);
       setLoaded(true);
     })();
+    const sync = () => void refreshPlan().then(setPlan);
+    sync();
+    window.addEventListener('focus', sync);
+    return () => window.removeEventListener('focus', sync);
   }, []);
 
   const flash = useCallback((message: string) => {
@@ -190,7 +195,13 @@ export default function App() {
           <p className="mt-2 max-w-[60ch] text-sm leading-relaxed text-muted-foreground">{t('app.subtitle')}</p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <AccountButton />
+          {plan === 'free' && (
+            <Button onClick={() => void browser.tabs.create({ url: `${API_URL}/api/checkout` })}>
+              <Crown />
+              {t('account.upgrade')}
+            </Button>
+          )}
+          <AccountButton pro={plan === 'pro'} />
           <Select value={langPref} onValueChange={(v) => changeLanguage(v as LanguagePref)}>
           <SelectTrigger className="w-36 rounded-full bg-card backdrop-blur" aria-label={t('app.language')}>
             <SelectValue />

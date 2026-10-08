@@ -5,6 +5,10 @@
   "compatibility_flags": ["nodejs_compat"],
   "main": "@tanstack/react-start/server-entry",
   "observability": { "enabled": true },
+  "vars": {
+    "CREEM_API_URL": "https://test-api.creem.io",
+    "CREEM_PRODUCT_ID": "prod_6PzvVNkyaSOvcq9QqHL974"
+  },
   "routes": [{ "pattern": "tabyard.jayden0.com", "custom_domain": true }],
   "d1_databases": [
     {

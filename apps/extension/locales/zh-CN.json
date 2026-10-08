@@ -156,6 +156,7 @@
     "internal": "服务器出错，请稍后再试"
   },
   "account": {
-    "signIn": "登录"
+    "signIn": "登录",
+    "upgrade": "升级 Pro"
   }
 }

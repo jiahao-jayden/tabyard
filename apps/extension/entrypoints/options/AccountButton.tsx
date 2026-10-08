@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { browser } from 'wxt/browser';
-import { LogIn } from 'lucide-react';
+import { Crown, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { API_URL, fetchAccount, type AccountUser } from '@/utils/api';
 
-export function AccountButton() {
+export function AccountButton({ pro }: { pro: boolean }) {
   const { t } = useTranslation();
   const [user, setUser] = useState<AccountUser | null | undefined>(undefined);
 
@@ -33,7 +33,7 @@ export function AccountButton() {
       target="_blank"
       rel="noreferrer"
       title={user.name}
-      className="flex h-9 items-center gap-2 rounded-full bg-card pr-3 pl-1 text-sm ring-1 ring-white/70 backdrop-blur"
+      className="flex h-9 items-center gap-2 rounded-full bg-card pr-1 pl-1 text-sm ring-1 ring-white/70 backdrop-blur"
     >
       {user.image ? (
         <img src={user.image} alt="" className="size-7 rounded-full" />
@@ -42,7 +42,12 @@ export function AccountButton() {
           {user.name.slice(0, 1).toUpperCase()}
         </span>
       )}
-      <span className="max-w-24 truncate">{user.name}</span>
+      {pro && (
+        <span className="mr-1 inline-flex items-center gap-1 rounded-full bg-linear-to-r from-[#b8862b] to-[#e8c15a] px-2 py-0.5 text-xs font-semibold text-white shadow-[0_2px_10px_rgb(184_134_43/0.4)] ring-1 ring-white/50">
+          <Crown className="size-3" />
+          Pro
+        </span>
+      )}
     </a>
   );
 }

@@ -156,6 +156,7 @@
     "internal": "Server error, try again later"
   },
   "account": {
-    "signIn": "Sign in"
+    "signIn": "Sign in",
+    "upgrade": "Upgrade to Pro"
   }
 }
