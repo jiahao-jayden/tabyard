@@ -48,7 +48,7 @@ export default function App() {
   const [settings, setSettings] = useState<GroupSettings>(DEFAULT_SETTINGS);
   const [groups, setGroups] = useState<Group[]>([]);
   const [plan, setPlan] = useState<Plan>('free');
-  const [langPref, setLangPref] = useState<LanguagePref>('auto');
+  const [langPref, setLangPref] = useState<LanguagePref>('en');
   const [loaded, setLoaded] = useState(false);
   const [status, setStatus] = useState('');
   const [view, setView] = useState<RulesView>('groups');

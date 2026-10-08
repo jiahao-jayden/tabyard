@@ -1,4 +1,4 @@
-import { createRootRoute, HeadContent, Outlet, Scripts } from '@tanstack/react-router';
+import { createRootRoute, HeadContent, Outlet, Scripts, useRouterState } from '@tanstack/react-router';
 import appCss from '~/styles.css?url';
 
 export const Route = createRootRoute({
@@ -14,8 +14,17 @@ export const Route = createRootRoute({
       { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
     ],
   }),
-  component: () => (
-    <html lang="zh">
+  component: RootDocument,
+});
+
+function RootDocument() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const lang =
+    pathname === '/zh' || pathname.startsWith('/zh/') || pathname === '/admin' || pathname === '/privacy'
+      ? 'zh'
+      : 'en';
+  return (
+    <html lang={lang}>
       <head>
         <HeadContent />
       </head>
@@ -24,5 +33,5 @@ export const Route = createRootRoute({
         <Scripts />
       </body>
     </html>
-  ),
-});
+  );
+}

@@ -8,7 +8,7 @@ export const Route = createFileRoute('/{-$locale}/login')({ component: Login });
 function Login() {
   const { locale: param } = Route.useParams();
   const t = dictionaries[localeFromParam(param)];
-  const callbackURL = param ? '/en' : '/';
+  const callbackURL = param === 'zh' ? '/zh' : '/';
 
   const buttons = [
     { provider: 'github', label: t.withGithub, Icon: GithubLogo },

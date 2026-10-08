@@ -17,7 +17,8 @@ export type LanguagePref = Language | 'auto';
 
 export function resolveLanguage(pref: LanguagePref | undefined): Language {
   if (pref === 'zh-CN' || pref === 'en') return pref;
-  return navigator.language.toLowerCase().startsWith('zh') ? 'zh-CN' : 'en';
+  if (pref === 'auto') return navigator.language.toLowerCase().startsWith('zh') ? 'zh-CN' : 'en';
+  return 'en';
 }
 
 export const DEFAULT_OTHER_NAME: Record<Language, string> = { 'zh-CN': '其他', en: 'Other' };
@@ -63,7 +64,8 @@ export async function saveConfig(patch: { settings?: GroupSettings; groups?: Gro
 
 export async function loadLanguagePref(): Promise<LanguagePref> {
   const { language } = await storage.get('language');
-  return language === 'zh-CN' || language === 'en' ? language : 'auto';
+  if (language === 'zh-CN' || language === 'en' || language === 'auto') return language;
+  return 'en';
 }
 
 export async function saveLanguagePref(pref: LanguagePref): Promise<void> {

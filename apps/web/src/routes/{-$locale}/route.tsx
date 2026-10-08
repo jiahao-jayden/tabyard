@@ -7,7 +7,7 @@ import { fetchSession } from '~/server/fns';
 
 export const Route = createFileRoute('/{-$locale}')({
   beforeLoad: ({ params }) => {
-    if (params.locale !== undefined && params.locale !== 'en') throw notFound();
+    if (params.locale !== undefined && params.locale !== 'zh') throw notFound();
   },
   loader: () => fetchSession(),
   head: ({ params }) => ({ meta: [{ title: dictionaries[localeFromParam(params.locale)].docTitle }] }),
@@ -22,7 +22,7 @@ function Layout() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { pathname } = useLocation();
   const switchHref =
-    locale === 'en' ? pathname.replace(/^\/en/, '') || '/' : `/en${pathname === '/' ? '' : pathname}`;
+    locale === 'zh' ? pathname.replace(/^\/zh(?=\/|$)/, '') || '/' : `/zh${pathname === '/' ? '' : pathname}`;
 
   return (
     <div className="relative isolate flex min-h-[100dvh] flex-col">

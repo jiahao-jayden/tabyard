@@ -96,7 +96,7 @@ export type Dictionary = Dict;
 export const dictionaries: Record<Locale, Dict> = { zh, en };
 
 export function localeFromParam(param: string | undefined): Locale {
-  return param === 'en' ? 'en' : 'zh';
+  return param === 'zh' ? 'zh' : 'en';
 }
 
 export const GROUP_HEX: Record<string, string> = {
