@@ -187,7 +187,7 @@ export function RulesTable({ groups, onChange }: Props) {
 
       <ScrollArea className="rounded-md border [&>[data-slot=scroll-area-viewport]]:max-h-[480px]">
         <Table containerClassName="overflow-visible">
-          <TableHeader className="sticky top-0 z-10 bg-card shadow-[inset_0_-1px_0_var(--border)] [&_tr]:border-0">
+          <TableHeader className="sticky top-0 z-10 bg-popover shadow-[inset_0_-1px_0_var(--border)] [&_tr]:border-0">
             {table.getHeaderGroups().map((group) => (
               <TableRow key={group.id} className="hover:bg-transparent">
                 {group.headers.map((header) => (

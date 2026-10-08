@@ -54,6 +54,10 @@ const storage = browser.storage.local;
 export const CONFIG_STORAGE_AREA = 'local';
 
 export async function saveConfig(patch: { settings?: GroupSettings; groups?: Group[] }): Promise<void> {
+  const { settings } = patch;
+  if (settings && Object.values(DEFAULT_OTHER_NAME).includes(settings.otherGroupName.trim())) {
+    patch = { ...patch, settings: { ...settings, otherGroupName: '' } };
+  }
   await storage.set({ ...patch, modifiedAt: Date.now() });
 }
 
@@ -69,7 +73,7 @@ export async function saveLanguagePref(pref: LanguagePref): Promise<void> {
 export async function loadConfig(): Promise<{ settings: GroupSettings; groups: Group[] }> {
   const stored = await storage.get(['settings', 'groups', 'language']);
   const settings = { ...DEFAULT_SETTINGS, ...((stored.settings as Partial<GroupSettings>) || {}) };
-  if (!settings.otherGroupName.trim()) {
+  if (!settings.otherGroupName.trim() || Object.values(DEFAULT_OTHER_NAME).includes(settings.otherGroupName.trim())) {
     settings.otherGroupName = DEFAULT_OTHER_NAME[resolveLanguage(stored.language as LanguagePref)];
   }
   return {

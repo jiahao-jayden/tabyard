@@ -21,9 +21,11 @@ import { AccountButton } from './AccountButton';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { enabledCount, FREE_GROUP_LIMIT, getPlan, refreshPlan, type Plan } from '@/utils/plan';
 import {
+  DEFAULT_OTHER_NAME,
   DEFAULT_SETTINGS,
   loadConfig,
   loadLanguagePref,
+  resolveLanguage,
   saveConfig,
   type FallbackMode,
   type GroupSettings,
@@ -69,6 +71,10 @@ export default function App() {
     window.addEventListener('focus', sync);
     return () => window.removeEventListener('focus', sync);
   }, []);
+
+  useEffect(() => {
+    document.title = t('app.pageTitle');
+  }, [t, i18n.language]);
 
   const reloadConfig = useCallback(() => {
     void loadConfig().then((cfg) => {
@@ -189,6 +195,10 @@ export default function App() {
   const changeLanguage = useCallback((pref: LanguagePref) => {
     setLangPref(pref);
     void setLanguagePref(pref);
+    const next = DEFAULT_OTHER_NAME[resolveLanguage(pref)];
+    setSettings((s) =>
+      Object.values(DEFAULT_OTHER_NAME).includes(s.otherGroupName.trim()) ? { ...s, otherGroupName: next } : s,
+    );
   }, []);
 
   if (!loaded) {

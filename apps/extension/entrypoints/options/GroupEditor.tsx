@@ -12,7 +12,6 @@ import { canEnableMoreGroups, enabledCount, groupLimit, type Plan } from '@/util
 import { uid } from '@/utils/rules';
 import { COLOR_DOT } from './colors';
 
-const COLLAPSE_THRESHOLD = 10;
 const PREVIEW_COUNT = 6;
 
 interface Props {
@@ -42,8 +41,11 @@ export function GroupEditor({ groups, plan, onChange }: Props) {
     }
   }
 
-  const addGroup = () =>
-    onChange([...groups, { id: uid(), name: '', color: 'blue', enabled: true, patterns: [''] }]);
+  const addGroup = () => {
+    const id = uid();
+    setExpanded((prev) => new Set(prev).add(id));
+    onChange([...groups, { id, name: '', color: 'blue', enabled: true, patterns: [''] }]);
+  };
 
   const removeGroup = (g: Group) => {
     if (window.confirm(t('editor.confirmDelete', { name: g.name, count: g.patterns.length }))) {
@@ -67,8 +69,7 @@ export function GroupEditor({ groups, plan, onChange }: Props) {
       )}
 
       {groups.map((g) => {
-        const collapsed = g.patterns.length > COLLAPSE_THRESHOLD && !expanded.has(g.id);
-        const collapsible = g.patterns.length > COLLAPSE_THRESHOLD;
+        const collapsed = !expanded.has(g.id);
         return (
           <div key={g.id} className={`space-y-3 rounded-lg border p-4 ${g.enabled ? '' : 'opacity-60'}`}>
             <div className="flex items-center gap-2">
@@ -128,7 +129,7 @@ export function GroupEditor({ groups, plan, onChange }: Props) {
 
             {!collapsed && (
               <div className="space-y-2">
-                <div className={`space-y-2 ${collapsible ? 'max-h-72 overflow-y-auto pr-2' : ''}`}>
+                <div className={'max-h-72 space-y-2 overflow-y-auto pr-2'}>
                 {g.patterns.map((raw, i) => {
                   const parsed = parsePattern(raw);
                   const others = (owners.get(parsed.value) ?? []).filter((o) => o.id !== g.id);
@@ -188,11 +189,9 @@ export function GroupEditor({ groups, plan, onChange }: Props) {
                     <Plus />
                     {t('editor.addPattern')}
                   </Button>
-                  {collapsible && (
-                    <Button variant="ghost" size="sm" onClick={() => toggleExpanded(g.id)}>
-                      {t('editor.collapse')}
-                    </Button>
-                  )}
+                  <Button variant="ghost" size="sm" onClick={() => toggleExpanded(g.id)}>
+                    {t('editor.collapse')}
+                  </Button>
                 </div>
               </div>
             )}

@@ -5,7 +5,8 @@
     "loading": "Loading…",
     "language": "Language",
     "langAuto": "Follow system",
-    "footer": "After editing, click \"Save & apply\" to regroup all tabs with the new rules."
+    "footer": "After editing, click \"Save & apply\" to regroup all tabs with the new rules.",
+    "pageTitle": "Tabyard · Rule settings"
   },
   "master": {
     "title": "General",
