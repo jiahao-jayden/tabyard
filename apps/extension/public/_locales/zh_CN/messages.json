@@ -1,0 +1,4 @@
+{
+  "extName": { "message": "Tabyard 归处：标签自动分组" },
+  "extDescription": { "message": "按自定义规则自动把标签页归入 Chrome 原生分组，支持域名、路径、关键词和正则。" }
+}

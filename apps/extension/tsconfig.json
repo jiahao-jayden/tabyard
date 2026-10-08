@@ -1,0 +1,1 @@
+{"compilerOptions":{"baseUrl":".","jsx":"react-jsx","paths":{"@/*":["./*"]},"resolveJsonModule":true,"strict":true},"extends":"./.wxt/tsconfig.json","include":["**/*"]}

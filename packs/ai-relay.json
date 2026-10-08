@@ -1,0 +1,28 @@
+{
+  "format": "tabyard/pack",
+  "version": 1,
+  "meta": {
+    "id": "official-ai-relay",
+    "name": "AI 中转站",
+    "author": "Tabyard"
+  },
+  "groups": [
+    {
+      "name": "AI 中转站",
+      "color": "yellow",
+      "patterns": [
+        "openrouter.ai",
+        "302.ai",
+        "api2d.com",
+        "aihubmix.com",
+        "ohmygpt.com",
+        "closeai-asia.com",
+        "chatanywhere.tech",
+        "chatanywhere.org",
+        "dmxapi.com",
+        "openai-hk.com",
+        "token5u.cn"
+      ]
+    }
+  ]
+}

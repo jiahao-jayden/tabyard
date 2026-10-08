@@ -1,0 +1,12 @@
+{
+  "name": "tabyard",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev:ext": "npm run dev -w @tabyard/extension",
+    "build:ext": "npm run build -w @tabyard/extension",
+    "dev:web": "npm run dev -w @tabyard/web",
+    "build:web": "npm run build -w @tabyard/web",
+    "compile": "npm run compile --workspaces --if-present"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "format": "tabyard/pack",
+  "version": 1,
+  "meta": {
+    "id": "official-video",
+    "name": "视频",
+    "author": "Tabyard"
+  },
+  "groups": [
+    {
+      "name": "视频",
+      "color": "purple",
+      "patterns": [
+        "lumalabs.ai",
+        "pika.art",
+        "runwayml.com",
+        "udio.com",
+        "suno.com",
+        "elevenlabs.io",
+        "bilibili.com"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "format": "tabyard/pack",
+  "version": 1,
+  "meta": {
+    "id": "official-ui-kits",
+    "name": "组件库",
+    "author": "Tabyard"
+  },
+  "groups": [
+    {
+      "name": "组件库",
+      "color": "orange",
+      "patterns": [
+        "ui.shadcn.com",
+        "shadcn-vue.com",
+        "radix-ui.com",
+        "reka-ui.com",
+        "base-ui.com",
+        "ark-ui.com",
+        "headlessui.com",
+        "ant.design",
+        "antdv.com",
+        "element-plus.org",
+        "naiveui.com",
+        "arco.design",
+        "tdesign.tencent.com",
+        "semi.design",
+        "vant.pro",
+        "mui.com",
+        "chakra-ui.com",
+        "mantine.dev",
+        "heroui.com",
+        "daisyui.com",
+        "flowbite.com",
+        "getbootstrap.com",
+        "vuetifyjs.com",
+        "primevue.org",
+        "primereact.org",
+        "quasar.dev",
+        "ui.nuxt.com"
+      ]
+    }
+  ]
+}

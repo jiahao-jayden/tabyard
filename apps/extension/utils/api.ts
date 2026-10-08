@@ -1,0 +1,71 @@
+import { normalizeCode, type RulePack } from '@tabyard/shared';
+import { browser } from 'wxt/browser';
+
+const API_URL = import.meta.env.WXT_API_URL;
+
+export class ApiError extends Error {
+  constructor(readonly code: string, message?: string) {
+    super(message ?? code);
+  }
+}
+
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  let res: Response;
+  try {
+    res = await fetch(API_URL + path, init);
+  } catch {
+    throw new ApiError('network');
+  }
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new ApiError(body.error ?? 'internal', body.message);
+  return body as T;
+}
+
+export interface RemotePack {
+  code: string;
+  version: number;
+  md5: string;
+  pack: RulePack;
+}
+
+export async function fetchPack(input: string): Promise<RemotePack> {
+  const code = normalizeCode(input);
+  if (!code) throw new ApiError('invalid_code');
+  return request<RemotePack>(`/api/packs/${code}`);
+}
+
+export interface PublishResult {
+  code: string;
+  version: number;
+  md5: string;
+  editToken?: string;
+}
+
+export function publishPack(
+  pack: RulePack,
+  target?: { code: string; editToken: string },
+): Promise<PublishResult> {
+  return request<PublishResult>('/api/publish', {
+    method: 'POST',
+    body: JSON.stringify({ pack, ...target }),
+  });
+}
+
+export interface PublishedRecord {
+  code: string;
+  editToken: string;
+  name: string;
+  version: number;
+}
+
+const storage = browser.storage.local;
+
+export async function loadPublished(): Promise<PublishedRecord[]> {
+  const { published } = await storage.get('published');
+  return (published as PublishedRecord[] | undefined) ?? [];
+}
+
+export async function savePublished(record: PublishedRecord): Promise<void> {
+  const rest = (await loadPublished()).filter((r) => r.code !== record.code);
+  await storage.set({ published: [record, ...rest] });
+}

@@ -1,0 +1,30 @@
+{
+  "format": "tabyard/pack",
+  "version": 1,
+  "meta": {
+    "id": "official-design",
+    "name": "设计",
+    "author": "Tabyard"
+  },
+  "groups": [
+    {
+      "name": "设计",
+      "color": "purple",
+      "patterns": [
+        "descript.com",
+        "captions.ai",
+        "tome.app",
+        "beautiful.ai",
+        "gamma.app",
+        "cherry-ai.com",
+        "freepik.com",
+        "ideogram.ai",
+        "leonardo.ai",
+        "midjourney.com",
+        "krea.ai",
+        "designer.microsoft.com",
+        "labs.google"
+      ]
+    }
+  ]
+}

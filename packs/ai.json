@@ -1,0 +1,27 @@
+{
+  "format": "tabyard/pack",
+  "version": 1,
+  "meta": {
+    "id": "official-ai",
+    "name": "AI",
+    "author": "Tabyard"
+  },
+  "groups": [
+    {
+      "name": "AI",
+      "color": "purple",
+      "patterns": [
+        "chat.qwen.ai",
+        "chat.deepseek.com",
+        "chatgpt.com",
+        "claude.ai",
+        "grok.com",
+        "x.ai",
+        "gemini.google.com",
+        "aistudio.google.com",
+        "copilot.microsoft.com",
+        "copilot.com"
+      ]
+    }
+  ]
+}

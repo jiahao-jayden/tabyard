@@ -1,0 +1,19 @@
+{
+  "format": "tabyard/pack",
+  "version": 1,
+  "meta": {
+    "id": "official-twitter",
+    "name": "推特",
+    "author": "Tabyard"
+  },
+  "groups": [
+    {
+      "name": "推特",
+      "color": "cyan",
+      "patterns": [
+        "x.com",
+        "twitter.com"
+      ]
+    }
+  ]
+}
