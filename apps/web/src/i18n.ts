@@ -1,6 +1,7 @@
 export type Locale = 'zh' | 'en';
 
-export const INSTALL_URL = 'https://chromewebstore.google.com/';
+export const INSTALL_URL =
+  'https://chromewebstore.google.com/detail/lnmhlchecohhbmpioimnfdhblolnflec';
 
 const zh = {
   siteName: 'Tabyard 归处',
