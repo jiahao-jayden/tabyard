@@ -127,7 +127,21 @@ function Layout() {
       </main>
 
       <footer className="mx-auto w-full max-w-6xl px-4 py-8 text-xs text-ink/50 md:px-8 dark:text-slate-500">
-        {t.footer}
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <span>{t.footer}</span>
+          <a href="/privacy" className="underline hover:text-ink/80 dark:hover:text-slate-300">
+            {t.privacyPolicy}
+          </a>
+          <a href="/terms" className="underline hover:text-ink/80 dark:hover:text-slate-300">
+            {t.termsOfService}
+          </a>
+          <a
+            href="mailto:jayden.devwork@gmail.com"
+            className="underline hover:text-ink/80 dark:hover:text-slate-300"
+          >
+            jayden.devwork@gmail.com
+          </a>
+        </div>
       </footer>
     </div>
   );
