@@ -62,6 +62,12 @@ const zh = {
   buyPro: '购买 Pro',
   alreadyPro: '你已经是 Pro',
   paidNote: '扩展通过本站的登录状态识别 Pro，付款后重新打开扩展设置页即可生效。',
+  giftTitle: '兑换 Pro',
+  giftDesc: '点击下方按钮，立即激活一次 Pro。',
+  giftActivate: '激活 Pro',
+  giftOk: '激活成功！重新打开扩展的设置页即可生效。',
+  giftInvalid: '兑换码无效或已被使用。',
+  giftLoginFirst: '登录后即可激活 Pro。',
 } as const;
 
 type Dict = { [K in keyof typeof zh]: string };
@@ -125,6 +131,12 @@ const en: Dict = {
   buyPro: 'Buy Pro',
   alreadyPro: "You're on Pro",
   paidNote: 'The extension reads your sign-in on this site. Reopen its settings page after paying.',
+  giftTitle: 'Redeem Pro',
+  giftDesc: 'Click the button below to activate Pro once.',
+  giftActivate: 'Activate Pro',
+  giftOk: "Activated! Reopen the extension's settings page to apply.",
+  giftInvalid: 'This code is invalid or already used.',
+  giftLoginFirst: 'Sign in to activate Pro.',
 };
 
 export type Dictionary = Dict;

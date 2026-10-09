@@ -24,6 +24,7 @@ import { Route as Char123LocaleChar125PricingRouteImport } from './routes/{-$loc
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as ApiCreemWebhookRouteImport } from './routes/api/creem.webhook'
 import { Route as ApiPacksCodeRouteImport } from './routes/api/packs.$code'
+import { Route as Char123LocaleChar125GiftCodeRouteImport } from './routes/{-$locale}/gift.$code'
 import { Route as Char123LocaleChar125PCodeRouteImport } from './routes/{-$locale}/p.$code'
 
 const AdminRoute = AdminRouteImport.update({
@@ -106,6 +107,12 @@ const ApiPacksCodeRoute = ApiPacksCodeRouteImport.update({
   path: '/$code',
   getParentRoute: () => ApiPacksRoute,
 } as any)
+const Char123LocaleChar125GiftCodeRoute =
+  Char123LocaleChar125GiftCodeRouteImport.update({
+    id: '/gift/$code',
+    path: '/gift/$code',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
 const Char123LocaleChar125PCodeRoute =
   Char123LocaleChar125PCodeRouteImport.update({
     id: '/p/$code',
@@ -129,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/creem/webhook': typeof ApiCreemWebhookRoute
   '/api/packs/$code': typeof ApiPacksCodeRoute
+  '/{-$locale}/gift/$code': typeof Char123LocaleChar125GiftCodeRoute
   '/{-$locale}/p/$code': typeof Char123LocaleChar125PCodeRoute
 }
 export interface FileRoutesByTo {
@@ -146,6 +154,7 @@ export interface FileRoutesByTo {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/creem/webhook': typeof ApiCreemWebhookRoute
   '/api/packs/$code': typeof ApiPacksCodeRoute
+  '/{-$locale}/gift/$code': typeof Char123LocaleChar125GiftCodeRoute
   '/{-$locale}/p/$code': typeof Char123LocaleChar125PCodeRoute
 }
 export interface FileRoutesById {
@@ -165,6 +174,7 @@ export interface FileRoutesById {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/creem/webhook': typeof ApiCreemWebhookRoute
   '/api/packs/$code': typeof ApiPacksCodeRoute
+  '/{-$locale}/gift/$code': typeof Char123LocaleChar125GiftCodeRoute
   '/{-$locale}/p/$code': typeof Char123LocaleChar125PCodeRoute
 }
 export interface FileRouteTypes {
@@ -185,6 +195,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/api/creem/webhook'
     | '/api/packs/$code'
+    | '/{-$locale}/gift/$code'
     | '/{-$locale}/p/$code'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -202,6 +213,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/api/creem/webhook'
     | '/api/packs/$code'
+    | '/{-$locale}/gift/$code'
     | '/{-$locale}/p/$code'
   id:
     | '__root__'
@@ -220,6 +232,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/api/creem/webhook'
     | '/api/packs/$code'
+    | '/{-$locale}/gift/$code'
     | '/{-$locale}/p/$code'
   fileRoutesById: FileRoutesById
 }
@@ -343,6 +356,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPacksCodeRouteImport
       parentRoute: typeof ApiPacksRoute
     }
+    '/{-$locale}/gift/$code': {
+      id: '/{-$locale}/gift/$code'
+      path: '/gift/$code'
+      fullPath: '/{-$locale}/gift/$code'
+      preLoaderRoute: typeof Char123LocaleChar125GiftCodeRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
     '/{-$locale}/p/$code': {
       id: '/{-$locale}/p/$code'
       path: '/p/$code'
@@ -358,6 +378,7 @@ interface Char123LocaleChar125RouteRouteChildren {
   Char123LocaleChar125PacksRoute: typeof Char123LocaleChar125PacksRoute
   Char123LocaleChar125PricingRoute: typeof Char123LocaleChar125PricingRoute
   Char123LocaleChar125IndexRoute: typeof Char123LocaleChar125IndexRoute
+  Char123LocaleChar125GiftCodeRoute: typeof Char123LocaleChar125GiftCodeRoute
   Char123LocaleChar125PCodeRoute: typeof Char123LocaleChar125PCodeRoute
 }
 
@@ -367,6 +388,7 @@ const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChil
     Char123LocaleChar125PacksRoute: Char123LocaleChar125PacksRoute,
     Char123LocaleChar125PricingRoute: Char123LocaleChar125PricingRoute,
     Char123LocaleChar125IndexRoute: Char123LocaleChar125IndexRoute,
+    Char123LocaleChar125GiftCodeRoute: Char123LocaleChar125GiftCodeRoute,
     Char123LocaleChar125PCodeRoute: Char123LocaleChar125PCodeRoute,
   }
 

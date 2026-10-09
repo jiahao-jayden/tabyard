@@ -1,0 +1,6 @@
+CREATE TABLE gift (
+  code TEXT PRIMARY KEY,
+  userId TEXT REFERENCES user (id) ON DELETE SET NULL,
+  redeemedAt INTEGER,
+  createdAt INTEGER NOT NULL
+);

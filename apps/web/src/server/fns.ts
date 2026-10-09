@@ -2,7 +2,20 @@ import { createServerFn } from '@tanstack/react-start';
 import { getRequestHeaders } from '@tanstack/react-start/server';
 import { auth } from './auth';
 import { z } from 'zod';
-import { createDiscount, deleteDiscount, getPrice, isAdmin, isPro, listDiscounts, listOrders } from './billing';
+import {
+  createDiscount,
+  createGift,
+  deleteDiscount,
+  deleteGift,
+  getPrice,
+  isAdmin,
+  isPro,
+  listDiscounts,
+  listGifts,
+  listOrders,
+  redeemGift,
+} from './billing';
+import { normalizeCode } from '@tabyard/shared';
 import { GROUP_COLORS } from '@tabyard/shared';
 import { getPack, listOfficialPacks, listPacks, updateOfficialPack } from './packs';
 
@@ -37,8 +50,13 @@ async function requireAdmin() {
 export const fetchAdmin = createServerFn({ method: 'GET' }).handler(async () => {
   const session = await auth.api.getSession({ headers: getRequestHeaders() });
   if (!session?.user || !isAdmin(session.user.email)) return null;
-  const [orders, discounts, packs] = await Promise.all([listOrders(), listDiscounts(), listOfficialPacks()]);
-  return { orders, discounts, packs };
+  const [orders, discounts, packs, gifts] = await Promise.all([
+    listOrders(),
+    listDiscounts(),
+    listOfficialPacks(),
+    listGifts(),
+  ]);
+  return { orders, discounts, packs, gifts };
 });
 
 const newDiscountSchema = z.object({
@@ -62,6 +80,30 @@ export const removeDiscount = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     await requireAdmin();
     await deleteDiscount(data);
+  });
+
+export const addGift = createServerFn({ method: 'POST' }).handler(async () => {
+  await requireAdmin();
+  return createGift();
+});
+
+export const removeGift = createServerFn({ method: 'POST' })
+  .validator((id: string) => z.string().min(1).parse(id))
+  .handler(async ({ data }) => {
+    await requireAdmin();
+    await deleteGift(data);
+  });
+
+export const redeemGiftCode = createServerFn({ method: 'POST' })
+  .validator((code: string): string => {
+    const c = normalizeCode(code);
+    if (!c) throw new Error('invalid code');
+    return c;
+  })
+  .handler(async ({ data }) => {
+    const session = await auth.api.getSession({ headers: getRequestHeaders() });
+    if (!session?.user) throw new Error('unauthorized');
+    return redeemGift(session.user.id, data);
   });
 
 const officialPackSchema = z.object({

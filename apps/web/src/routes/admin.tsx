@@ -1,9 +1,9 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { useState } from 'react';
-import type { Discount, OrderRow } from '~/server/billing';
+import type { Discount, GiftRow, OrderRow } from '~/server/billing';
 import { GROUP_COLORS, type GroupColor } from '@tabyard/shared';
 import type { OfficialPackEdit } from '~/server/packs';
-import { addDiscount, fetchAdmin, removeDiscount, saveOfficialPack } from '~/server/fns';
+import { addDiscount, addGift, fetchAdmin, removeDiscount, removeGift, saveOfficialPack } from '~/server/fns';
 
 export const Route = createFileRoute('/admin')({
   loader: () => fetchAdmin(),
@@ -21,7 +21,7 @@ function Admin() {
       </p>
     );
   }
-  const { orders, discounts, packs } = data;
+  const { orders, discounts, packs, gifts } = data;
   const unpaid = orders.filter((o) => !o.paid);
   const paid = orders.filter((o) => o.paid);
 
@@ -29,6 +29,7 @@ function Admin() {
     <div className="mx-auto max-w-4xl space-y-10 px-5 py-10">
       <h1 className="text-3xl font-medium tracking-tight">后台</h1>
       <OfficialPacks packs={packs} />
+      <Gifts gifts={gifts} />
       <Discounts discounts={discounts} />
       <Orders title={`已下单未付款（${unpaid.length}）`} rows={unpaid} />
       <Orders title={`已付款（${paid.length}）`} rows={paid} />
@@ -37,6 +38,85 @@ function Admin() {
 }
 
 const input = 'w-full rounded-full bg-white/70 px-4 py-2 text-sm outline-none ring-1 ring-white/70 focus:ring-lake';
+
+function Gifts({ gifts }: { gifts: GiftRow[] }) {
+  const router = useRouter();
+  const [busy, setBusy] = useState(false);
+
+  async function create() {
+    setBusy(true);
+    await addGift();
+    await router.invalidate();
+    setBusy(false);
+  }
+
+  async function remove(code: string) {
+    if (!confirm('确定删除这个兑换码？删除后链接立即失效。')) return;
+    await removeGift({ data: code });
+    await router.invalidate();
+  }
+
+  return (
+    <section>
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="text-lg font-medium">送会员</h2>
+        <button
+          onClick={create}
+          disabled={busy}
+          className="rounded-full bg-ink px-5 py-2 text-sm text-white transition hover:bg-ink/85 disabled:opacity-50"
+        >
+          生成兑换码
+        </button>
+      </div>
+      <div className="frost overflow-hidden rounded-[20px]">
+        {gifts.length === 0 ? (
+          <p className="px-5 py-8 text-center text-sm text-ink/50">暂无兑换码</p>
+        ) : (
+          <table className="w-full text-left text-sm">
+            <thead className="text-ink/50">
+              <tr>
+                <th className="px-5 py-3 font-normal">兑换码</th>
+                <th className="px-5 py-3 font-normal">状态</th>
+                <th className="px-5 py-3 font-normal">生成时间</th>
+                <th className="px-5 py-3 font-normal">兑换链接</th>
+                <th />
+              </tr>
+            </thead>
+            <tbody>
+              {gifts.map((g) => (
+                <tr key={g.code} className="border-t border-white/60">
+                  <td className="px-5 py-3 font-mono">{g.code}</td>
+                  <td className="px-5 py-3">
+                    {g.redeemedAt
+                      ? `已激活 · ${g.email} · ${fmt.format(g.redeemedAt)}`
+                      : '未使用'}
+                  </td>
+                  <td className="px-5 py-3 tabular-nums">{fmt.format(g.createdAt)}</td>
+                  <td className="px-5 py-3">
+                    <button
+                      type="button"
+                      className="text-lake underline"
+                      onClick={() => navigator.clipboard.writeText(`${location.origin}/zh/gift/${g.code}`)}
+                    >
+                      复制
+                    </button>
+                  </td>
+                  <td className="px-5 py-3 text-right">
+                    {!g.redeemedAt && (
+                      <button type="button" className="text-red-600" onClick={() => remove(g.code)}>
+                        删除
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </section>
+  );
+}
 
 function Discounts({ discounts }: { discounts: Discount[] }) {
   const router = useRouter();

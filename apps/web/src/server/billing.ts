@@ -1,4 +1,5 @@
 import { env } from 'cloudflare:workers';
+import { CODE_ALPHABET, GENERATED_CODE_LENGTH } from '@tabyard/shared';
 import { auth } from './auth';
 
 export function getUser(headers: Headers) {
@@ -163,4 +164,51 @@ export async function createDiscount(d: NewDiscount): Promise<void> {
 
 export async function deleteDiscount(id: string): Promise<void> {
   await creem(`/v1/discounts/${encodeURIComponent(id)}/delete`, { method: 'DELETE' });
+}
+
+export interface GiftRow {
+  code: string;
+  email: string | null;
+  redeemedAt: number | null;
+  createdAt: number;
+}
+
+export async function createGift(): Promise<string> {
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const code = [...crypto.getRandomValues(new Uint8Array(GENERATED_CODE_LENGTH))]
+      .map((b) => CODE_ALPHABET[b % CODE_ALPHABET.length])
+      .join('');
+    const res = await env.DB.prepare('INSERT OR IGNORE INTO gift (code, createdAt) VALUES (?, ?)')
+      .bind(code, Date.now())
+      .run();
+    if (res.meta.changes === 1) return code;
+  }
+  throw new Error('code_generation_failed');
+}
+
+export async function listGifts(): Promise<GiftRow[]> {
+  const { results } = await env.DB.prepare(
+    `SELECT g.code, u.email, g.redeemedAt, g.createdAt
+     FROM gift g LEFT JOIN user u ON u.id = g.userId
+     ORDER BY g.createdAt DESC LIMIT 200`,
+  ).all<GiftRow>();
+  return results;
+}
+
+/** 只允许删除未被兑换的 gift */
+export async function deleteGift(code: string): Promise<void> {
+  await env.DB.prepare('DELETE FROM gift WHERE code = ? AND userId IS NULL').bind(code).run();
+}
+
+export async function redeemGift(userId: string, code: string): Promise<boolean> {
+  const res = await env.DB.prepare(
+    'UPDATE gift SET userId = ?, redeemedAt = ? WHERE code = ? AND userId IS NULL',
+  )
+    .bind(userId, Date.now(), code)
+    .run();
+  if (res.meta.changes !== 1) return false;
+  await env.DB.prepare('INSERT OR IGNORE INTO pro (userId, orderId, createdAt) VALUES (?, ?, ?)')
+    .bind(userId, `gift:${code}`, Date.now())
+    .run();
+  return true;
 }
