@@ -1,14 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { browser } from 'wxt/browser';
 import { Button } from '@/components/ui/button';
 import { Card, CardAction, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
-} from '@/components/ui/dialog';
 import { API_URL, fetchAccount } from '@/utils/api';
 import type { Plan } from '@/utils/plan';
-import { resolveFirstSync, syncNow, type SyncResult } from '@/utils/sync';
+import { syncNow } from '@/utils/sync';
 
 const storage = browser.storage.local;
 
@@ -20,27 +18,18 @@ function relativeTime(ts: number, lang: string): string {
   return rtf.format(Math.round(minutes / 1440), 'day');
 }
 
-export function SyncCard({ plan, onApplied }: { plan: Plan; onApplied: () => void }) {
+export function SyncCard({ plan }: { plan: Plan }) {
   const { t, i18n } = useTranslation();
   const [signedIn, setSignedIn] = useState<boolean | undefined>(undefined);
   const [lastSyncAt, setLastSyncAt] = useState<number | undefined>();
   const [busy, setBusy] = useState(false);
-  const [failed, setFailed] = useState(false);
-  const [choosing, setChoosing] = useState(false);
 
-  const run = useCallback(
-    async (task: () => Promise<SyncResult>) => {
-      setBusy(true);
-      const before = (await storage.get('modifiedAt')).modifiedAt;
-      const result = await task();
-      const after = (await storage.get('modifiedAt')).modifiedAt;
-      if (before !== after) onApplied();
-      setFailed(result === 'error');
-      setChoosing(result === 'needs-choice');
-      setBusy(false);
-    },
-    [onApplied],
-  );
+  const run = useCallback(async () => {
+    setBusy(true);
+    const result = await syncNow();
+    if (result === 'error') toast.error(t('sync.failed'), { id: 'sync-failed' });
+    setBusy(false);
+  }, [t]);
 
   useEffect(() => {
     void storage.get('lastSyncAt').then((s) => setLastSyncAt(s.lastSyncAt as number | undefined));
@@ -55,7 +44,7 @@ export function SyncCard({ plan, onApplied }: { plan: Plan; onApplied: () => voi
     const refresh = () => {
       void fetchAccount().then((user) => {
         setSignedIn(!!user);
-        if (user && plan === 'pro') void run(syncNow);
+        if (user && plan === 'pro') void run();
       });
     };
     refresh();
@@ -72,13 +61,11 @@ export function SyncCard({ plan, onApplied }: { plan: Plan; onApplied: () => voi
     <Button onClick={() => openUrl('/api/checkout')}>{t('account.upgrade')}</Button>
   );
   if (plan === 'pro') {
-    description = failed
-      ? t('sync.failed')
-      : lastSyncAt
-        ? t('sync.last', { time: relativeTime(lastSyncAt, i18n.language) })
-        : t('sync.never');
+    description = lastSyncAt
+      ? t('sync.last', { time: relativeTime(lastSyncAt, i18n.language) })
+      : t('sync.never');
     action = signedIn ? (
-      <Button variant="outline" disabled={busy} onClick={() => void run(syncNow)}>
+      <Button variant="outline" disabled={busy} onClick={() => void run()}>
         {busy ? t('sync.syncing') : t('sync.now')}
       </Button>
     ) : (
@@ -88,29 +75,12 @@ export function SyncCard({ plan, onApplied }: { plan: Plan; onApplied: () => voi
   }
 
   return (
-    <>
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('sync.title')}</CardTitle>
-          <CardDescription>{description}</CardDescription>
-          <CardAction>{action}</CardAction>
-        </CardHeader>
-      </Card>
-
-      <Dialog open={choosing} onOpenChange={(open) => !open && setChoosing(false)}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>{t('sync.conflictTitle')}</DialogTitle>
-            <DialogDescription>{t('sync.conflictDesc')}</DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => void run(() => resolveFirstSync('local'))}>
-              {t('sync.useLocal')}
-            </Button>
-            <Button onClick={() => void run(() => resolveFirstSync('remote'))}>{t('sync.useRemote')}</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('sync.title')}</CardTitle>
+        <CardDescription>{description}</CardDescription>
+        <CardAction>{action}</CardAction>
+      </CardHeader>
+    </Card>
   );
 }

@@ -29,13 +29,10 @@
     "import": "导入",
     "export": "导出",
     "exportName": "我的规则",
-    "save": "保存并应用",
-    "applying": "正在应用…",
-    "saved": "已保存并应用到所有标签页",
-    "savedLater": "已保存（后台稍后会自动应用）",
+    "saved": "已自动保存",
     "saveFailed": "保存失败：{{msg}}",
     "importFailed": "导入失败：{{msg}}",
-    "imported": "已导入 {{n}} 条模式，点击保存并应用后生效",
+    "imported": "已导入 {{n}} 条模式",
     "invalidPack": "规则包格式无效：{{msg}}",
     "overLimit": "免费版最多启用 {{limit}} 个分组，请先停用多余的分组或升级 Pro",
     "jsonLabel": "规则包 JSON",
@@ -169,10 +166,6 @@
     "never": "尚未同步",
     "now": "立即同步",
     "syncing": "同步中…",
-    "failed": "同步失败，请稍后重试",
-    "conflictTitle": "云端已有一份配置",
-    "conflictDesc": "本机和云端都有规则。请选择保留哪一份，另一份将被覆盖。",
-    "useRemote": "用云端覆盖本机",
-    "useLocal": "用本机覆盖云端"
+    "failed": "同步失败，请稍后重试"
   }
 }

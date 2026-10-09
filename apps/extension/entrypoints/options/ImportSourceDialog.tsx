@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
@@ -21,15 +22,13 @@ export function ImportSourceDialog({ open, onClose, onLoaded, onPickFile }: Prop
   const { t, i18n } = useTranslation();
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const submit = async () => {
     setLoading(true);
-    setError('');
     try {
       onLoaded(await fetchPack(code));
     } catch (e) {
-      setError(errorMessage(e));
+      toast.error(errorMessage(e));
     } finally {
       setLoading(false);
     }
@@ -52,7 +51,7 @@ export function ImportSourceDialog({ open, onClose, onLoaded, onPickFile }: Prop
               id="pack-code"
               autoFocus
               value={code}
-              onChange={(e) => { setCode(e.target.value); setError(''); }}
+              onChange={(e) => setCode(e.target.value)}
               placeholder={t('importSource.codePlaceholder')}
               className="font-mono uppercase"
             />
@@ -60,7 +59,6 @@ export function ImportSourceDialog({ open, onClose, onLoaded, onPickFile }: Prop
               {loading ? t('importSource.fetching') : t('importSource.fetch')}
             </Button>
           </div>
-          {error && <p className="text-sm text-destructive">{error}</p>}
         </form>
         <DialogFooter className="sm:justify-between">
           <Button variant="link" className="px-0" onClick={() => void browser.tabs.create({ url: packsUrl(i18n.language) })}>

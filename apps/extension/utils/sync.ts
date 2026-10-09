@@ -1,18 +1,34 @@
-// 云同步（Pro）：以 modifiedAt 判定新旧，最后修改者胜出
-import { syncDataSchema, type SyncData, type SyncRecord } from '@tabyard/shared';
+// 云同步（Pro）
+//
+// 本地字段：
+//   modifiedAt  本地配置最后一次修改时间（saveConfig 单调递增）
+//   syncedAt    最近一次与云端达成一致的版本号（= 当时的 modifiedAt）
+// 判定：
+//   本地脏   = modifiedAt > syncedAt
+//   云端更新 = remote.modifiedAt > syncedAt
+// 两边都变过 → 合并（不丢数据）；只有一边变过 → 直接拉取或推送。
+//
+// 并发：
+//   SYNC_LOCK   整个同步流程跨上下文串行（选项页、后台各有自己的 JS 环境）。
+//   CONFIG_LOCK 只包住本地读-改-写；网络请求在锁外，期间用户的编辑不会被阻塞。
+//   推送以快照版本号为准，推送期间的新编辑版本号更大，仍然保持"脏"，下一轮会再推送。
+//   云端用 modifiedAt 做条件写入，被别的设备抢先时返回 409，重新拉取合并后重试。
+import { LIMITS, syncDataSchema, type Group, type SyncData, type SyncRecord } from '@tabyard/shared';
 import { browser } from 'wxt/browser';
 import { API_URL } from './api';
 import { getPlan } from './plan';
-import { DEFAULT_SETTINGS } from './rules';
+import { CONFIG_LOCK, DEFAULT_SETTINGS, withLock } from './rules';
 
 const storage = browser.storage.local;
+const SYNC_LOCK = 'tabyard-sync';
+const MAX_ATTEMPTS = 3;
 
-export type SyncResult = 'ok' | 'skipped' | 'needs-choice' | 'error';
+export type SyncResult = 'ok' | 'skipped' | 'error';
 
 interface LocalState {
   data: SyncData;
   modifiedAt: number;
-  syncedAt: number | undefined;
+  syncedAt: number;
 }
 
 async function readLocal(): Promise<LocalState> {
@@ -23,18 +39,8 @@ async function readLocal(): Promise<LocalState> {
       groups: Array.isArray(s.groups) ? s.groups : [],
     } as SyncData,
     modifiedAt: (s.modifiedAt as number | undefined) ?? 0,
-    syncedAt: s.syncedAt as number | undefined,
+    syncedAt: (s.syncedAt as number | undefined) ?? 0,
   };
-}
-
-async function applyRemote(record: SyncRecord): Promise<void> {
-  await storage.set({
-    settings: record.data.settings,
-    groups: record.data.groups,
-    modifiedAt: record.modifiedAt,
-    syncedAt: record.modifiedAt,
-    lastSyncAt: Date.now(),
-  });
 }
 
 type Remote = { status: 'ok'; record: SyncRecord | null } | { status: 'skipped' | 'error' };
@@ -52,78 +58,106 @@ async function fetchRemote(): Promise<Remote> {
   }
 }
 
-async function push(local: LocalState): Promise<SyncResult> {
+type PushResult = 'ok' | 'conflict' | 'skipped' | 'error';
+
+async function push(snapshot: { data: SyncData; modifiedAt: number }): Promise<PushResult> {
   try {
     const res = await fetch(`${API_URL}/api/sync`, {
       method: 'PUT',
       credentials: 'include',
-      body: JSON.stringify({ data: local.data, modifiedAt: local.modifiedAt }),
+      body: JSON.stringify(snapshot),
     });
     if (res.status === 401 || res.status === 403) return 'skipped';
-    if (res.status === 409) {
-      const { record } = (await res.json()) as { record: SyncRecord };
-      await applyRemote(record);
-      return 'ok';
-    }
+    if (res.status === 409) return 'conflict';
     if (!res.ok) return 'error';
-    await storage.set({ syncedAt: local.modifiedAt, lastSyncAt: Date.now() });
+    await withLock(CONFIG_LOCK, async () => {
+      const { syncedAt = 0 } = await storage.get('syncedAt');
+      await storage.set({
+        syncedAt: Math.max(syncedAt as number, snapshot.modifiedAt),
+        lastSyncAt: Date.now(),
+      });
+    });
     return 'ok';
   } catch {
     return 'error';
   }
 }
 
-let queue: Promise<unknown> = Promise.resolve();
-const serial = <T>(task: () => Promise<T>): Promise<T> => {
-  const next = queue.then(task, task);
-  queue = next.catch(() => undefined);
-  return next;
-};
-
-/** 先拉后推；本机从未同步过、本机有规则、云端也有数据时不自动覆盖，交给用户选择 */
-export function syncNow(): Promise<SyncResult> {
-  return serial(async () => {
-    const remote = await fetchRemote();
-    if (remote.status !== 'ok') return remote.status;
-    const local = await readLocal();
-
-    if (remote.record) {
-      if (local.syncedAt === undefined && local.data.groups.length > 0) return 'needs-choice';
-      if (remote.record.modifiedAt > local.modifiedAt) {
-        await applyRemote(remote.record);
-        return 'ok';
-      }
+/** 同名（忽略大小写）或同 id 视为同一个分组：规则取并集，名称、颜色、开关以较新的一方为准 */
+function mergeGroups(remote: Group[], local: Group[], localWins: boolean): Group[] {
+  const merged = remote.map((g) => ({ ...g, patterns: [...g.patterns] }));
+  const nameKey = (g: Group) => g.name.trim().toLowerCase();
+  for (const l of local) {
+    const hit = merged.find((m) => m.id === l.id) ?? merged.find((m) => nameKey(m) === nameKey(l));
+    if (!hit) {
+      merged.push({ ...l, patterns: [...l.patterns] });
+      continue;
     }
-    if (local.modifiedAt > (local.syncedAt ?? 0)) return push(local);
-    await storage.set({ lastSyncAt: Date.now() });
-    return 'ok';
-  });
-}
-
-/** 首次关联时用户的选择：采用云端，或用本机覆盖云端 */
-export function resolveFirstSync(choice: 'remote' | 'local'): Promise<SyncResult> {
-  return serial(async () => {
-    const remote = await fetchRemote();
-    if (remote.status !== 'ok' || !remote.record) return remote.status === 'ok' ? 'ok' : remote.status;
-    if (choice === 'remote') {
-      await applyRemote(remote.record);
-      return 'ok';
+    hit.patterns = [...new Set([...hit.patterns, ...l.patterns])];
+    if (localWins) {
+      hit.name = l.name;
+      hit.color = l.color;
+      hit.enabled = l.enabled;
     }
-    const local = await readLocal();
-    const modifiedAt = Math.max(Date.now(), remote.record.modifiedAt + 1);
-    await storage.set({ modifiedAt });
-    return push({ ...local, modifiedAt });
-  });
-}
-
-/** 配置变化后的自动上传：仅 Pro，且已完成首次关联 */
-export async function pushIfPro(): Promise<void> {
-  if ((await getPlan()) !== 'pro') return;
-  const local = await readLocal();
-  if (local.syncedAt === undefined) {
-    await syncNow();
-    return;
   }
-  if (local.modifiedAt <= local.syncedAt) return;
-  await serial(async () => push(await readLocal()));
+  return merged.slice(0, LIMITS.maxGroups).map((g) => ({ ...g, patterns: g.patterns.slice(0, LIMITS.maxPatternsPerGroup) }));
+}
+
+/**
+ * 在 CONFIG_LOCK 内对比本地与云端：能直接落地的就地写入；
+ * 需要上传时返回快照（本地数据已是最终结果，版本号已分配）。
+ */
+function reconcile(remote: SyncRecord | null): Promise<{ data: SyncData; modifiedAt: number } | null> {
+  return withLock(CONFIG_LOCK, async () => {
+    const local = await readLocal();
+    const dirty = local.modifiedAt > local.syncedAt;
+    const remoteNewer = !!remote && remote.modifiedAt > local.syncedAt;
+
+    if (remote && remoteNewer && !dirty) {
+      await storage.set({
+        settings: remote.data.settings,
+        groups: remote.data.groups,
+        modifiedAt: remote.modifiedAt,
+        syncedAt: remote.modifiedAt,
+        lastSyncAt: Date.now(),
+      });
+      return null;
+    }
+
+    if (remote && remoteNewer && dirty) {
+      const localWins = local.modifiedAt > remote.modifiedAt;
+      const data: SyncData = {
+        settings: localWins ? local.data.settings : remote.data.settings,
+        groups: mergeGroups(remote.data.groups, local.data.groups, localWins),
+      };
+      const modifiedAt = Math.max(Date.now(), remote.modifiedAt + 1, local.modifiedAt + 1);
+      await storage.set({ settings: data.settings, groups: data.groups, modifiedAt });
+      return { data, modifiedAt };
+    }
+
+    if (dirty) return { data: local.data, modifiedAt: local.modifiedAt };
+
+    await storage.set({ lastSyncAt: Date.now() });
+    return null;
+  });
+}
+
+/** 先拉后推，两边都有改动时合并 */
+export function syncNow(): Promise<SyncResult> {
+  return withLock(SYNC_LOCK, async () => {
+    for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+      const remote = await fetchRemote();
+      if (remote.status !== 'ok') return remote.status;
+      const snapshot = await reconcile(remote.record);
+      if (!snapshot) return 'ok';
+      const result = await push(snapshot);
+      if (result !== 'conflict') return result;
+    }
+    return 'error';
+  });
+}
+
+/** 配置变化后自动同步：仅 Pro；与手动同步共用同一把锁，多次触发会依次执行并自然合并 */
+export async function syncIfPro(): Promise<void> {
+  if ((await getPlan()) === 'pro') await syncNow();
 }

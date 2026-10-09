@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast, Toaster } from 'sonner';
 import { browser } from 'wxt/browser';
-import { Check, ChevronDown, Crown, Download, Library, Share2, Upload } from 'lucide-react';
+import { ChevronDown, Crown, Download, Library, Share2, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle,
@@ -23,6 +24,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { enabledCount, FREE_GROUP_LIMIT, getPlan, refreshPlan, type Plan } from '@/utils/plan';
 import {
+  CONFIG_STORAGE_AREA,
   DEFAULT_OTHER_NAME,
   DEFAULT_SETTINGS,
   loadConfig,
@@ -40,6 +42,12 @@ import { PublishDialog } from './PublishDialog';
 import { RulesTable } from './RulesTable';
 import { SyncCard } from './SyncCard';
 
+function cleanGroups(list: Group[]): Group[] {
+  return list
+    .map((g) => ({ ...g, name: g.name.trim(), patterns: g.patterns.map((p) => p.trim()).filter(Boolean) }))
+    .filter((g) => g.name);
+}
+
 type RulesView = 'groups' | 'table' | 'json';
 const VIEWS: RulesView[] = ['groups', 'table', 'json'];
 
@@ -50,19 +58,20 @@ export default function App() {
   const [plan, setPlan] = useState<Plan>('free');
   const [langPref, setLangPref] = useState<LanguagePref>('en');
   const [loaded, setLoaded] = useState(false);
-  const [status, setStatus] = useState('');
   const [view, setView] = useState<RulesView>('groups');
   const [jsonText, setJsonText] = useState('');
-  const [jsonError, setJsonError] = useState('');
   const [importing, setImporting] = useState<{ pack: RulePack; base: Group[]; version?: number } | null>(null);
   const [sourceOpen, setSourceOpen] = useState(false);
   const [officialPacks, setOfficialPacks] = useState<OfficialPack[] | null>(null);
   const [publishing, setPublishing] = useState<Group[] | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  /** 最近一次已落盘（或刚加载）的内容，用来跳过无变化的保存 */
+  const lastSaved = useRef('');
 
   useEffect(() => {
     void (async () => {
       const [cfg, p, lang] = await Promise.all([loadConfig(), getPlan(), loadLanguagePref()]);
+      lastSaved.current = JSON.stringify({ settings: cfg.settings, groups: cleanGroups(cfg.groups) });
       setSettings(cfg.settings);
       setGroups(cfg.groups);
       setPlan(p);
@@ -79,22 +88,27 @@ export default function App() {
     document.title = t('app.pageTitle');
   }, [t, i18n.language]);
 
-  const reloadConfig = useCallback(() => {
-    void loadConfig().then((cfg) => {
-      setSettings(cfg.settings);
-      setGroups(cfg.groups);
-    });
-  }, []);
-
-  const flash = useCallback((message: string) => {
-    setStatus(message);
-    setTimeout(() => setStatus(''), 3000);
-  }, []);
-
   const serialize = useCallback(
     (list: Group[]) => JSON.stringify(toPack(list, t('rules.exportName')), null, 2),
     [t],
   );
+
+  /** 其他上下文（popup、后台同步）改了配置时，以存储为准刷新界面；自己刚写入的内容不处理 */
+  useEffect(() => {
+    const onChanged = (changes: Record<string, unknown>, area: string) => {
+      if (area !== CONFIG_STORAGE_AREA || (!changes.settings && !changes.groups)) return;
+      void loadConfig().then((cfg) => {
+        const key = JSON.stringify({ settings: cfg.settings, groups: cleanGroups(cfg.groups) });
+        if (key === lastSaved.current) return;
+        lastSaved.current = key;
+        setSettings(cfg.settings);
+        setGroups(cfg.groups);
+        if (view === 'json') setJsonText(serialize(cfg.groups));
+      });
+    };
+    browser.storage.onChanged.addListener(onChanged);
+    return () => browser.storage.onChanged.removeListener(onChanged);
+  }, [view, serialize]);
 
   /** JSON 视图下以文本为准；解析失败或超出套餐限制时返回 null 并显示错误 */
   const resolveGroups = useCallback((): Group[] | null => {
@@ -103,19 +117,16 @@ export default function App() {
       try {
         current = packToGroups(parsePack(jsonText));
       } catch (error) {
-        setJsonError(t('rules.invalidPack', { msg: (error as Error).message }));
+        toast.error(t('rules.invalidPack', { msg: (error as Error).message }), { id: 'rules-error' });
         return null;
       }
     }
     if (plan === 'free' && enabledCount(current) > FREE_GROUP_LIMIT) {
-      const msg = t('rules.overLimit', { limit: FREE_GROUP_LIMIT });
-      if (view === 'json') setJsonError(msg);
-      else flash(msg);
+      toast.error(t('rules.overLimit', { limit: FREE_GROUP_LIMIT }), { id: 'rules-error' });
       return null;
     }
-    setJsonError('');
     return current;
-  }, [groups, view, jsonText, plan, t, flash]);
+  }, [groups, view, jsonText, plan, t]);
 
   const commitGroups = useCallback((next: Group[]) => {
     setGroups(next);
@@ -131,27 +142,27 @@ export default function App() {
     setView(next);
   }, [view, resolveGroups, serialize]);
 
+  /** 自动保存：落盘的是清理后的副本，编辑中的界面状态不动；后台监听存储变化后自动重新分组 */
   const save = useCallback(async () => {
     const current = resolveGroups();
     if (!current) return;
-    const clean = current
-      .map((g) => ({ ...g, name: g.name.trim(), patterns: g.patterns.map((p) => p.trim()).filter(Boolean) }))
-      .filter((g) => g.name);
+    const key = JSON.stringify({ settings, groups: cleanGroups(current) });
+    if (key === lastSaved.current) return;
     try {
-      await saveConfig({ settings, groups: clean });
+      await saveConfig({ settings, groups: cleanGroups(current) });
     } catch (error) {
-      flash(t('rules.saveFailed', { msg: (error as Error).message }));
+      toast.error(t('rules.saveFailed', { msg: (error as Error).message }), { id: 'rules-saved' });
       return;
     }
-    commitGroups(clean);
-    setStatus(t('rules.applying'));
-    try {
-      await browser.runtime.sendMessage({ type: 'regroup' });
-      flash(t('rules.saved'));
-    } catch {
-      flash(t('rules.savedLater'));
-    }
-  }, [settings, resolveGroups, commitGroups, flash, t]);
+    lastSaved.current = key;
+    toast.success(t('rules.saved'), { id: 'rules-saved' });
+  }, [settings, resolveGroups, t]);
+
+  useEffect(() => {
+    if (!loaded) return;
+    const timer = setTimeout(() => void save(), 600);
+    return () => clearTimeout(timer);
+  }, [loaded, save, groups, jsonText]);
 
   const exportJson = useCallback(() => {
     const current = resolveGroups();
@@ -185,17 +196,17 @@ export default function App() {
       const remote = await fetchPack(code);
       startImport(remote.pack, remote.version);
     } catch (error) {
-      flash(t('rules.importFailed', { msg: (error as Error).message }));
+      toast.error(t('rules.importFailed', { msg: (error as Error).message }));
     }
-  }, [startImport, flash, t]);
+  }, [startImport, t]);
 
   const importFile = useCallback(async (file: File) => {
     try {
       startImport(parsePack(await file.text()));
     } catch (error) {
-      flash(t('rules.importFailed', { msg: (error as Error).message }));
+      toast.error(t('rules.importFailed', { msg: (error as Error).message }));
     }
-  }, [startImport, flash, t]);
+  }, [startImport, t]);
 
   const openPublish = useCallback(() => {
     const current = resolveGroups();
@@ -205,8 +216,8 @@ export default function App() {
   const confirmImport = useCallback((next: Group[], count: number) => {
     commitGroups(next);
     setImporting(null);
-    flash(t('rules.imported', { n: count }));
-  }, [commitGroups, flash, t]);
+    toast.success(t('rules.imported', { n: count }));
+  }, [commitGroups, t]);
 
   const changeLanguage = useCallback((pref: LanguagePref) => {
     setLangPref(pref);
@@ -274,7 +285,7 @@ export default function App() {
         </CardContent>
       </Card>
 
-      <SyncCard plan={plan} onApplied={reloadConfig} />
+      <SyncCard plan={plan} />
 
       <Card>
         <CardHeader>
@@ -390,22 +401,14 @@ export default function App() {
             <div className="space-y-2">
               <textarea
                 value={jsonText}
-                onChange={(event) => { setJsonText(event.target.value); setJsonError(''); }}
+                onChange={(event) => setJsonText(event.target.value)}
                 spellCheck={false}
                 className="min-h-96 w-full rounded-xl border border-input bg-white/80 px-3 py-2 font-mono text-xs leading-relaxed shadow-sm outline-none focus-visible:ring-1 focus-visible:ring-ring"
                 aria-label={t('rules.jsonLabel')}
               />
-              {jsonError && <p className="text-sm text-destructive">{jsonError}</p>}
             </div>
           )}
 
-          <div className="flex items-center gap-3">
-            <Button onClick={() => void save()}>
-              <Check />
-              {t('rules.save')}
-            </Button>
-            {status && <span className="text-sm text-muted-foreground">{status}</span>}
-          </div>
         </CardContent>
       </Card>
 
@@ -432,6 +435,7 @@ export default function App() {
       />
 
       <p className="text-center text-xs text-muted-foreground">{t('app.footer')}</p>
+      <Toaster position="top-center" richColors />
     </div>
   );
 }

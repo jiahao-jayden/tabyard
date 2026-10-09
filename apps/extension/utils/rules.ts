@@ -1,5 +1,6 @@
 // 数据模型与存储：background 与 UI 共用
 import { browser } from 'wxt/browser';
+import { getDomain } from 'tldts';
 import { hostnameOf, type Group, type GroupColor, type TabLike } from '@tabyard/shared';
 
 export type FallbackMode = 'domain' | 'other' | 'none';
@@ -40,9 +41,10 @@ export function fallbackGroupFor(
   settings: GroupSettings,
 ): { groupName: string; color: GroupColor } | null {
   if (settings.fallback === 'domain') {
+    // 取一级域名（eTLD+1），如 docs.github.com → github.com；IP、localhost 保留原主机名
     const host = hostnameOf(tab.url || '');
     if (!host) return null;
-    return { groupName: host, color: 'grey' };
+    return { groupName: getDomain(host) ?? host, color: 'grey' };
   }
   if (settings.fallback === 'other') {
     return { groupName: settings.otherGroupName.trim(), color: settings.otherColor };
@@ -54,12 +56,37 @@ export function fallbackGroupFor(
 const storage = browser.storage.local;
 export const CONFIG_STORAGE_AREA = 'local';
 
-export async function saveConfig(patch: { settings?: GroupSettings; groups?: Group[] }): Promise<void> {
+/**
+ * 配置的读-改-写会发生在多个上下文（选项页、popup、后台同步），
+ * 用 Web Locks 跨上下文串行化，避免互相覆盖。
+ * CONFIG_LOCK 只包住短小的存储操作，网络请求绝不放在里面。
+ */
+export const CONFIG_LOCK = 'tabyard-config';
+export const withLock = <T>(name: string, task: () => Promise<T>): Promise<T> =>
+  navigator.locks.request(name, task) as Promise<T>;
+
+type ConfigPatch = { settings?: GroupSettings; groups?: Group[] };
+
+/** 必须在 CONFIG_LOCK 内调用；modifiedAt 单调递增，保证后写的一定更新 */
+async function writeConfig(patch: ConfigPatch): Promise<void> {
   const { settings } = patch;
   if (settings && Object.values(DEFAULT_OTHER_NAME).includes(settings.otherGroupName.trim())) {
     patch = { ...patch, settings: { ...settings, otherGroupName: '' } };
   }
-  await storage.set({ ...patch, modifiedAt: Date.now() });
+  const { modifiedAt = 0 } = await storage.get('modifiedAt');
+  await storage.set({ ...patch, modifiedAt: Math.max(Date.now(), (modifiedAt as number) + 1) });
+}
+
+export function saveConfig(patch: ConfigPatch): Promise<void> {
+  return withLock(CONFIG_LOCK, () => writeConfig(patch));
+}
+
+/** 只改部分设置项（如 popup 的总开关），在锁内读取最新值再写，不会覆盖其他字段 */
+export function patchSettings(patch: Partial<GroupSettings>): Promise<void> {
+  return withLock(CONFIG_LOCK, async () => {
+    const { settings } = await loadConfig();
+    await writeConfig({ settings: { ...settings, ...patch } });
+  });
 }
 
 export async function loadLanguagePref(): Promise<LanguagePref> {

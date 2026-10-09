@@ -1,11 +1,22 @@
-import { createFileRoute, useRouter } from '@tanstack/react-router';
+import { createFileRoute, Link, useRouter } from '@tanstack/react-router';
 import { useState } from 'react';
 import type { Discount, GiftRow, OrderRow } from '~/server/billing';
 import { GROUP_COLORS, type GroupColor } from '@tabyard/shared';
 import type { OfficialPackEdit } from '~/server/packs';
 import { addDiscount, addGift, fetchAdmin, removeDiscount, removeGift, saveOfficialPack } from '~/server/fns';
 
+const TABS = [
+  { id: 'packs', label: '官方规则包' },
+  { id: 'gifts', label: '送会员' },
+  { id: 'discounts', label: '折扣码' },
+  { id: 'orders', label: '订单' },
+] as const;
+type Tab = (typeof TABS)[number]['id'];
+
 export const Route = createFileRoute('/admin')({
+  validateSearch: (s: Record<string, unknown>): { tab: Tab } => ({
+    tab: TABS.find((t) => t.id === s.tab)?.id ?? 'packs',
+  }),
   loader: () => fetchAdmin(),
   component: Admin,
 });
@@ -22,17 +33,40 @@ function Admin() {
     );
   }
   const { orders, discounts, packs, gifts } = data;
+  const { tab } = Route.useSearch();
   const unpaid = orders.filter((o) => !o.paid);
   const paid = orders.filter((o) => o.paid);
 
   return (
-    <div className="mx-auto max-w-4xl space-y-10 px-5 py-10">
-      <h1 className="text-3xl font-medium tracking-tight">后台</h1>
-      <OfficialPacks packs={packs} />
-      <Gifts gifts={gifts} />
-      <Discounts discounts={discounts} />
-      <Orders title={`已下单未付款（${unpaid.length}）`} rows={unpaid} />
-      <Orders title={`已付款（${paid.length}）`} rows={paid} />
+    <div className="mx-auto flex max-w-6xl flex-col gap-6 px-5 py-10 md:flex-row md:gap-10">
+      <aside className="md:w-44 md:shrink-0">
+        <h1 className="mb-4 text-3xl font-medium tracking-tight">后台</h1>
+        <nav className="flex gap-1 overflow-x-auto md:sticky md:top-6 md:flex-col">
+          {TABS.map((t) => (
+            <Link
+              key={t.id}
+              to="/admin"
+              search={{ tab: t.id }}
+              className={`whitespace-nowrap rounded-full px-4 py-2 text-sm transition ${
+                tab === t.id ? 'bg-ink text-white' : 'hover:bg-white/70'
+              }`}
+            >
+              {t.label}
+            </Link>
+          ))}
+        </nav>
+      </aside>
+      <div className="min-w-0 flex-1 space-y-10">
+        {tab === 'packs' && <OfficialPacks packs={packs} />}
+        {tab === 'gifts' && <Gifts gifts={gifts} />}
+        {tab === 'discounts' && <Discounts discounts={discounts} />}
+        {tab === 'orders' && (
+          <>
+            <Orders title={`已下单未付款（${unpaid.length}）`} rows={unpaid} />
+            <Orders title={`已付款（${paid.length}）`} rows={paid} />
+          </>
+        )}
+      </div>
     </div>
   );
 }

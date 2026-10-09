@@ -4,7 +4,7 @@ import { browser } from 'wxt/browser';
 import { ChevronRight, LoaderCircle, Settings2, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { loadConfig, saveConfig } from '@/utils/rules';
+import { loadConfig, patchSettings } from '@/utils/rules';
 
 interface Stats {
   tabCount: number;
@@ -38,8 +38,7 @@ export default function App() {
 
   const toggle = async (v: boolean) => {
     setEnabled(v);
-    const { settings } = await loadConfig();
-    await saveConfig({ settings: { ...settings, enabled: v } });
+    await patchSettings({ enabled: v });
   };
 
   const regroup = async () => {

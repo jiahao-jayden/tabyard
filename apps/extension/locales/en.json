@@ -29,13 +29,10 @@
     "import": "Import",
     "export": "Export",
     "exportName": "My rules",
-    "save": "Save & apply",
-    "applying": "Applying…",
-    "saved": "Saved and applied to all tabs",
-    "savedLater": "Saved (the background will apply it shortly)",
+    "saved": "Saved automatically",
     "saveFailed": "Save failed: {{msg}}",
     "importFailed": "Import failed: {{msg}}",
-    "imported": "Imported {{n}} patterns. Click Save & apply to take effect",
+    "imported": "Imported {{n}} patterns",
     "invalidPack": "Invalid rule pack: {{msg}}",
     "overLimit": "The free plan allows {{limit}} enabled groups. Disable some or upgrade to Pro",
     "jsonLabel": "Rule pack JSON",
@@ -169,10 +166,6 @@
     "never": "Not synced yet",
     "now": "Sync now",
     "syncing": "Syncing…",
-    "failed": "Sync failed, try again later",
-    "conflictTitle": "A cloud config already exists",
-    "conflictDesc": "Both this device and the cloud have rules. Choose which one to keep; the other will be overwritten.",
-    "useRemote": "Overwrite this device with cloud",
-    "useLocal": "Overwrite cloud with this device"
+    "failed": "Sync failed, try again later"
   }
 }

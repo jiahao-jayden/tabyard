@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -54,9 +55,7 @@ function Body({ groups, onClose }: Omit<Props, 'open'>) {
   const [records, setRecords] = useState<PublishedRecord[]>([]);
   const [target, setTarget] = useState(NEW);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState('');
   const [result, setResult] = useState<(PublishResult & { name: string }) | null>(null);
-  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     void loadPublished().then(setRecords);
@@ -77,7 +76,6 @@ function Body({ groups, onClose }: Omit<Props, 'open'>) {
 
   const submit = async () => {
     setBusy(true);
-    setError('');
     try {
       const chosen = groups
         .map((g, gi) => ({ ...g, patterns: picks[gi]! }))
@@ -96,7 +94,7 @@ function Body({ groups, onClose }: Omit<Props, 'open'>) {
       });
       setResult({ ...res, name: pack.meta.name });
     } catch (e) {
-      setError(errorMessage(e));
+      toast.error(errorMessage(e));
     } finally {
       setBusy(false);
     }
@@ -104,8 +102,7 @@ function Body({ groups, onClose }: Omit<Props, 'open'>) {
 
   const copy = async () => {
     await navigator.clipboard.writeText(result!.code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
+    toast.success(t('publish.copied'));
   };
 
   if (result) {
@@ -122,7 +119,7 @@ function Body({ groups, onClose }: Omit<Props, 'open'>) {
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => void copy()}>
-            {copied ? t('publish.copied') : t('publish.copy')}
+            {t('publish.copy')}
           </Button>
           <Button onClick={onClose}>{t('publish.done')}</Button>
         </DialogFooter>
@@ -216,7 +213,6 @@ function Body({ groups, onClose }: Omit<Props, 'open'>) {
           </div>
         )}
       </div>
-      {error && <p className="text-sm text-destructive">{error}</p>}
 
       <DialogFooter>
         <Button disabled={busy || total === 0 || !name.trim()} onClick={() => void submit()}>

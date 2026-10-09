@@ -4,7 +4,7 @@ import { defineBackground } from 'wxt/utils/define-background';
 import type { Group } from '@tabyard/shared';
 import { findBestGroup } from '@/utils/match';
 import { loadActiveConfig, refreshPlan } from '@/utils/plan';
-import { pushIfPro, syncNow } from '@/utils/sync';
+import { syncIfPro, syncNow } from '@/utils/sync';
 import {
   CONFIG_STORAGE_AREA,
   fallbackGroupFor,
@@ -186,7 +186,7 @@ export default defineBackground(() => {
   browser.storage.onChanged.addListener((changes, area) => {
     if (area !== CONFIG_STORAGE_AREA) return;
     if (!changes.settings && !changes.groups && !changes.plan) return;
-    if (changes.settings || changes.groups) void pushIfPro();
+    if (changes.settings || changes.groups) void syncIfPro();
     if (regroupTimer) clearTimeout(regroupTimer);
     regroupTimer = setTimeout(() => void regroupAll(), 500);
   });
