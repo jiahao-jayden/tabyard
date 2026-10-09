@@ -33,7 +33,7 @@ export const DEFAULT_SETTINGS: GroupSettings = {
   otherGroupName: '',
   otherColor: 'grey',
   autoCollapse: false,
-  insertPosition: 'start',
+  insertPosition: 'end',
 };
 
 export function uid(): string {

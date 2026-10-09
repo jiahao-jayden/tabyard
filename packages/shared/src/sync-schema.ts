@@ -11,7 +11,7 @@ export const syncDataSchema = z.object({
     otherGroupName: z.string().max(LIMITS.maxNameLength),
     otherColor: z.enum(GROUP_COLORS),
     autoCollapse: z.boolean(),
-    insertPosition: z.enum(['end', 'start']).default('start'),
+    insertPosition: z.enum(['end', 'start']).default('end'),
   }),
   groups: z
     .array(
