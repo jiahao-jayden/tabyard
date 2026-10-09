@@ -18,8 +18,7 @@
     "joinPrefix": "Put into",
     "joinSuffix": "group",
     "domain": "Group by domain (one group per domain)",
-    "none": "Leave ungrouped",
-    "proHint": "Grouping by domain requires Pro"
+    "none": "Leave ungrouped"
   },
   "rules": {
     "title": "Group rules",

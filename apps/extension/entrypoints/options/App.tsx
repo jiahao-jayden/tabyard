@@ -282,7 +282,7 @@ export default function App() {
         </CardHeader>
         <CardContent>
           <RadioGroup
-            value={plan === 'free' && settings.fallback === 'domain' ? 'none' : settings.fallback}
+            value={settings.fallback}
             onValueChange={(v) => setSettings((s) => ({ ...s, fallback: v as FallbackMode }))}
             className="space-y-3"
           >
@@ -299,19 +299,10 @@ export default function App() {
               </Label>
             </div>
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="domain" id="fb-domain" disabled={plan === 'free'} />
+              <RadioGroupItem value="domain" id="fb-domain" />
               <Label htmlFor="fb-domain" className="font-normal">
                 {t('fallback.domain')}
               </Label>
-              {plan === 'free' && (
-                <span
-                  title={t('fallback.proHint')}
-                  className="inline-flex items-center gap-1 rounded-full bg-linear-to-r from-[#2a5f91] to-[#4f8fcf] px-2.5 py-0.5 text-xs font-semibold text-white shadow-[0_2px_10px_rgb(42_95_145/0.35)] ring-1 ring-white/40"
-                >
-                  <Crown className="size-3.5" />
-                  Pro
-                </span>
-              )}
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="none" id="fb-none" />

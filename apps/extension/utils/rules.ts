@@ -25,7 +25,7 @@ export const DEFAULT_OTHER_NAME: Record<Language, string> = { 'zh-CN': '其他',
 
 export const DEFAULT_SETTINGS: GroupSettings = {
   enabled: true,
-  fallback: 'other',
+  fallback: 'domain',
   otherGroupName: '',
   otherColor: 'grey',
   autoCollapse: false,

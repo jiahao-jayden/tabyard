@@ -18,8 +18,7 @@
     "joinPrefix": "归入",
     "joinSuffix": "分组",
     "domain": "按域名自动分组（每个域名一组）",
-    "none": "不分组",
-    "proHint": "按域名自动分组需要 Pro"
+    "none": "不分组"
   },
   "rules": {
     "title": "分组规则",

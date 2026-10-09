@@ -40,7 +40,7 @@ export function canEnableMoreGroups(plan: Plan, groups: Group[]): boolean {
   return enabledCount(groups) < groupLimit(plan);
 }
 
-/** 实际生效的配置：免费版只取前几个启用分组，且不能按域名兜底 */
+/** 实际生效的配置：免费版只取前几个启用分组 */
 export async function loadActiveConfig(): Promise<{ settings: GroupSettings; groups: Group[]; allGroups: Group[] }> {
   const [{ settings, groups }, plan] = await Promise.all([loadConfig(), getPlan()]);
   if (plan === 'pro') return { settings, groups, allGroups: groups };
@@ -49,9 +49,5 @@ export async function loadActiveConfig(): Promise<{ settings: GroupSettings; gro
     if (!g.enabled) return g;
     return ++used <= FREE_GROUP_LIMIT ? g : { ...g, enabled: false };
   });
-  return {
-    settings: settings.fallback === 'domain' ? { ...settings, fallback: 'none' } : settings,
-    groups: active,
-    allGroups: groups,
-  };
+  return { settings, groups: active, allGroups: groups };
 }
