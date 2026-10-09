@@ -37,8 +37,10 @@ async function groupTab(
   tab: Browser.tabs.Tab,
   settings: GroupSettings,
   groups: Group[],
+  /** 刚新建的标签页可能继承了打开者的分组，需要按自己的网址重新归类 */
+  fresh = false,
 ): Promise<void> {
-  if (tab.groupId !== -1) return;
+  if (tab.groupId !== -1 && !fresh) return;
 
   const matched = findBestGroup(tab, groups);
   let groupName: string;
@@ -53,6 +55,10 @@ async function groupTab(
     color = fb.color as Browser.tabGroups.Color;
   }
   if (!groupName || tab.windowId == null) return;
+  if (tab.groupId !== -1) {
+    const current = await browser.tabGroups.get(tab.groupId).catch(() => null);
+    if (current?.title === groupName) return;
+  }
 
   // Multiple tab update events can arrive together. Serialize each
   // window/group pair so concurrent events cannot create duplicate groups.
@@ -98,6 +104,10 @@ async function groupTab(
   }
 }
 
+// 刚创建、还没按网址处理过的标签页
+const freshTabs = new Set<number>();
+const RETRY_DELAYS = [300, 1000];
+
 async function groupTabById(tabId: number): Promise<void> {
   let tab: Browser.tabs.Tab;
   try {
@@ -108,10 +118,25 @@ async function groupTabById(tabId: number): Promise<void> {
   if (!isGroupableUrl(tab.url)) return;
   const { settings, groups } = await loadActiveConfig();
   if (!settings.enabled) return;
-  try {
-    await groupTab(tab, settings, groups);
-  } catch (e) {
-    console.warn('[tabyard] groupTab failed:', e);
+  const fresh = freshTabs.has(tabId);
+  // 拖动标签页等瞬时状态下 Chrome 会拒绝分组，稍后重试
+  for (let attempt = 0; ; attempt++) {
+    try {
+      await groupTab(tab, settings, groups, fresh);
+      freshTabs.delete(tabId);
+      return;
+    } catch (e) {
+      if (attempt >= RETRY_DELAYS.length) {
+        console.warn('[tabyard] groupTab failed:', e);
+        return;
+      }
+      await new Promise((r) => setTimeout(r, RETRY_DELAYS[attempt]));
+      try {
+        tab = await browser.tabs.get(tabId);
+      } catch {
+        return;
+      }
+    }
   }
 }
 
@@ -173,8 +198,11 @@ export default defineBackground(() => {
   browser.runtime.onStartup.addListener(() => void groupAllTabs());
 
   browser.tabs.onCreated.addListener((tab) => {
-    if (tab.id != null) scheduleGroupTab(tab.id);
+    if (tab.id == null) return;
+    freshTabs.add(tab.id);
+    scheduleGroupTab(tab.id);
   });
+  browser.tabs.onRemoved.addListener((tabId) => freshTabs.delete(tabId));
 
   browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
     if (changeInfo.url || changeInfo.status === 'complete' || (changeInfo as { title?: string }).title) {
