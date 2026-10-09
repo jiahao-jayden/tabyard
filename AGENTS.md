@@ -72,3 +72,10 @@ npx wrangler d1 migrations apply DB --local
 - 不提交密钥、令牌、Cookie、用户数据或本地环境文件。`.env.*` 不一定被现有 `.gitignore` 覆盖，提交前务必检查暂存内容。
 - 未经用户明确要求，不执行生产部署、远程 D1 迁移、生产数据修改、真实支付操作或扩展商店发布。`npm run deploy -w @tabyard/web` 会构建并部署到生产，不是本地验证命令。
 - 不擅自增加扩展权限、改动生产域名或扩大跨域访问范围；确有需要时说明原因和影响。
+
+## Cursor Cloud specific instructions
+
+- 网站开发服务器监听 `http://127.0.0.1:5173`。启动命令是 `npm run dev -w @tabyard/web -- --host 127.0.0.1 --port 5173`。`npm run dev:web -- ...` 不会把参数继续传给 Vite。
+- 启动前在 `apps/web` 执行 `npx wrangler d1 migrations apply DB --local`。非交互环境会自动确认。本地数据库在 `apps/web/.wrangler`。
+- 扩展的 `npm run compile` 依赖 `apps/extension/.wxt/tsconfig.json`。安装依赖后，在 `apps/extension` 执行 `npx wxt prepare`。构建还需要 git 忽略的 `apps/extension/.env`，内容为 `WXT_API_URL=http://127.0.0.1:5173`。
+- 没有 `apps/web/.dev.vars` 时，首页、规则包浏览和发布可以本地验证，未登录访问 `/api/sync` 返回 401。GitHub / Google 登录和 Creem 结账需要真实密钥，不要写入仓库。
