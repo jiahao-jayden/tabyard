@@ -5,13 +5,16 @@
     "loading": "正在加载…",
     "language": "语言",
     "langAuto": "跟随系统",
-    "footer": "修改规则后点击「保存并应用」，所有标签页会立即按新规则重新分组。",
+    "footer": "修改会自动保存，所有标签页会按新规则重新分组。",
     "pageTitle": "Tabyard 归处 · 规则设置"
   },
   "master": {
     "title": "总开关",
     "enabled": "启用自动分组",
-    "autoCollapse": "新建分组默认折叠"
+    "autoCollapse": "新建分组默认折叠",
+    "insertPosition": "新标签页加入分组的位置",
+    "insertEnd": "分组末尾",
+    "insertStart": "分组最前"
   },
   "fallback": {
     "title": "未命中规则的标签页",

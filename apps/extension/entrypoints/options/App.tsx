@@ -33,6 +33,7 @@ import {
   saveConfig,
   type FallbackMode,
   type GroupSettings,
+  type InsertPosition,
   type LanguagePref,
 } from '@/utils/rules';
 import { GroupEditor } from './GroupEditor';
@@ -281,6 +282,21 @@ export default function App() {
               checked={settings.autoCollapse}
               onCheckedChange={(v) => setSettings((s) => ({ ...s, autoCollapse: v }))}
             />
+          </div>
+          <div className="flex items-center justify-between">
+            <Label>{t('master.insertPosition')}</Label>
+            <Select
+              value={settings.insertPosition}
+              onValueChange={(v) => setSettings((s) => ({ ...s, insertPosition: v as InsertPosition }))}
+            >
+              <SelectTrigger className="w-36" aria-label={t('master.insertPosition')}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="end">{t('master.insertEnd')}</SelectItem>
+                <SelectItem value="start">{t('master.insertStart')}</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </CardContent>
       </Card>

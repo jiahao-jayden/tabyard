@@ -3,6 +3,7 @@ import { browser } from 'wxt/browser';
 import { getDomain } from 'tldts';
 import { hostnameOf, type Group, type GroupColor, type TabLike } from '@tabyard/shared';
 
+export type InsertPosition = 'end' | 'start';
 export type FallbackMode = 'domain' | 'other' | 'none';
 
 export interface GroupSettings {
@@ -11,6 +12,8 @@ export interface GroupSettings {
   otherGroupName: string;
   otherColor: GroupColor;
   autoCollapse: boolean;
+  /** 新标签页加入已有分组时的位置 */
+  insertPosition: InsertPosition;
 }
 
 export type Language = 'zh-CN' | 'en';
@@ -30,6 +33,7 @@ export const DEFAULT_SETTINGS: GroupSettings = {
   otherGroupName: '',
   otherColor: 'grey',
   autoCollapse: false,
+  insertPosition: 'start',
 };
 
 export function uid(): string {

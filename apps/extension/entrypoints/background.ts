@@ -39,6 +39,8 @@ async function groupTab(
   groups: Group[],
   /** 刚新建的标签页可能继承了打开者的分组，需要按自己的网址重新归类 */
   fresh = false,
+  /** 仅事件触发的单个标签页才按设置插入；批量整理保持原有相对顺序 */
+  insertAtStart = false,
 ): Promise<void> {
   if (tab.groupId !== -1 && !fresh) return;
 
@@ -85,6 +87,12 @@ async function groupTab(
         }
       }
       await browser.tabs.group({ tabIds: tabIds as [number, ...number[]], groupId: existing.id });
+      if (insertAtStart) {
+        // 加入后默认在分组末尾；移到分组第一个标签页的位置即插到最前
+        const members = await browser.tabs.query({ windowId: tab.windowId, groupId: existing.id });
+        const first = Math.min(...members.map((m) => m.index));
+        await browser.tabs.move(tab.id!, { index: first });
+      }
     } else {
       // Without windowId, Chrome creates the group in the focused window and moves the tab there.
       const groupId = await browser.tabs.group({
@@ -122,7 +130,7 @@ async function groupTabById(tabId: number): Promise<void> {
   // 拖动标签页等瞬时状态下 Chrome 会拒绝分组，稍后重试
   for (let attempt = 0; ; attempt++) {
     try {
-      await groupTab(tab, settings, groups, fresh);
+      await groupTab(tab, settings, groups, fresh, settings.insertPosition === 'start');
       freshTabs.delete(tabId);
       return;
     } catch (e) {
