@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as Char123LocaleChar125RouteRouteImport } from './routes/{-$locale}/route'
 import { Route as ApiCheckoutRouteImport } from './routes/api/checkout'
 import { Route as ApiPacksRouteImport } from './routes/api/packs'
@@ -35,6 +36,11 @@ const AdminRoute = AdminRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Char123LocaleChar125RouteRoute =
@@ -124,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/{-$locale}': typeof Char123LocaleChar125RouteRouteWithChildren
   '/admin': typeof AdminRoute
   '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/api/checkout': typeof ApiCheckoutRoute
   '/api/packs': typeof ApiPacksRouteWithChildren
   '/api/plan': typeof ApiPlanRoute
@@ -142,6 +149,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/api/checkout': typeof ApiCheckoutRoute
   '/api/packs': typeof ApiPacksRouteWithChildren
   '/api/plan': typeof ApiPlanRoute
@@ -162,6 +170,7 @@ export interface FileRoutesById {
   '/{-$locale}': typeof Char123LocaleChar125RouteRouteWithChildren
   '/admin': typeof AdminRoute
   '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/api/checkout': typeof ApiCheckoutRoute
   '/api/packs': typeof ApiPacksRouteWithChildren
   '/api/plan': typeof ApiPlanRoute
@@ -183,6 +192,7 @@ export interface FileRouteTypes {
     | '/{-$locale}'
     | '/admin'
     | '/privacy'
+    | '/terms'
     | '/api/checkout'
     | '/api/packs'
     | '/api/plan'
@@ -201,6 +211,7 @@ export interface FileRouteTypes {
   to:
     | '/admin'
     | '/privacy'
+    | '/terms'
     | '/api/checkout'
     | '/api/packs'
     | '/api/plan'
@@ -220,6 +231,7 @@ export interface FileRouteTypes {
     | '/{-$locale}'
     | '/admin'
     | '/privacy'
+    | '/terms'
     | '/api/checkout'
     | '/api/packs'
     | '/api/plan'
@@ -240,6 +252,7 @@ export interface RootRouteChildren {
   Char123LocaleChar125RouteRoute: typeof Char123LocaleChar125RouteRouteWithChildren
   AdminRoute: typeof AdminRoute
   PrivacyRoute: typeof PrivacyRoute
+  TermsRoute: typeof TermsRoute
   ApiCheckoutRoute: typeof ApiCheckoutRoute
   ApiPacksRoute: typeof ApiPacksRouteWithChildren
   ApiPlanRoute: typeof ApiPlanRoute
@@ -263,6 +276,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/{-$locale}': {
@@ -413,6 +433,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char123LocaleChar125RouteRoute: Char123LocaleChar125RouteRouteWithChildren,
   AdminRoute: AdminRoute,
   PrivacyRoute: PrivacyRoute,
+  TermsRoute: TermsRoute,
   ApiCheckoutRoute: ApiCheckoutRoute,
   ApiPacksRoute: ApiPacksRouteWithChildren,
   ApiPlanRoute: ApiPlanRoute,

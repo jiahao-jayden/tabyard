@@ -86,6 +86,8 @@ export interface PublishedRecord {
   code: string;
   editToken: string;
   name: string;
+  author: string;
+  description: string;
   version: number;
 }
 

@@ -61,6 +61,16 @@ function Body({ groups, onClose }: Omit<Props, 'open'>) {
     void loadPublished().then(setRecords);
   }, []);
 
+  /** 选择覆盖已发布的包时，带出它上次发布的名称、作者和描述，避免被默认值悄悄覆盖 */
+  const selectTarget = (code: string) => {
+    setTarget(code);
+    const record = records.find((r) => r.code === code);
+    if (!record) return;
+    setName(record.name);
+    setAuthor(record.author ?? '');
+    setDescription(record.description ?? '');
+  };
+
   const picks = useMemo(
     () => groups.map((g, gi) => g.patterns.filter((_, pi) => picked.has(key(gi, pi)))),
     [groups, picked],
@@ -90,6 +100,8 @@ function Body({ groups, onClose }: Omit<Props, 'open'>) {
         code: res.code,
         editToken: res.editToken ?? record!.editToken,
         name: pack.meta.name,
+        author: author.trim(),
+        description: description.trim(),
         version: res.version,
       });
       setResult({ ...res, name: pack.meta.name });
@@ -199,7 +211,7 @@ function Body({ groups, onClose }: Omit<Props, 'open'>) {
         {records.length > 0 && (
           <div className="space-y-1">
             <Label>{t('publish.target')}</Label>
-            <Select value={target} onValueChange={setTarget}>
+            <Select value={target} onValueChange={selectTarget}>
               <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value={NEW}>{t('publish.new')}</SelectItem>
