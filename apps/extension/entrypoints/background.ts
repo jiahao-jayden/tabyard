@@ -5,6 +5,9 @@ import type { Group } from '@tabyard/shared';
 import { findBestGroup } from '@/utils/match';
 import { loadActiveConfig, refreshPlan } from '@/utils/plan';
 import { syncIfPro, syncNow } from '@/utils/sync';
+import { syncXButton } from '@/utils/x/button-script';
+import { watchBookmarksRequests, watchJobTabClosed } from '@/utils/x/fetch-job';
+import { handleXMessage } from '@/utils/x/messages';
 import {
   CONFIG_STORAGE_AREA,
   fallbackGroupFor,
@@ -228,11 +231,22 @@ export default defineBackground(() => {
   });
 
   browser.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
-    if (msg && (msg as { type?: string }).type === 'regroup') {
+    const type = (msg as { type?: string } | undefined)?.type;
+    if (type === 'regroup') {
       void regroupAll().then(() => sendResponse({ ok: true }));
       return true;
     }
+    // 来自 x.com 页面上的脚本或设置页的消息
+    const reply = handleXMessage(msg);
+    if (reply) {
+      void reply.then(sendResponse);
+      return true;
+    }
   });
+
+  watchBookmarksRequests();
+  watchJobTabClosed();
+  void syncXButton();
 
   browser.alarms.create('sync', { periodInMinutes: 30 });
   browser.alarms.onAlarm.addListener((alarm) => {

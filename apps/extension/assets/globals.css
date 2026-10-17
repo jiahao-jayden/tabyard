@@ -134,6 +134,6 @@
 }
 .painted {
   background:
-    linear-gradient(rgb(244 240 230 / 0.55), rgb(244 240 230 / 0.8)),
+    linear-gradient(rgb(244 240 230 / 0.55), rgb(244 240 230 / 0.8)) fixed,
     url('/bg.webp') 50% 45% / cover fixed;
 }
