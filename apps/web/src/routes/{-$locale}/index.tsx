@@ -49,6 +49,20 @@ function Landing() {
         </div>
       </section>
 
+      <section className="grid grid-cols-[minmax(0,1fr)] items-center gap-8 pb-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.7fr)] lg:gap-14">
+        <div className="max-w-sm">
+          <h2 className="text-2xl font-medium tracking-tight md:text-3xl">{t.bentoCollectTitle}</h2>
+          <p className="mt-4 text-base leading-relaxed text-slate-600 dark:text-slate-300">{t.bentoCollectDesc}</p>
+        </div>
+        <div className="frost rounded-[20px] p-3">
+          <img src="/collection.webp" alt="" width={2048} height={1269} loading="lazy" className="w-full rounded-2xl" />
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:col-span-2">
+          <ShotCard title={t.bentoXTitle} desc={t.bentoXDesc} src="/x-bookmarks.webp" />
+          <ShotCard title={t.bentoAiTitle} desc={t.bentoAiDesc} src="/ai-organize.webp" />
+        </div>
+      </section>
+
       {featured.length > 0 && (
         <section className="pb-16">
           <div className="flex items-end justify-between">
@@ -156,6 +170,15 @@ function ShareCard({ t }: { t: Dictionary }) {
         <span className="font-mono text-lg tracking-[0.2em]">K7M2X9AB</span>
         <Copy className="size-4 text-lake dark:text-slate-300" />
       </div>
+    </div>
+  );
+}
+
+function ShotCard({ title, desc, src }: { title: string; desc: string; src: string }) {
+  return (
+    <div className="frost flex flex-col gap-5 rounded-[20px] p-6">
+      <CardText title={title} desc={desc} />
+      <img src={src} alt="" loading="lazy" className="w-full rounded-2xl" />
     </div>
   );
 }

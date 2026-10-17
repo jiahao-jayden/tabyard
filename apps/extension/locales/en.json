@@ -187,6 +187,7 @@
     "unfiled": "Unfiled",
     "folders": "Folders",
     "newFolder": "New folder",
+    "folderLimit": "Free plan: up to {{limit}} folders",
     "addFolder": "Add folder",
     "deleteFolder": "Delete folder (pages move to Unfiled)",
     "search": "Search title, description or domain",

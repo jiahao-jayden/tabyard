@@ -40,7 +40,7 @@ function Pricing() {
           i={2}
           name={t.planFree}
           price={t.free}
-          features={[t.freeGroups, t.freeRules, t.freePacks]}
+          features={[t.freeGroups, t.freeRules, t.freePacks, t.freeCollect]}
         />
         <Plan
           i={3}
@@ -48,7 +48,7 @@ function Pricing() {
           name={t.planPro}
           price={amount}
           note={t.oneTime}
-          features={[t.proEverything, t.proGroups, t.proDomain, t.proSync]}
+          features={[t.proEverything, t.proGroups, t.proDomain, t.proSync, t.proAi]}
         >
           {user?.pro ? (
             <p className="flex h-11 items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-[#b8862b] to-[#e8c15a] text-sm font-medium text-white">

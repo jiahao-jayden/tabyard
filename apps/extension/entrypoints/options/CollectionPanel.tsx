@@ -117,7 +117,7 @@ export function CollectionPanel({ plan }: { plan: Plan }) {
         </CardAction>
       </CardHeader>
       <CardContent className="flex flex-col gap-6 sm:flex-row">
-        <FolderSidebar data={data} selected={filter} onSelect={changeFilter} />
+        <FolderSidebar data={data} plan={plan} selected={filter} onSelect={changeFilter} />
         <div className="min-w-0 flex-1 space-y-4">
           {chosen.length > 0 ? (
             <SelectionBar

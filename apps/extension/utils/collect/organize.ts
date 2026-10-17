@@ -17,10 +17,11 @@ function systemPrompt(language: string): string {
   return [
     'You file a user\'s unsorted saved web pages into their existing folders.',
     'You get the list of existing folder names and a numbered list of pages (title, domain, description).',
+    'Pages with type "tweet" are X posts: the title is the author and the description is the post text. Judge them by the topic of the text and ignore the domain x.com.',
     'Rules:',
     '- Strongly prefer existing folders. Put a page into one only if it clearly belongs there.',
     `- When no existing folder fits, suggest a new folder. Put similar pages into the same new folder instead of one folder per page, and suggest at most ${MAX_NEW_FOLDERS} new folders in total, with short, specific names.`,
-    '- Assign each page to at most one folder. If you are not sure, leave the page out.',
+    '- Assign each page to at most one folder. Leave a page out only when it has no discernible topic.',
     `- Write new folder names in ${language}.`,
     'Respond with JSON only, in this shape: {"folders":[{"name":string,"items":number[]}]} where items are the page numbers.',
   ].join('\n');
@@ -34,7 +35,13 @@ function describe(b: Bookmark, n: number) {
     /* 保持为空 */
   }
   // 推文的信息都在正文里，多给一些长度；作者放进 title
-  return { n, title: b.title.slice(0, 120), domain: host, description: b.description.slice(0, b.source ? 280 : 120) };
+  return {
+    n,
+    type: b.source ? 'tweet' : 'page',
+    title: b.title.slice(0, 120),
+    domain: b.source ? undefined : host,
+    description: b.description.slice(0, b.source ? 280 : 120),
+  };
 }
 
 export async function proposeOrganization({

@@ -187,6 +187,7 @@
     "unfiled": "未分类",
     "folders": "文件夹",
     "newFolder": "新建文件夹",
+    "folderLimit": "免费版最多 {{limit}} 个文件夹",
     "addFolder": "添加文件夹",
     "deleteFolder": "删除文件夹（其中的网页回到未分类）",
     "search": "搜索标题、描述或域名",

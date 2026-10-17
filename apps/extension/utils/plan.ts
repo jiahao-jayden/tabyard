@@ -6,6 +6,7 @@ import { loadConfig, type GroupSettings } from './rules';
 export type Plan = 'free' | 'pro';
 
 export const FREE_GROUP_LIMIT = 3;
+export const FREE_FOLDER_LIMIT = 3;
 
 /** 读取缓存的套餐；缓存由 refreshPlan 从服务端同步 */
 export async function getPlan(): Promise<Plan> {

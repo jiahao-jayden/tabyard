@@ -12,6 +12,7 @@ import {
   addBookmark, addFolder, loadCollect, type Folder,
 } from '@/utils/collect/store';
 import { normalizeUrl } from '@/utils/collect/url';
+import { FREE_FOLDER_LIMIT, getPlan, type Plan } from '@/utils/plan';
 import { PagePreview } from './PagePreview';
 
 const UNFILED = 'none';
@@ -34,6 +35,11 @@ export function CollectSection({ activeTab }: { activeTab: Browser.tabs.Tab | un
   const [busy, setBusy] = useState(false);
   const [creating, setCreating] = useState(false);
   const [newName, setNewName] = useState('');
+  const [plan, setPlan] = useState<Plan>('free');
+
+  useEffect(() => {
+    void getPlan().then(setPlan);
+  }, []);
 
   useEffect(() => {
     void loadCollect().then((data) => {
@@ -106,10 +112,16 @@ export function CollectSection({ activeTab }: { activeTab: Browser.tabs.Tab | un
             <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
           ))}
           <SelectSeparator />
-          <SelectItem value={NEW_FOLDER}>
-            <Plus />
-            {t('popup.collectNewFolder')}
-          </SelectItem>
+          {plan === 'free' && folders.length >= FREE_FOLDER_LIMIT ? (
+            <SelectItem value={NEW_FOLDER} disabled>
+              {t('collect.folderLimit', { limit: FREE_FOLDER_LIMIT })}
+            </SelectItem>
+          ) : (
+            <SelectItem value={NEW_FOLDER}>
+              <Plus />
+              {t('popup.collectNewFolder')}
+            </SelectItem>
+          )}
         </SelectContent>
       </Select>
       )}

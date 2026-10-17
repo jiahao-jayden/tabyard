@@ -1,5 +1,6 @@
 // 网页收藏集的数据与存储：独立于标签分组配置，不参与同步
 import { browser } from 'wxt/browser';
+import { getPlan, FREE_FOLDER_LIMIT } from '../plan';
 import { withLock } from '../rules';
 import { COLLECT_KEY, normalizeUrl } from './url';
 
@@ -116,8 +117,10 @@ export function deleteBookmarks(ids: string[]): Promise<void> {
   });
 }
 
-export function addFolder(name: string): Promise<Folder> {
+export async function addFolder(name: string): Promise<Folder> {
+  const plan = await getPlan();
   return mutate((data) => {
+    if (plan === 'free' && data.folders.length >= FREE_FOLDER_LIMIT) throw new Error('folder-limit');
     const folder: Folder = { id: crypto.randomUUID(), name: name.trim() };
     data.folders.push(folder);
     return folder;
