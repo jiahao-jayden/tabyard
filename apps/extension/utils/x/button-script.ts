@@ -17,6 +17,7 @@ async function register(): Promise<void> {
 }
 
 export async function isXButtonEnabled(): Promise<boolean> {
+  if (!browser.scripting || !browser.permissions) return false;
   const stored = (await browser.storage.local.get(FLAG_KEY))[FLAG_KEY];
   return stored === true && (await browser.permissions.contains({ origins: X_ORIGINS }));
 }

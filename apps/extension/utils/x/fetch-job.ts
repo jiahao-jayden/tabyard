@@ -32,8 +32,9 @@ function captureTemplate(details: Browser.webRequest.OnBeforeSendHeadersDetails)
 }
 
 function registerListener(): void {
-  browser.webRequest.onBeforeSendHeaders.removeListener(captureTemplate);
+  if (!browser.webRequest?.onBeforeSendHeaders) return;
   try {
+    browser.webRequest.onBeforeSendHeaders.removeListener(captureTemplate);
     browser.webRequest.onBeforeSendHeaders.addListener(
       captureTemplate,
       { urls: ['*://x.com/i/api/graphql/*', '*://twitter.com/i/api/graphql/*'] },
@@ -47,7 +48,7 @@ function registerListener(): void {
 /** 授权 x.com 之后重新注册，确保新授予的权限立即生效 */
 export function watchBookmarksRequests(): void {
   registerListener();
-  browser.permissions.onAdded.addListener(registerListener);
+  browser.permissions?.onAdded.addListener(registerListener);
 }
 
 async function waitForTemplate(since: number): Promise<Template | null> {

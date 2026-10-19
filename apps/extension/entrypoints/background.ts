@@ -199,7 +199,11 @@ async function regroupAll(): Promise<void> {
     const toFree = tabs
       .filter((t) => t.groupId != null && t.groupId !== -1 && managedIds.has(t.groupId))
       .map((t) => t.id!);
-    if (toFree.length > 0) await browser.tabs.ungroup(toFree as [number, ...number[]]);
+    if (toFree.length > 0) {
+      await browser.tabs.ungroup(toFree as [number, ...number[]]).catch((e) => {
+        console.warn('[tabyard] ungroup failed:', e);
+      });
+    }
   }
   await groupAllTabs();
 }
@@ -233,13 +237,13 @@ export default defineBackground(() => {
   browser.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     const type = (msg as { type?: string } | undefined)?.type;
     if (type === 'regroup') {
-      void regroupAll().then(() => sendResponse({ ok: true }));
+      void regroupAll().finally(() => sendResponse({ ok: true }));
       return true;
     }
     // 来自 x.com 页面上的脚本或设置页的消息
     const reply = handleXMessage(msg);
     if (reply) {
-      void reply.then(sendResponse);
+      void reply.then(sendResponse, () => sendResponse(undefined));
       return true;
     }
   });
