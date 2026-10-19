@@ -228,8 +228,8 @@ export default defineBackground(() => {
   let regroupTimer: ReturnType<typeof setTimeout> | null = null;
   browser.storage.onChanged.addListener((changes, area) => {
     if (area !== CONFIG_STORAGE_AREA) return;
+    if (changes.settings || changes.groups || changes.collect || changes.plan) void syncIfPro();
     if (!changes.settings && !changes.groups && !changes.plan) return;
-    if (changes.settings || changes.groups) void syncIfPro();
     if (regroupTimer) clearTimeout(regroupTimer);
     regroupTimer = setTimeout(() => void regroupAll(), 500);
   });

@@ -13,7 +13,7 @@
 //   CONFIG_LOCK 只包住本地读-改-写；网络请求在锁外，期间用户的编辑不会被阻塞。
 //   推送以快照版本号为准，推送期间的新编辑版本号更大，仍然保持"脏"，下一轮会再推送。
 //   云端用 modifiedAt 做条件写入，被别的设备抢先时返回 409，重新拉取合并后重试。
-import { LIMITS, syncDataSchema, type Group, type SyncData, type SyncRecord } from '@tabyard/shared';
+import { LIMITS, collectSchema, emptyCollect, mergeCollect, syncDataSchema, type Group, type SyncData, type SyncRecord } from '@tabyard/shared';
 import { browser } from 'wxt/browser';
 import { API_URL } from './api';
 import { getPlan } from './plan';
@@ -32,11 +32,12 @@ interface LocalState {
 }
 
 async function readLocal(): Promise<LocalState> {
-  const s = await storage.get(['settings', 'groups', 'modifiedAt', 'syncedAt']);
+  const s = await storage.get(['settings', 'groups', 'modifiedAt', 'syncedAt', 'collect']);
   return {
     data: {
       settings: { ...DEFAULT_SETTINGS, ...((s.settings as object) || {}) },
       groups: Array.isArray(s.groups) ? s.groups : [],
+      collect: collectSchema.parse(s.collect ?? emptyCollect()),
     } as SyncData,
     modifiedAt: (s.modifiedAt as number | undefined) ?? 0,
     syncedAt: (s.syncedAt as number | undefined) ?? 0,
@@ -51,8 +52,10 @@ async function fetchRemote(): Promise<Remote> {
     if (res.status === 401 || res.status === 403) return { status: 'skipped' };
     if (!res.ok) return { status: 'error' };
     const { record } = (await res.json()) as { record: SyncRecord | null };
-    if (record && !syncDataSchema.safeParse(record.data).success) return { status: 'error' };
-    return { status: 'ok', record };
+    if (!record) return { status: 'ok', record: null };
+    const parsed = syncDataSchema.safeParse(record.data);
+    if (!parsed.success || !Number.isSafeInteger(record.modifiedAt) || record.modifiedAt <= 0) return { status: 'error' };
+    return { status: 'ok', record: { data: parsed.data, modifiedAt: record.modifiedAt } };
   } catch {
     return { status: 'error' };
   }
@@ -65,6 +68,7 @@ async function push(snapshot: { data: SyncData; modifiedAt: number }): Promise<P
     const res = await fetch(`${API_URL}/api/sync`, {
       method: 'PUT',
       credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(snapshot),
     });
     if (res.status === 401 || res.status === 403) return 'skipped';
@@ -109,6 +113,14 @@ function mergeGroups(remote: Group[], local: Group[], localWins: boolean): Group
  */
 function reconcile(remote: SyncRecord | null): Promise<{ data: SyncData; modifiedAt: number } | null> {
   return withLock(CONFIG_LOCK, async () => {
+    // 旧版收藏没有配置版本号，首次同步必须标记为本地编辑，避免被云端覆盖。
+    const legacy = await storage.get(['collect', 'collectSyncReady', 'modifiedAt', 'syncedAt']);
+    if (!legacy.collectSyncReady) {
+      await storage.set({
+        collectSyncReady: true,
+        ...(legacy.collect ? { modifiedAt: Math.max(Date.now(), Number(legacy.modifiedAt ?? 0) + 1, Number(legacy.syncedAt ?? 0) + 1) } : {}),
+      });
+    }
     const local = await readLocal();
     const dirty = local.modifiedAt > local.syncedAt;
     const remoteNewer = !!remote && remote.modifiedAt > local.syncedAt;
@@ -117,6 +129,7 @@ function reconcile(remote: SyncRecord | null): Promise<{ data: SyncData; modifie
       await storage.set({
         settings: remote.data.settings,
         groups: remote.data.groups,
+        collect: remote.data.collect ?? local.data.collect,
         modifiedAt: remote.modifiedAt,
         syncedAt: remote.modifiedAt,
         lastSyncAt: Date.now(),
@@ -129,9 +142,10 @@ function reconcile(remote: SyncRecord | null): Promise<{ data: SyncData; modifie
       const data: SyncData = {
         settings: localWins ? local.data.settings : remote.data.settings,
         groups: mergeGroups(remote.data.groups, local.data.groups, localWins),
+        collect: mergeCollect(remote.data.collect ?? emptyCollect(), local.data.collect ?? emptyCollect(), localWins),
       };
       const modifiedAt = Math.max(Date.now(), remote.modifiedAt + 1, local.modifiedAt + 1);
-      await storage.set({ settings: data.settings, groups: data.groups, modifiedAt });
+      await storage.set({ settings: data.settings, groups: data.groups, collect: data.collect, modifiedAt });
       return { data, modifiedAt };
     }
 
@@ -145,15 +159,20 @@ function reconcile(remote: SyncRecord | null): Promise<{ data: SyncData; modifie
 /** 先拉后推，两边都有改动时合并 */
 export function syncNow(): Promise<SyncResult> {
   return withLock(SYNC_LOCK, async () => {
-    for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-      const remote = await fetchRemote();
-      if (remote.status !== 'ok') return remote.status;
-      const snapshot = await reconcile(remote.record);
-      if (!snapshot) return 'ok';
-      const result = await push(snapshot);
-      if (result !== 'conflict') return result;
+    if ((await getPlan()) !== 'pro') return 'skipped';
+    try {
+      for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+        const remote = await fetchRemote();
+        if (remote.status !== 'ok') return remote.status;
+        const snapshot = await reconcile(remote.record);
+        if (!snapshot) return 'ok';
+        const result = await push(snapshot);
+        if (result !== 'conflict') return result;
+      }
+      return 'error';
+    } catch {
+      return 'error';
     }
-    return 'error';
   });
 }
 

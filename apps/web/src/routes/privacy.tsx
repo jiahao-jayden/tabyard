@@ -19,7 +19,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function Privacy() {
   return (
     <div className="mx-auto max-w-3xl px-5 py-12">
-      <p className="text-sm text-slate-500">最后更新：2026 年 10 月 8 日 · 适用产品：Tabyard Chrome 扩展</p>
+      <p className="text-sm text-slate-500">最后更新：2026 年 10 月 19 日 · 适用产品：Tabyard Chrome 扩展</p>
       <h1 className="mt-2 text-3xl font-medium tracking-tight">隐私政策</h1>
       <p className="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
         Tabyard（以下简称"我们"）是一款 Chrome 扩展，可根据你自定义的规则将标签页自动归入 Chrome
@@ -43,10 +43,10 @@ function Privacy() {
         <p>如果你使用 GitHub / Google 登录并使用 Pro 功能，以下数据会同步到我们的后端 https://tabyard.jayden0.com（Cloudflare 基础设施）：</p>
         <ul className="list-disc space-y-2 pl-5">
           <li>账号标识与邮箱（来自 OAuth，仅用于登录）；</li>
-          <li>你的分组规则与扩展设置（用于多设备云同步，可随时在设置中关闭）；</li>
+          <li>你的分组规则、扩展设置与收藏集（包括主动收藏的网址、标题、描述、封面图链接、已导入的 X 推文及文件夹，用于 Pro 多设备云同步）；</li>
           <li>你主动发布或分享的规则包（通过短码分享）。</li>
         </ul>
-        <p>我们<strong className="text-ink dark:text-slate-100">不会</strong>上传你的标签页网址、标题或浏览记录。</p>
+        <p>除你主动保存并通过 Pro 同步的收藏外，我们<strong className="text-ink dark:text-slate-100">不会</strong>上传标签页网址、标题或浏览记录。X 抓取缓存保留在本机，导入收藏集后才参与同步。</p>
       </Section>
 
       <Section title="三、我们绝不做的事">
@@ -59,7 +59,7 @@ function Privacy() {
 
       <Section title="四、数据保留与删除">
         <p>
-          同步的规则与设置仅在账号有效期内保留。你可以随时在扩展设置中退出登录并删除云端数据，或联系我们要求彻底删除账号数据。
+          同步的规则、设置与收藏集仅在账号有效期内保留。你可以随时在扩展设置中退出登录并删除云端数据，或联系我们要求彻底删除账号数据。
         </p>
       </Section>
 
@@ -79,7 +79,7 @@ function Privacy() {
 
       <hr className="my-12 border-slate-200 dark:border-slate-700" />
 
-      <p className="text-sm text-slate-500">Last updated: October 8, 2026 · Applies to: Tabyard Chrome extension</p>
+      <p className="text-sm text-slate-500">Last updated: October 19, 2026 · Applies to: Tabyard Chrome extension</p>
       <h1 className="mt-2 text-3xl font-medium tracking-tight">Privacy Policy</h1>
       <p className="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
         Tabyard ("we", "our") is a Chrome extension that automatically sorts your browser tabs into native Chrome tab
@@ -110,12 +110,12 @@ function Privacy() {
         </p>
         <ul className="list-disc space-y-2 pl-5">
           <li>Account identifier and email address (from OAuth, sign-in only);</li>
-          <li>Your grouping rules and extension settings (for multi-device cloud sync; can be disabled anytime);</li>
+          <li>Your grouping rules, extension settings, and collection (saved URLs, titles, descriptions, cover image links, imported X posts, and folders, for Pro multi-device cloud sync);</li>
           <li>Rule packs you choose to publish or share (via short codes).</li>
         </ul>
         <p>
-          We do <strong className="text-ink dark:text-slate-100">not</strong> upload your tab URLs, page titles, or
-          browsing history.
+          Apart from items you save to your collection and sync with Pro, we do <strong className="text-ink dark:text-slate-100">not</strong> upload tab URLs, page titles, or
+          browsing history. The X fetch cache stays on your device; posts only sync after you import them into your collection.
         </p>
       </Section>
 
@@ -129,7 +129,7 @@ function Privacy() {
 
       <Section title="4. Retention and deletion">
         <p>
-          Synced rules and settings are kept only while your account is active. You may sign out and delete cloud data
+          Synced rules, settings, and collections are kept only while your account is active. You may sign out and delete cloud data
           anytime in the extension options, or contact us to request full deletion.
         </p>
       </Section>

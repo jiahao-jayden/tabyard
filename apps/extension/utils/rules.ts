@@ -1,7 +1,7 @@
 // 数据模型与存储：background 与 UI 共用
 import { browser } from 'wxt/browser';
 import { getDomain } from 'tldts';
-import { hostnameOf, type Group, type GroupColor, type TabLike } from '@tabyard/shared';
+import { hostnameOf, type Group, type GroupColor, type TabLike, type CollectData } from '@tabyard/shared';
 
 export type InsertPosition = 'end' | 'start';
 export type FallbackMode = 'domain' | 'other' | 'none';
@@ -69,10 +69,10 @@ export const CONFIG_LOCK = 'tabyard-config';
 export const withLock = <T>(name: string, task: () => Promise<T>): Promise<T> =>
   navigator.locks.request(name, task) as Promise<T>;
 
-type ConfigPatch = { settings?: GroupSettings; groups?: Group[] };
+type ConfigPatch = { settings?: GroupSettings; groups?: Group[]; collect?: CollectData };
 
 /** 必须在 CONFIG_LOCK 内调用；modifiedAt 单调递增，保证后写的一定更新 */
-async function writeConfig(patch: ConfigPatch): Promise<void> {
+export async function saveConfigLocked(patch: ConfigPatch): Promise<void> {
   const { settings } = patch;
   if (settings && Object.values(DEFAULT_OTHER_NAME).includes(settings.otherGroupName.trim())) {
     patch = { ...patch, settings: { ...settings, otherGroupName: '' } };
@@ -82,14 +82,14 @@ async function writeConfig(patch: ConfigPatch): Promise<void> {
 }
 
 export function saveConfig(patch: ConfigPatch): Promise<void> {
-  return withLock(CONFIG_LOCK, () => writeConfig(patch));
+  return withLock(CONFIG_LOCK, () => saveConfigLocked(patch));
 }
 
 /** 只改部分设置项（如 popup 的总开关），在锁内读取最新值再写，不会覆盖其他字段 */
 export function patchSettings(patch: Partial<GroupSettings>): Promise<void> {
   return withLock(CONFIG_LOCK, async () => {
     const { settings } = await loadConfig();
-    await writeConfig({ settings: { ...settings, ...patch } });
+    await saveConfigLocked({ settings: { ...settings, ...patch } });
   });
 }
 

@@ -1,10 +1,12 @@
 import { z } from 'zod';
+import { collectSchema } from './collect';
 import { LIMITS } from './pack-schema';
 import { GROUP_COLORS } from './types';
 
 export const SYNC_MAX_BYTES = 512_000;
 
 export const syncDataSchema = z.object({
+  collect: collectSchema.optional(),
   settings: z.object({
     enabled: z.boolean(),
     fallback: z.enum(['domain', 'other', 'none']),

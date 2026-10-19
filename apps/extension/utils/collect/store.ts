@@ -1,59 +1,43 @@
-// 网页收藏集的数据与存储：独立于标签分组配置，不参与同步
+// 网页收藏集：与配置共用版本号和锁，Pro 用户参与云同步
 import { browser } from 'wxt/browser';
 import { getPlan, FREE_FOLDER_LIMIT } from '../plan';
-import { withLock } from '../rules';
+import { CONFIG_LOCK, saveConfigLocked, withLock } from '../rules';
+import { collectSchema, type Bookmark, type Folder, type CollectData } from '@tabyard/shared';
 import { COLLECT_KEY, normalizeUrl } from './url';
 
-/** 来自 X 的推文；没有该字段的就是普通网页 */
-export interface TweetSource {
-  type: 'tweet';
-  authorName: string;
-  handle: string;
-  postedAt: number;
-}
+export type { Bookmark, Folder, CollectData, TweetSource } from '@tabyard/shared';
 
-export interface Bookmark {
-  id: string;
-  url: string;
-  title: string;
-  description: string;
-  /** og:image 的绝对地址；没有则为空，界面显示占位图 */
-  image: string;
-  favicon: string;
-  /** null 表示未分类 */
-  folderId: string | null;
-  createdAt: number;
-  source?: TweetSource;
-}
-
-export interface Folder {
-  id: string;
-  name: string;
-}
-
-export interface CollectData {
-  bookmarks: Bookmark[];
-  folders: Folder[];
-}
-
-const COLLECT_LOCK = 'tabyard-collect';
-
-export type BookmarkInput = Omit<Bookmark, 'id' | 'createdAt'>;
+export type BookmarkInput = Omit<Bookmark, 'id' | 'createdAt' | 'updatedAt'>;
 
 export async function loadCollect(): Promise<CollectData> {
-  const stored = (await browser.storage.local.get(COLLECT_KEY))[COLLECT_KEY] as Partial<CollectData> | undefined;
-  return {
-    bookmarks: Array.isArray(stored?.bookmarks) ? stored.bookmarks : [],
-    folders: Array.isArray(stored?.folders) ? stored.folders : [],
-  };
+  const stored = (await browser.storage.local.get(COLLECT_KEY))[COLLECT_KEY];
+  return collectSchema.parse(stored ?? { bookmarks: [], folders: [] });
+}
+
+/** 同步按记录合并，只有实际改动的记录才更新版本；删除留下标记。 */
+function markChanges<T extends { updatedAt?: number }>(
+  before: T[], after: T[], key: (item: T) => string, deleted: Record<string, number>, version: number,
+): void {
+  const previous = new Map(before.map((item) => [key(item), item]));
+  for (const item of after) {
+    const k = key(item);
+    if (JSON.stringify(previous.get(k)) !== JSON.stringify(item)) item.updatedAt = version;
+    previous.delete(k);
+  }
+  for (const k of previous.keys()) deleted[k] = version;
 }
 
 /** 读-改-写放在锁内，popup 与收藏集页面可能同时操作 */
 function mutate<T>(fn: (data: CollectData) => T): Promise<T> {
-  return withLock(COLLECT_LOCK, async () => {
+  return withLock(CONFIG_LOCK, async () => {
     const data = await loadCollect();
+    const before = structuredClone(data);
     const result = fn(data);
-    await browser.storage.local.set({ [COLLECT_KEY]: data });
+    const { modifiedAt = 0 } = await browser.storage.local.get('modifiedAt');
+    const version = Math.max(Date.now(), (modifiedAt as number) + 1);
+    markChanges(before.bookmarks, data.bookmarks, (b) => b.url, data.deletedBookmarks, version);
+    markChanges(before.folders, data.folders, (f) => f.id, data.deletedFolders, version);
+    await saveConfigLocked({ collect: data });
     return result;
   });
 }
