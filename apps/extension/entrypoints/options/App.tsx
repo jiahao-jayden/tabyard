@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Toaster } from 'sonner';
 import { browser } from 'wxt/browser';
-import { Bookmark, Crown, Layers } from 'lucide-react';
+import { Bookmark, Crown, Layers, Scissors } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -13,17 +13,19 @@ import { setLanguagePref } from '@/utils/i18n';
 import { getPlan, refreshPlan, type Plan } from '@/utils/plan';
 import { loadLanguagePref, type LanguagePref } from '@/utils/rules';
 import { AccountButton } from './AccountButton';
+import { ClipPanel } from './ClipPanel';
 import { CollectionPanel } from './CollectionPanel';
 import { TabGroupsPanel } from './TabGroupsPanel';
 
-type PanelId = 'groups' | 'collect';
+type PanelId = 'groups' | 'collect' | 'clip';
+const PANELS: PanelId[] = ['groups', 'collect', 'clip'];
 
 export default function App() {
   const { t, i18n } = useTranslation();
   const [plan, setPlan] = useState<Plan>('free');
   const [langPref, setLangPref] = useState<LanguagePref>('en');
   const [loaded, setLoaded] = useState(false);
-  const [panel, setPanel] = useState<PanelId>(location.hash === '#collect' ? 'collect' : 'groups');
+  const [panel, setPanel] = useState<PanelId>(PANELS.find((id) => location.hash === `#${id}`) ?? 'groups');
 
   useEffect(() => {
     void Promise.all([getPlan(), loadLanguagePref()]).then(([p, lang]) => {
@@ -89,6 +91,10 @@ export default function App() {
             <Bookmark />
             {t('tabs.collect')}
           </TabsTrigger>
+          <TabsTrigger value="clip">
+            <Scissors />
+            {t('tabs.clip')}
+          </TabsTrigger>
         </TabsList>
         {/* forceMount：切换时保留编辑状态，避免未落盘的自动保存被卸载取消 */}
         <TabsContent value="groups" forceMount>
@@ -96,6 +102,9 @@ export default function App() {
         </TabsContent>
         <TabsContent value="collect" forceMount>
           <CollectionPanel plan={plan} />
+        </TabsContent>
+        <TabsContent value="clip">
+          <ClipPanel />
         </TabsContent>
       </Tabs>
 

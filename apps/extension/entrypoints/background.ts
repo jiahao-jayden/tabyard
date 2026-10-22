@@ -8,6 +8,7 @@ import { syncIfPro, syncNow } from '@/utils/sync';
 import { syncXButton } from '@/utils/x/button-script';
 import { watchBookmarksRequests, watchJobTabClosed } from '@/utils/x/fetch-job';
 import { handleXMessage } from '@/utils/x/messages';
+import { fetchPushShare, PUSH_CONTENT_REQUEST } from '@/utils/clip/push-share';
 import {
   CONFIG_STORAGE_AREA,
   fallbackGroupFor,
@@ -234,8 +235,12 @@ export default defineBackground(() => {
     regroupTimer = setTimeout(() => void regroupAll(), 500);
   });
 
-  browser.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+  browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     const type = (msg as { type?: string } | undefined)?.type;
+    if (type === PUSH_CONTENT_REQUEST) {
+      void fetchPushShare(sender).then(sendResponse);
+      return true;
+    }
     if (type === 'regroup') {
       void regroupAll().finally(() => sendResponse({ ok: true }));
       return true;

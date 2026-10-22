@@ -176,7 +176,8 @@
   },
   "tabs": {
     "groups": "Tab groups",
-    "collect": "Collection"
+    "collect": "Collection",
+    "clip": "Clipper"
   },
   "collect": {
     "title": "Collection",
@@ -272,5 +273,49 @@
       "cap": "the page limit was hit"
     },
     "refetchAll": "Refetch all"
+  },
+  "clip": {
+    "title": "Page clipper",
+    "desc": "Turn the current page into clean Markdown and copy or download it. Optionally save it straight to your Obsidian vault.",
+    "copy": "Copy Markdown",
+    "download": "Download Markdown",
+    "saveTo": "Save to Obsidian",
+    "preview": "Preview & notes",
+    "extracting": "Extracting page…",
+    "empty": "No content extracted",
+    "chars": "{{n}} characters",
+    "unsupported": "This page can't be clipped",
+    "copied": "Markdown copied",
+    "downloaded": "Download started: {{name}}",
+    "saved": "Saved to {{path}}",
+    "extractFailed": "Extraction failed: {{msg}}",
+    "copyFailed": "Copy failed: {{msg}}",
+    "saveFailed": "Save failed: {{msg}}",
+    "needSetup": "Finish the Obsidian setup in settings first",
+    "note": "Note",
+    "notePlaceholder": "Optional, written to user_note",
+    "tags": "Tags",
+    "tagPlaceholder": "Add a tag, press Enter",
+    "removeTag": "Remove tag {{tag}}",
+    "exportTitle": "Save to Obsidian",
+    "exportDesc": "Needs the Local REST API plugin in Obsidian. The key is stored on this device only and never synced.",
+    "exportEnabled": "Enable save to Obsidian",
+    "restUrl": "REST URL",
+    "restToken": "API key",
+    "saveBaseDir": "Base folder",
+    "pathTemplate": "Path template",
+    "pathHint": "Variables: {platform} {date} {slug}",
+    "test": "Test connection",
+    "testOk": "Connected",
+    "testFailed": "Connection failed: {{msg}}",
+    "settingsSaved": "Settings saved",
+    "permissionDenied": "Access to the REST URL was not granted.",
+    "err": {
+      "url": "Enter a valid http(s) REST URL",
+      "token": "Enter the REST API key",
+      "baseDir": "Enter a base folder",
+      "template": "Enter a path template",
+      "variables": "Unsupported path template variables: {{vars}}"
+    }
   }
 }

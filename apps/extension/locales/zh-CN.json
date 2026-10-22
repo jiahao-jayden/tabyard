@@ -176,7 +176,8 @@
   },
   "tabs": {
     "groups": "标签页设置",
-    "collect": "收藏集"
+    "collect": "收藏集",
+    "clip": "剪藏"
   },
   "collect": {
     "title": "收藏集",
@@ -272,5 +273,49 @@
       "cap": "达到页数上限"
     },
     "refetchAll": "重新获取全部"
+  },
+  "clip": {
+    "title": "网页剪藏",
+    "desc": "把当前页面抽取为干净的 Markdown，复制或下载；也可以选择直接保存到 Obsidian。",
+    "copy": "复制 Markdown",
+    "download": "下载 Markdown",
+    "saveTo": "保存到 Obsidian",
+    "preview": "预览与备注",
+    "extracting": "正在抽取页面内容…",
+    "empty": "未抽取到正文",
+    "chars": "{{n}} 字符",
+    "unsupported": "此页面无法剪藏",
+    "copied": "已复制 Markdown",
+    "downloaded": "已开始下载：{{name}}",
+    "saved": "已保存到 {{path}}",
+    "extractFailed": "抽取失败：{{msg}}",
+    "copyFailed": "复制失败：{{msg}}",
+    "saveFailed": "保存失败：{{msg}}",
+    "needSetup": "请先在设置页完成 Obsidian 配置",
+    "note": "备注",
+    "notePlaceholder": "可选，写入 user_note",
+    "tags": "标签",
+    "tagPlaceholder": "输入标签，回车添加",
+    "removeTag": "移除标签 {{tag}}",
+    "exportTitle": "保存到 Obsidian",
+    "exportDesc": "需要在 Obsidian 中启用 Local REST API 插件。密钥只保存在本机，不会同步。",
+    "exportEnabled": "启用保存到 Obsidian",
+    "restUrl": "REST URL",
+    "restToken": "API 密钥",
+    "saveBaseDir": "基础目录",
+    "pathTemplate": "路径模板",
+    "pathHint": "可用变量：{platform} {date} {slug}",
+    "test": "测试连接",
+    "testOk": "连接成功",
+    "testFailed": "连接失败：{{msg}}",
+    "settingsSaved": "设置已保存",
+    "permissionDenied": "未授予访问该 REST URL 的权限。",
+    "err": {
+      "url": "请填写有效的 http(s) REST URL",
+      "token": "请填写 REST API 密钥",
+      "baseDir": "请填写基础目录",
+      "template": "请填写路径模板",
+      "variables": "路径模板不支持变量：{{vars}}"
+    }
   }
 }

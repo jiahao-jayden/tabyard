@@ -4,6 +4,8 @@ import { browser, type Browser } from 'wxt/browser';
 import { Bookmark, ChevronRight, LoaderCircle, Settings2, Sparkles } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { loadConfig, patchSettings } from '@/utils/rules';
+import { Toaster } from 'sonner';
+import { ClipSection } from './ClipSection';
 import { CollectSection } from './CollectSection';
 
 function MenuRow({
@@ -75,6 +77,10 @@ export default function App() {
         {activeTab === undefined ? null : <CollectSection activeTab={activeTab ?? undefined} />}
       </div>
 
+      <div className="border-t px-4 py-3">
+        {activeTab === undefined ? null : <ClipSection activeTab={activeTab ?? undefined} />}
+      </div>
+
       <MenuRow
         icon={busy ? <LoaderCircle className="animate-spin" /> : <Sparkles />}
         label={busy ? t('popup.regrouping') : t('popup.regroup')}
@@ -92,6 +98,7 @@ export default function App() {
         label={t('popup.settings')}
         onClick={() => void browser.runtime.openOptionsPage()}
       />
+      <Toaster position="top-center" richColors />
     </div>
   );
 }
