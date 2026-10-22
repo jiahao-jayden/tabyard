@@ -8,7 +8,6 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { GROUP_COLORS, parsePattern, type Group, type GroupColor } from '@tabyard/shared';
-import { canEnableMoreGroups, enabledCount, groupLimit, type Plan } from '@/utils/plan';
 import { uid } from '@/utils/rules';
 import { COLOR_DOT } from './colors';
 
@@ -16,15 +15,12 @@ const PREVIEW_COUNT = 6;
 
 interface Props {
   groups: Group[];
-  plan: Plan;
   onChange: (groups: Group[]) => void;
 }
 
-export function GroupEditor({ groups, plan, onChange }: Props) {
+export function GroupEditor({ groups, onChange }: Props) {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
-  const canAdd = canEnableMoreGroups(plan, groups);
-  const limit = groupLimit(plan);
 
   const patch = (id: string, change: Partial<Group>) =>
     onChange(groups.map((g) => (g.id === id ? { ...g, ...change } : g)));
@@ -99,7 +95,6 @@ export function GroupEditor({ groups, plan, onChange }: Props) {
               </span>
               <Switch
                 checked={g.enabled}
-                disabled={!g.enabled && !canAdd}
                 onCheckedChange={(v) => patch(g.id, { enabled: v })}
                 aria-label={t('editor.enableGroup')}
               />
@@ -200,17 +195,10 @@ export function GroupEditor({ groups, plan, onChange }: Props) {
       })}
 
       <div className="flex items-center gap-3">
-        <Button variant="outline" onClick={addGroup} disabled={!canAdd}>
+        <Button variant="outline" onClick={addGroup}>
           <Plus />
           {t('editor.newGroup')}
         </Button>
-        <span className="text-sm text-muted-foreground">
-          {Number.isFinite(limit)
-            ? canAdd
-              ? t('editor.used', { used: enabledCount(groups), limit })
-              : t('editor.limitReached', { limit })
-            : null}
-        </span>
       </div>
     </div>
   );

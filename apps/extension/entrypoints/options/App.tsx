@@ -101,7 +101,7 @@ export default function App() {
           <TabGroupsPanel plan={plan} />
         </TabsContent>
         <TabsContent value="collect" forceMount>
-          <CollectionPanel plan={plan} />
+          <CollectionPanel />
         </TabsContent>
         <TabsContent value="clip">
           <ClipPanel />

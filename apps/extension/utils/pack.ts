@@ -40,8 +40,7 @@ export function packToGroups(pack: RulePack): Group[] {
 
 export type GroupMapping =
   | { type: 'new' }
-  | { type: 'existing'; groupId: string }
-  | { type: 'skip' };
+  | { type: 'existing'; groupId: string };
 
 export interface ImportItem {
   id: string;
@@ -55,17 +54,12 @@ export interface ImportPlan {
   duplicates: number;
 }
 
-/** 已有同名分组则并入，否则在名额内新建，名额用完则跳过 */
-export function defaultMapping(groups: Group[], pack: RulePack, slots: number): GroupMapping[] {
-  let left = slots;
+/** 已有同名分组则并入，否则新建 */
+export function defaultMapping(groups: Group[], pack: RulePack): GroupMapping[] {
   return pack.groups.map((pg) => {
     const same = groups.find((g) => g.name === pg.name);
     if (same) return { type: 'existing', groupId: same.id };
-    if (left > 0) {
-      left--;
-      return { type: 'new' };
-    }
-    return { type: 'skip' };
+    return { type: 'new' };
   });
 }
 
@@ -83,7 +77,7 @@ export function planImport(groups: Group[], pack: RulePack, mapping: GroupMappin
   let duplicates = 0;
   pack.groups.forEach((pg, gi) => {
     const target = mapping[gi];
-    if (!target || target.type === 'skip') return;
+    if (!target) return;
     for (let pi = 0; pi < pg.patterns.length; pi++) {
       const pattern = pg.patterns[pi]!;
       const key = parsePattern(pattern).value;

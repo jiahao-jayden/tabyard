@@ -3,7 +3,8 @@ import { browser, type Browser } from 'wxt/browser';
 import { defineBackground } from 'wxt/utils/define-background';
 import type { Group } from '@tabyard/shared';
 import { findBestGroup } from '@/utils/match';
-import { loadActiveConfig, refreshPlan } from '@/utils/plan';
+import { refreshPlan } from '@/utils/plan';
+import { loadConfig } from '@/utils/rules';
 import { syncIfPro, syncNow } from '@/utils/sync';
 import { syncXButton } from '@/utils/x/button-script';
 import { watchBookmarksRequests, watchJobTabClosed } from '@/utils/x/fetch-job';
@@ -128,7 +129,7 @@ async function groupTabById(tabId: number): Promise<void> {
     return;
   }
   if (!isGroupableUrl(tab.url)) return;
-  const { settings, groups } = await loadActiveConfig();
+  const { settings, groups } = await loadConfig();
   if (!settings.enabled) return;
   const fresh = freshTabs.has(tabId);
   // 拖动标签页等瞬时状态下 Chrome 会拒绝分组，稍后重试
@@ -165,7 +166,7 @@ function scheduleGroupTab(tabId: number): void {
 }
 
 async function groupAllTabs(): Promise<void> {
-  const { settings, groups } = await loadActiveConfig();
+  const { settings, groups } = await loadConfig();
   if (!settings.enabled) return;
   const tabs = await browser.tabs.query({});
   for (const tab of tabs) {
@@ -180,7 +181,7 @@ async function groupAllTabs(): Promise<void> {
 
 // 按当前规则重新整理：先解散插件管理过的分组，再全部重新分组
 async function regroupAll(): Promise<void> {
-  const { settings, allGroups } = await loadActiveConfig();
+  const { settings, groups: allGroups } = await loadConfig();
   if (!settings.enabled) return;
   const managed = await getManagedTitles();
   // Include configured group names so groups created before managedGroups was

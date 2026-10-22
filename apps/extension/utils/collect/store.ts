@@ -1,6 +1,5 @@
 // 网页收藏集：与配置共用版本号和锁，Pro 用户参与云同步
 import { browser } from 'wxt/browser';
-import { getPlan, FREE_FOLDER_LIMIT } from '../plan';
 import { CONFIG_LOCK, saveConfigLocked, withLock } from '../rules';
 import { collectSchema, type Bookmark, type Folder, type CollectData } from '@tabyard/shared';
 import { COLLECT_KEY, normalizeUrl } from './url';
@@ -101,10 +100,8 @@ export function deleteBookmarks(ids: string[]): Promise<void> {
   });
 }
 
-export async function addFolder(name: string): Promise<Folder> {
-  const plan = await getPlan();
+export function addFolder(name: string): Promise<Folder> {
   return mutate((data) => {
-    if (plan === 'free' && data.folders.length >= FREE_FOLDER_LIMIT) throw new Error('folder-limit');
     const folder: Folder = { id: crypto.randomUUID(), name: name.trim() };
     data.folders.push(folder);
     return folder;

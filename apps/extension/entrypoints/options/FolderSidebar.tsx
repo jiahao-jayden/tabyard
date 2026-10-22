@@ -1,22 +1,18 @@
 import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Folder as FolderIcon, FolderPlus, Inbox, Library, Pencil, X } from 'lucide-react';
-import { browser } from 'wxt/browser';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { addFolder, deleteFolder, renameFolder, type CollectData } from '@/utils/collect/store';
-import { API_URL } from '@/utils/api';
-import { FREE_FOLDER_LIMIT, type Plan } from '@/utils/plan';
 import { cn } from '@/lib/utils';
 
 /** 'all' 全部、'none' 未分类，其余为文件夹 id */
 export type FolderFilter = string;
 
 export function FolderSidebar({
-  data, plan, selected, onSelect,
+  data, selected, onSelect,
 }: {
   data: CollectData;
-  plan: Plan;
   selected: FolderFilter;
   onSelect: (filter: FolderFilter) => void;
 }) {
@@ -83,18 +79,6 @@ export function FolderSidebar({
         />
         ),
       )}
-      {plan === 'free' && data.folders.length >= FREE_FOLDER_LIMIT ? (
-        <div className="space-y-1 px-3 pt-2 text-xs text-muted-foreground">
-          <p>{t('collect.folderLimit', { limit: FREE_FOLDER_LIMIT })}</p>
-          <button
-            type="button"
-            className="font-medium text-foreground hover:underline"
-            onClick={() => void browser.tabs.create({ url: `${API_URL}/api/checkout` })}
-          >
-            {t('account.upgrade')}
-          </button>
-        </div>
-      ) : (
       <form onSubmit={submit} className="flex items-center gap-1 pt-2">
         <Input
           value={name}
@@ -107,7 +91,6 @@ export function FolderSidebar({
           <FolderPlus />
         </Button>
       </form>
-      )}
     </nav>
   );
 }

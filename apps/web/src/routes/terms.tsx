@@ -30,11 +30,11 @@ function Terms() {
         <ul className="list-disc space-y-2 pl-5">
           <li>
             <strong className="text-ink dark:text-slate-100">免费版</strong>：
-            核心的标签自动分组功能永久免费，包含自定义分组规则（域名、路径、关键词、正则匹配）。
+            除云同步外的所有功能永久免费，包括不限数量的分组、按域名自动分组、网页收藏集、AI 整理和网页剪藏。
           </li>
           <li>
             <strong className="text-ink dark:text-slate-100">Pro 付费版</strong>：
-            包含无限分组数量、按域名自动分组、多设备云同步等高级功能。Pro 为订阅制，具体价格以网站公示为准。
+            仅包含多设备云同步。Pro 为订阅制，具体价格以网站公示为准。
           </li>
         </ul>
       </Section>
@@ -98,12 +98,12 @@ function Terms() {
       <Section title="1. The Service">
         <ul className="list-disc space-y-2 pl-5">
           <li>
-            <strong className="text-ink dark:text-slate-100">Free plan</strong>: core automatic tab grouping is free
-            forever, including custom grouping rules (domain, path, keyword, and regex matching).
+            <strong className="text-ink dark:text-slate-100">Free plan</strong>: every feature except cloud sync is free
+            forever, including unlimited groups, per-domain auto grouping, web collection, AI organize, and the page clipper.
           </li>
           <li>
             <strong className="text-ink dark:text-slate-100">Pro plan</strong>: a paid subscription that includes
-            unlimited tab groups, per-domain auto grouping, and multi-device cloud sync. Pricing is as displayed on the
+            multi-device cloud sync only. Pricing is as displayed on the
             website.
           </li>
         </ul>

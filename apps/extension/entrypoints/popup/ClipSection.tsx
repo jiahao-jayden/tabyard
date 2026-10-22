@@ -40,31 +40,28 @@ export function ClipSection({ activeTab }: { activeTab: Browser.tabs.Tab | undef
   const exportEnabled = settings?.exportEnabled === true;
   const configError = settings && exportEnabled ? validateClipSettings(settings) : null;
 
-  /** 首次需要正文时才抽取，之后复用 */
-  const ensureCapture = async (): Promise<RawCapture> => {
-    if (capture) return capture;
+  // 打开 popup 即抽取；抽取成功且有正文前，按钮保持置灰
+  useEffect(() => {
+    if (!clippable) return;
+    let alive = true;
     setLoading(true);
-    try {
-      const result = await extractTab({ id: tabId!, title: activeTab?.title }, url!);
-      setCapture(result);
-      return result;
-    } catch (error) {
-      toast.error(t('clip.extractFailed', { msg: (error as Error).message }));
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
+    extractTab({ id: tabId, title: activeTab?.title }, url)
+      .then((result) => alive && setCapture(result))
+      .catch((error: Error) => alive && toast.error(t('clip.extractFailed', { msg: error.message })))
+      .finally(() => alive && setLoading(false));
+    return () => {
+      alive = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tabId, url]);
 
-  const togglePreview = () => {
-    setOpen(!open);
-    if (!open) void ensureCapture().catch(() => {});
-  };
+  const ready = !!capture?.raw_text.trim();
 
   const run = async (action: (data: RawCapture, md: string) => Promise<void> | void) => {
     setBusy(true);
     try {
-      const data = await ensureCapture();
+      if (!capture) return;
+      const data = capture;
       // 备注和标签只在开启导出时出现，也只在此时写入 frontmatter
       const md = toMarkdown({ ...data, user_note: exportEnabled ? note : '', tags: exportEnabled ? tags : [] });
       await action(data, md);
@@ -106,19 +103,19 @@ export function ClipSection({ activeTab }: { activeTab: Browser.tabs.Tab | undef
     return <p className="text-xs text-muted-foreground">{t('clip.unsupported')}</p>;
   }
 
-  const working = busy || loading;
+  const disabled = busy || !ready;
   return (
     <div className="space-y-2">
       <div className="flex gap-2">
-        <Button variant="outline" className="h-9 flex-1 rounded-full" onClick={() => void copy()} disabled={working}>
-          {working ? <LoaderCircle className="animate-spin" /> : <Copy />}
+        <Button variant="outline" className="h-9 flex-1 rounded-full" onClick={() => void copy()} disabled={disabled}>
+          {busy || loading ? <LoaderCircle className="animate-spin" /> : <Copy />}
           {t('clip.copy')}
         </Button>
         <Button
           variant="outline"
           size="icon-lg"
           onClick={() => void download()}
-          disabled={working}
+          disabled={disabled}
           title={t('clip.download')}
           aria-label={t('clip.download')}
           className="rounded-full"
@@ -130,7 +127,7 @@ export function ClipSection({ activeTab }: { activeTab: Browser.tabs.Tab | undef
             variant="outline"
             size="icon-lg"
             onClick={() => void saveToObsidian()}
-            disabled={working || !!configError}
+            disabled={disabled || !!configError}
             title={configError ? t('clip.needSetup') : t('clip.saveTo')}
             aria-label={t('clip.saveTo')}
             className="rounded-full"
@@ -142,7 +139,7 @@ export function ClipSection({ activeTab }: { activeTab: Browser.tabs.Tab | undef
 
       <button
         type="button"
-        onClick={togglePreview}
+        onClick={() => setOpen(!open)}
         aria-expanded={open}
         className="flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
       >

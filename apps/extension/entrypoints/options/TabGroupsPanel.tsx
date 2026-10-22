@@ -20,7 +20,7 @@ import { fetchOfficialPacks, fetchPack, packsUrl, type OfficialPack } from '@/ut
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { enabledCount, FREE_GROUP_LIMIT, type Plan } from '@/utils/plan';
+import type { Plan } from '@/utils/plan';
 import {
   CONFIG_STORAGE_AREA,
   DEFAULT_OTHER_NAME,
@@ -107,12 +107,8 @@ export function TabGroupsPanel({ plan }: { plan: Plan }) {
         return null;
       }
     }
-    if (plan === 'free' && enabledCount(current) > FREE_GROUP_LIMIT) {
-      toast.error(t('rules.overLimit', { limit: FREE_GROUP_LIMIT }), { id: 'rules-error' });
-      return null;
-    }
     return current;
-  }, [groups, view, jsonText, plan, t]);
+  }, [groups, view, jsonText, t]);
 
   const commitGroups = useCallback((next: Group[]) => {
     setGroups(next);
@@ -368,7 +364,7 @@ export function TabGroupsPanel({ plan }: { plan: Plan }) {
           </CardAction>
         </CardHeader>
         <CardContent className="space-y-4">
-          {view === 'groups' && <GroupEditor groups={groups} plan={plan} onChange={commitGroups} />}
+          {view === 'groups' && <GroupEditor groups={groups} onChange={commitGroups} />}
           {view === 'table' && <RulesTable groups={groups} onChange={commitGroups} />}
           {view === 'json' && (
             <div className="space-y-2">
@@ -402,7 +398,6 @@ export function TabGroupsPanel({ plan }: { plan: Plan }) {
         pack={importing?.pack ?? null}
         version={importing?.version}
         groups={importing?.base ?? groups}
-        plan={plan}
         onClose={() => setImporting(null)}
         onConfirm={confirmImport}
       />

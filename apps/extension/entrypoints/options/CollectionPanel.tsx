@@ -1,16 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { browser } from 'wxt/browser';
-import { Crown, Download, Search, Settings2, Sparkles } from 'lucide-react';
-import { toast } from 'sonner';
+import { Download, Search, Settings2, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { hostnameOf } from '@tabyard/shared';
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { API_URL } from '@/utils/api';
 import { loadModelConfig, type ModelConfig } from '@/utils/collect/llm';
 import { COLLECT_KEY } from '@/utils/collect/url';
-import type { Plan } from '@/utils/plan';
 import {
   deleteBookmarks, loadCollect, moveBookmarks, type Bookmark, type CollectData,
 } from '@/utils/collect/store';
@@ -25,7 +22,7 @@ import { SelectionBar } from './SelectionBar';
 type SourceFilter = 'all' | 'web' | 'tweet';
 const SOURCES: SourceFilter[] = ['all', 'web', 'tweet'];
 
-export function CollectionPanel({ plan }: { plan: Plan }) {
+export function CollectionPanel() {
   const { t } = useTranslation();
   const [data, setData] = useState<CollectData | null>(null);
   const [filter, setFilter] = useState<FolderFilter>('all');
@@ -75,12 +72,6 @@ export function CollectionPanel({ plan }: { plan: Plan }) {
     });
 
   const startOrganize = async () => {
-    if (plan !== 'pro') {
-      toast(t('ai.proOnly'), {
-        action: { label: t('account.upgrade'), onClick: () => void browser.tabs.create({ url: `${API_URL}/api/checkout` }) },
-      });
-      return;
-    }
     const config = await loadModelConfig();
     if (config) setOrganizing(config);
     else setModelOpen(true);
@@ -108,7 +99,7 @@ export function CollectionPanel({ plan }: { plan: Plan }) {
             {t('x.open')}
           </Button>
           <Button variant="outline" size="sm" onClick={() => void startOrganize()} disabled={!data.bookmarks.some((b) => b.folderId === null)}>
-            {plan === 'pro' ? <Sparkles /> : <Crown />}
+            <Sparkles />
             {t('ai.button')}
           </Button>
           <Button variant="ghost" size="icon-sm" onClick={() => setModelOpen(true)} aria-label={t('ai.settingsTitle')}>
@@ -117,7 +108,7 @@ export function CollectionPanel({ plan }: { plan: Plan }) {
         </CardAction>
       </CardHeader>
       <CardContent className="flex flex-col gap-6 sm:flex-row">
-        <FolderSidebar data={data} plan={plan} selected={filter} onSelect={changeFilter} />
+        <FolderSidebar data={data} selected={filter} onSelect={changeFilter} />
         <div className="min-w-0 flex-1 space-y-4">
           {chosen.length > 0 ? (
             <SelectionBar

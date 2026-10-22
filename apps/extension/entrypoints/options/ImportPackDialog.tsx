@@ -6,7 +6,6 @@ import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
 import { applyImport, defaultMapping, planImport, type RulePack } from '@/utils/pack';
-import { enabledCount, groupLimit, type Plan } from '@/utils/plan';
 import type { Group } from '@tabyard/shared';
 import { COLOR_DOT } from './colors';
 
@@ -14,18 +13,17 @@ interface Props {
   pack: RulePack | null;
   version?: number;
   groups: Group[];
-  plan: Plan;
   onClose: () => void;
   onConfirm: (groups: Group[], importedCount: number) => void;
 }
 
-export function ImportPackDialog({ pack, version, groups, plan, onClose, onConfirm }: Props) {
+export function ImportPackDialog({ pack, version, groups, onClose, onConfirm }: Props) {
   const { t } = useTranslation();
   return (
     <Dialog open={pack !== null} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-xl">
         {pack ? (
-          <Body key={pack.meta.id} pack={pack} version={version} groups={groups} plan={plan} onConfirm={onConfirm} />
+          <Body key={pack.meta.id} pack={pack} version={version} groups={groups} onConfirm={onConfirm} />
         ) : (
           <DialogTitle className="sr-only">{t('import.title')}</DialogTitle>
         )}
@@ -34,11 +32,9 @@ export function ImportPackDialog({ pack, version, groups, plan, onClose, onConfi
   );
 }
 
-function Body({ pack, version, groups, plan, onConfirm }: Omit<Props, 'pack' | 'onClose'> & { pack: RulePack }) {
+function Body({ pack, version, groups, onConfirm }: Omit<Props, 'pack' | 'onClose'> & { pack: RulePack }) {
   const { t } = useTranslation();
-  const slots = groupLimit(plan) - enabledCount(groups);
-
-  const mapping = useMemo(() => defaultMapping(groups, pack, slots), [groups, pack, slots]);
+  const mapping = useMemo(() => defaultMapping(groups, pack), [groups, pack]);
   const importPlan = useMemo(() => planImport(groups, pack, mapping), [groups, pack, mapping]);
   const [picked, setPicked] = useState<Set<string>>(
     () => new Set(importPlan.items.filter((i) => !i.conflictWith).map((i) => i.id)),
@@ -54,7 +50,6 @@ function Body({ pack, version, groups, plan, onConfirm }: Omit<Props, 'pack' | '
   const note = (index: number) => {
     const m = mapping[index]!;
     if (m.type === 'existing') return t('import.toExisting', { name: groups.find((g) => g.id === m.groupId)?.name });
-    if (m.type === 'skip') return t('import.full');
     return null;
   };
 
@@ -95,7 +90,7 @@ function Body({ pack, version, groups, plan, onConfirm }: Omit<Props, 'pack' | '
                 <span className={`size-2.5 shrink-0 rounded-full ${COLOR_DOT[pg.color]}`} />
                 <span className="min-w-0 flex-1 truncate font-medium">{pg.name}</span>
                 {note(gi) && (
-                  <span className={`shrink-0 text-xs ${mapping[gi]!.type === 'skip' ? 'text-amber-700' : 'text-muted-foreground'}`}>
+                  <span className={"shrink-0 text-xs text-muted-foreground"}>
                     {note(gi)}
                   </span>
                 )}
