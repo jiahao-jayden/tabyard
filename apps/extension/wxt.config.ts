@@ -21,6 +21,7 @@ export default defineConfig({
 			"activeTab",
 			"scripting",
 			"webRequest",
+			"unlimitedStorage",
 		],
 		// AI 整理所用的模型服务域名由用户填写，保存配置时再按域名单独申请
 		optional_host_permissions: ["*://*/*"],

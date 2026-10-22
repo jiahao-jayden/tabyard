@@ -15,7 +15,7 @@ import { importBookmarks, type CollectData } from '@/utils/collect/store';
 import { normalizeUrl } from '@/utils/collect/url';
 import { disableXButton, enableXButton, isXButtonEnabled } from '@/utils/x/button-script';
 import {
-  loadXCache, loadXState, X_CACHE_KEY, X_STATE_KEY, XFETCH_STALE_MS, type XCache, type XFetchState,
+  loadXCache, loadXState, X_STATE_KEY, XFETCH_STALE_MS, type XCache, type XFetchState,
 } from '@/utils/x/cache';
 import { X_ORIGINS } from '@/utils/x/origins';
 import { tweetToBookmark } from '@/utils/x/tweet';
@@ -29,7 +29,7 @@ function useXFetch() {
     const refresh = () => void Promise.all([loadXCache(), loadXState()]).then(([c, s]) => { setCache(c); setState(s); });
     refresh();
     const onChanged = (changes: Record<string, unknown>, area: string) => {
-      if (area === 'local' && (changes[X_CACHE_KEY] || changes[X_STATE_KEY])) refresh();
+      if (area === 'local' && (changes[X_STATE_KEY])) refresh();
     };
     browser.storage.onChanged.addListener(onChanged);
     return () => browser.storage.onChanged.removeListener(onChanged);
