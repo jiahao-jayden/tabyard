@@ -2,6 +2,7 @@ import { normalizeCode, type RulePack } from '@tabyard/shared';
 import { browser } from 'wxt/browser';
 
 export const API_URL = import.meta.env.WXT_API_URL;
+export const REPO_URL = 'https://github.com/jiahao-jayden/tabyard';
 
 export class ApiError extends Error {
   constructor(readonly code: string, message?: string) {

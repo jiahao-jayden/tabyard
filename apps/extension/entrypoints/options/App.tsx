@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Toaster } from 'sonner';
 import { browser } from 'wxt/browser';
-import { Bookmark, Crown, Layers, Scissors } from 'lucide-react';
+import { Bookmark, Crown, Github, Layers, Scissors } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { API_URL } from '@/utils/api';
+import { API_URL, REPO_URL } from '@/utils/api';
 import { setLanguagePref } from '@/utils/i18n';
 import { getPlan, refreshPlan, type Plan } from '@/utils/plan';
 import { loadLanguagePref, type LanguagePref } from '@/utils/rules';
@@ -68,6 +68,11 @@ export default function App() {
             </Button>
           )}
           <AccountButton pro={plan === 'pro'} />
+          <Button variant="outline" size="icon" className="rounded-full bg-card" asChild>
+            <a href={REPO_URL} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+              <Github />
+            </a>
+          </Button>
           <Select value={langPref} onValueChange={(v) => changeLanguage(v as LanguagePref)}>
             <SelectTrigger className="w-36 rounded-full bg-card backdrop-blur" aria-label={t('app.language')}>
               <SelectValue />

@@ -2,6 +2,7 @@ export type Locale = 'zh' | 'en';
 
 export const INSTALL_URL =
   'https://chromewebstore.google.com/detail/lnmhlchecohhbmpioimnfdhblolnflec';
+export const REPO_URL = 'https://github.com/jiahao-jayden/tabyard';
 
 const zh = {
   siteName: 'Tabyard 归处',

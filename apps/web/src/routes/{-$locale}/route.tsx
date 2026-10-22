@@ -1,8 +1,8 @@
 import { createFileRoute, Link, notFound, Outlet, useLocation } from '@tanstack/react-router';
 import { useState } from 'react';
-import { Crown } from '@phosphor-icons/react';
+import { Crown, GithubLogo } from '@phosphor-icons/react';
 import { authClient } from '~/auth-client';
-import { dictionaries, INSTALL_URL, localeFromParam } from '~/i18n';
+import { dictionaries, INSTALL_URL, localeFromParam, REPO_URL } from '~/i18n';
 import { fetchSession } from '~/server/fns';
 
 export const Route = createFileRoute('/{-$locale}')({
@@ -56,6 +56,15 @@ function Layout() {
           >
             {t.navPricing}
           </Link>
+          <a
+            href={REPO_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+            className="frost flex size-8 items-center justify-center rounded-full transition hover:bg-white/80 dark:hover:bg-white/10"
+          >
+            <GithubLogo size={16} weight="fill" />
+          </a>
           <a
             href={switchHref}
             aria-label={t.languageLabel}
