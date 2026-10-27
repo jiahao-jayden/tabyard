@@ -28,14 +28,20 @@ export function toPack(groups: Group[], name: string): RulePack {
   };
 }
 
-export function packToGroups(pack: RulePack): Group[] {
-  return pack.groups.map((g) => ({
-    id: uid(),
-    name: g.name,
-    color: g.color,
-    enabled: g.enabled !== false,
-    patterns: g.patterns,
-  }));
+/** 同名分组沿用 base 中的 id，反复解析同一份文本得到相同结果 */
+export function packToGroups(pack: RulePack, base: Group[]): Group[] {
+  const used = new Set<string>();
+  return pack.groups.map((g) => {
+    const id = base.find((b) => b.name === g.name && !used.has(b.id))?.id ?? uid();
+    used.add(id);
+    return {
+      id,
+      name: g.name,
+      color: g.color,
+      enabled: g.enabled !== false,
+      patterns: g.patterns,
+    };
+  });
 }
 
 export type GroupMapping =

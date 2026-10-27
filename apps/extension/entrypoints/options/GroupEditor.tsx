@@ -41,6 +41,7 @@ export function GroupEditor({ groups, onChange }: Props) {
     const id = uid();
     setExpanded((prev) => new Set(prev).add(id));
     onChange([...groups, { id, name: '', color: 'blue', enabled: true, patterns: [''] }]);
+    focusPattern(id, 0);
   };
 
   const removeGroup = (g: Group) => {
@@ -64,6 +65,8 @@ export function GroupEditor({ groups, onChange }: Props) {
         </p>
       )}
 
+      {groups.length > 0 && (
+      <div className="max-h-[60vh] space-y-3 overflow-y-auto pr-2">
       {groups.map((g) => {
         const collapsed = !expanded.has(g.id);
         return (
@@ -193,6 +196,8 @@ export function GroupEditor({ groups, onChange }: Props) {
           </div>
         );
       })}
+      </div>
+      )}
 
       <div className="flex items-center gap-3">
         <Button variant="outline" onClick={addGroup}>

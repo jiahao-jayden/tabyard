@@ -101,7 +101,7 @@ export function TabGroupsPanel({ plan }: { plan: Plan }) {
     let current = groups;
     if (view === 'json') {
       try {
-        current = packToGroups(parsePack(jsonText));
+        current = packToGroups(parsePack(jsonText), groups);
       } catch (error) {
         toast.error(t('rules.invalidPack', { msg: (error as Error).message }), { id: 'rules-error' });
         return null;
@@ -130,13 +130,16 @@ export function TabGroupsPanel({ plan }: { plan: Plan }) {
     if (!current) return;
     const key = JSON.stringify({ settings, groups: cleanGroups(current) });
     if (key === lastSaved.current) return;
+    // 先登记，storage.onChanged 可能早于 saveConfig 返回触发，避免把自己的写入当成外部修改
+    const previous = lastSaved.current;
+    lastSaved.current = key;
     try {
       await saveConfig({ settings, groups: cleanGroups(current) });
     } catch (error) {
+      lastSaved.current = previous;
       toast.error(t('rules.saveFailed', { msg: (error as Error).message }), { id: 'rules-saved' });
       return;
     }
-    lastSaved.current = key;
     toast.success(t('rules.saved'), { id: 'rules-saved' });
   }, [settings, resolveGroups, t]);
 
