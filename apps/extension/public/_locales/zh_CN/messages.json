@@ -1,4 +1,4 @@
 {
   "extName": { "message": "Tabyard 归处：标签自动分组" },
-  "extDescription": { "message": "按你的规则把标签自动分进 Chrome 原生标签组，还能一键把任意网页剪藏成干净的 Markdown。" }
+  "extDescription": { "message": "按你的规则把标签自动分进 Chrome 原生分组，还能剪藏 Markdown、截图和录制标签页。" }
 }
