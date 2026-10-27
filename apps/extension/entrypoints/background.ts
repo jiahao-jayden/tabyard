@@ -30,6 +30,17 @@ async function getManagedTitles(): Promise<Set<string>> {
   return new Set((managedGroups as string[]) || []);
 }
 
+/** 插件创建过的分组，加上当前配置里的分组名（覆盖重装或 managedGroups 之前创建的分组） */
+async function getOwnedTitles(settings: GroupSettings, groups: Group[]): Promise<Set<string>> {
+  const owned = await getManagedTitles();
+  for (const g of groups) {
+    const name = g.name.trim();
+    if (name) owned.add(name);
+  }
+  if (settings.fallback === 'other') owned.add(settings.otherGroupName.trim());
+  return owned;
+}
+
 async function markManaged(title: string): Promise<void> {
   const set = await getManagedTitles();
   if (!set.has(title)) {
@@ -42,12 +53,20 @@ async function groupTab(
   tab: Browser.tabs.Tab,
   settings: GroupSettings,
   groups: Group[],
-  /** 刚新建的标签页可能继承了打开者的分组，需要按自己的网址重新归类 */
-  fresh = false,
+  /**
+   * 新建或网址变化时传入插件管理的分组名：标签页若在这些分组里（继承自打开者或页内跳转），
+   * 按当前网址重新归类；用户自建的分组不动
+   */
+  reclassifyFrom: Set<string> | null = null,
   /** 仅事件触发的单个标签页才按设置插入；批量整理保持原有相对顺序 */
   insertAtStart = false,
 ): Promise<void> {
-  if (tab.groupId !== -1 && !fresh) return;
+  let currentTitle: string | undefined;
+  if (tab.groupId !== -1) {
+    if (!reclassifyFrom) return;
+    currentTitle = (await browser.tabGroups.get(tab.groupId).catch(() => null))?.title;
+    if (currentTitle == null || !reclassifyFrom.has(currentTitle)) return;
+  }
 
   const matched = findBestGroup(tab, groups);
   let groupName: string;
@@ -61,11 +80,7 @@ async function groupTab(
     groupName = fb.groupName;
     color = fb.color as Browser.tabGroups.Color;
   }
-  if (!groupName || tab.windowId == null) return;
-  if (tab.groupId !== -1) {
-    const current = await browser.tabGroups.get(tab.groupId).catch(() => null);
-    if (current?.title === groupName) return;
-  }
+  if (!groupName || tab.windowId == null || currentTitle === groupName) return;
 
   // Multiple tab update events can arrive together. Serialize each
   // window/group pair so concurrent events cannot create duplicate groups.
@@ -117,11 +132,9 @@ async function groupTab(
   }
 }
 
-// 刚创建、还没按网址处理过的标签页
-const freshTabs = new Set<number>();
 const RETRY_DELAYS = [300, 1000];
 
-async function groupTabById(tabId: number): Promise<void> {
+async function groupTabById(tabId: number, reclassify: boolean): Promise<void> {
   let tab: Browser.tabs.Tab;
   try {
     tab = await browser.tabs.get(tabId);
@@ -131,12 +144,11 @@ async function groupTabById(tabId: number): Promise<void> {
   if (!isGroupableUrl(tab.url)) return;
   const { settings, groups } = await loadConfig();
   if (!settings.enabled) return;
-  const fresh = freshTabs.has(tabId);
+  const owned = reclassify ? await getOwnedTitles(settings, groups) : null;
   // 拖动标签页等瞬时状态下 Chrome 会拒绝分组，稍后重试
   for (let attempt = 0; ; attempt++) {
     try {
-      await groupTab(tab, settings, groups, fresh, settings.insertPosition === 'start');
-      freshTabs.delete(tabId);
+      await groupTab(tab, settings, groups, owned, settings.insertPosition === 'start');
       return;
     } catch (e) {
       if (attempt >= RETRY_DELAYS.length) {
@@ -153,14 +165,19 @@ async function groupTabById(tabId: number): Promise<void> {
   }
 }
 
-function scheduleGroupTab(tabId: number): void {
+/** 防抖窗口内出现过新建或网址变化的标签页 */
+const pendingReclassify = new Set<number>();
+
+function scheduleGroupTab(tabId: number, reclassify: boolean): void {
   const prev = pendingTimers.get(tabId);
   if (prev) clearTimeout(prev);
+  if (reclassify) pendingReclassify.add(tabId);
   pendingTimers.set(
     tabId,
     setTimeout(() => {
       pendingTimers.delete(tabId);
-      void groupTabById(tabId);
+      const shouldReclassify = pendingReclassify.delete(tabId);
+      void groupTabById(tabId, shouldReclassify);
     }, DEBOUNCE_MS),
   );
 }
@@ -183,18 +200,10 @@ async function groupAllTabs(): Promise<void> {
 async function regroupAll(): Promise<void> {
   const { settings, groups: allGroups } = await loadConfig();
   if (!settings.enabled) return;
-  const managed = await getManagedTitles();
-  // Include configured group names so groups created before managedGroups was
-  // introduced (or after a reinstall) are also cleaned up.
-  const configuredNames = new Set(
-    allGroups.map((g) => g.name.trim()).filter(Boolean),
-  );
-  if (settings.fallback === 'other') configuredNames.add(settings.otherGroupName.trim());
+  const owned = await getOwnedTitles(settings, allGroups);
   const chromeGroups = await browser.tabGroups.query({});
   const managedIds = new Set(
-    chromeGroups
-      .filter((g) => managed.has(g.title ?? '') || configuredNames.has(g.title ?? ''))
-      .map((g) => g.id),
+    chromeGroups.filter((g) => owned.has(g.title ?? '')).map((g) => g.id),
   );
   if (managedIds.size > 0) {
     const tabs = await browser.tabs.query({});
@@ -216,14 +225,12 @@ export default defineBackground(() => {
 
   browser.tabs.onCreated.addListener((tab) => {
     if (tab.id == null) return;
-    freshTabs.add(tab.id);
-    scheduleGroupTab(tab.id);
+    scheduleGroupTab(tab.id, true);
   });
-  browser.tabs.onRemoved.addListener((tabId) => freshTabs.delete(tabId));
 
   browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
     if (changeInfo.url || changeInfo.status === 'complete' || (changeInfo as { title?: string }).title) {
-      scheduleGroupTab(tabId);
+      scheduleGroupTab(tabId, !!changeInfo.url);
     }
   });
 
