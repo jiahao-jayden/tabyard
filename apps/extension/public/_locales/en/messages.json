@@ -1,4 +1,4 @@
 {
   "extName": { "message": "Tabyard" },
-  "extDescription": { "message": "Automatically sort tabs into native Chrome groups with your own rules: domain, path, keyword and regex." }
+  "extDescription": { "message": "Auto-sort tabs into native Chrome tab groups by your rules, plus one-click clipping of any page to clean Markdown." }
 }
