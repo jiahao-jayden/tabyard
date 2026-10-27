@@ -19,7 +19,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function Privacy() {
   return (
     <div className="mx-auto max-w-3xl px-5 py-12">
-      <p className="text-sm text-slate-500">最后更新：2026 年 10 月 19 日 · 适用产品：Tabyard Chrome 扩展</p>
+      <p className="text-sm text-slate-500">最后更新：2026 年 10 月 27 日 · 适用产品：Tabyard Chrome 扩展</p>
       <h1 className="mt-2 text-3xl font-medium tracking-tight">隐私政策</h1>
       <p className="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
         Tabyard（以下简称"我们"）是一款 Chrome 扩展，可根据你自定义的规则将标签页自动归入 Chrome
@@ -35,6 +35,10 @@ function Privacy() {
           </li>
           <li>
             <strong className="text-ink dark:text-slate-100">你的规则与设置</strong>：保存在浏览器本地的扩展存储（<code>chrome.storage</code>）中。
+          </li>
+          <li>
+            <strong className="text-ink dark:text-slate-100">截图、录屏与网页剪藏</strong>：仅在你主动操作时读取当前标签页的画面与页面内容，录屏时还会使用你开启的标签页声音、麦克风或摄像头。截图、录屏文件与收藏封面图只保存在本机浏览器存储中，由你自行预览、复制或下载，
+            <strong className="text-ink dark:text-slate-100">不会上传到我们的服务器</strong>，封面图也不参与云同步。
           </li>
         </ul>
       </Section>
@@ -79,7 +83,7 @@ function Privacy() {
 
       <hr className="my-12 border-slate-200 dark:border-slate-700" />
 
-      <p className="text-sm text-slate-500">Last updated: October 19, 2026 · Applies to: Tabyard Chrome extension</p>
+      <p className="text-sm text-slate-500">Last updated: October 27, 2026 · Applies to: Tabyard Chrome extension</p>
       <h1 className="mt-2 text-3xl font-medium tracking-tight">Privacy Policy</h1>
       <p className="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
         Tabyard ("we", "our") is a Chrome extension that automatically sorts your browser tabs into native Chrome tab
@@ -99,6 +103,14 @@ function Privacy() {
           <li>
             <strong className="text-ink dark:text-slate-100">Your rules and settings</strong>: stored in the browser's
             local extension storage (<code>chrome.storage</code>).
+          </li>
+          <li>
+            <strong className="text-ink dark:text-slate-100">Screenshots, recordings, and page clips</strong>: only when you
+            start them, the extension reads the current tab's pixels and page content, plus the tab audio, microphone, or
+            camera you turn on for a recording. Screenshots, recordings, and collection cover images stay in your browser's
+            local storage for you to preview, copy, or download.{' '}
+            <strong className="text-ink dark:text-slate-100">They are never uploaded to our servers</strong>, and cover
+            images are not included in cloud sync.
           </li>
         </ul>
       </Section>

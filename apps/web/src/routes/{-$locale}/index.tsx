@@ -63,6 +63,20 @@ function Landing() {
         </div>
       </section>
 
+      <section className="grid grid-cols-[minmax(0,1fr)] items-center gap-8 pb-20 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] lg:gap-14">
+        <div className="max-w-sm lg:order-last">
+          <h2 className="text-2xl font-medium tracking-tight md:text-3xl">{t.bentoCaptureTitle}</h2>
+          <p className="mt-4 text-base leading-relaxed text-slate-600 dark:text-slate-300">{t.bentoCaptureDesc}</p>
+        </div>
+        <div className="frost rounded-[20px] p-3">
+          <img src="/capture-record.webp" alt="" width={2048} height={1269} loading="lazy" className="w-full rounded-2xl" />
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:order-last lg:col-span-2">
+          <ShotCard title={t.bentoFullTitle} desc={t.bentoFullDesc} src="/capture-full.webp" />
+          <ShotCard title={t.bentoRecordTitle} desc={t.bentoRecordDesc} src="/capture-options.webp" />
+        </div>
+      </section>
+
       {featured.length > 0 && (
         <section className="pb-16">
           <div className="flex items-end justify-between">
