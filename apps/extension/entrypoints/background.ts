@@ -11,6 +11,7 @@ import { watchBookmarksRequests, watchJobTabClosed } from '@/utils/x/fetch-job';
 import { handleXMessage } from '@/utils/x/messages';
 import { fetchPushShare, PUSH_CONTENT_REQUEST } from '@/utils/clip/push-share';
 import { takeScreenshot, type ScreenshotRequest } from '@/utils/screenshot/capture';
+import { handleRecordMessage, watchRecording } from '@/utils/record/controller';
 import {
   CONFIG_STORAGE_AREA,
   fallbackGroupFor,
@@ -264,6 +265,14 @@ export default defineBackground(() => {
       void regroupAll().finally(() => sendResponse({ ok: true }));
       return true;
     }
+    const recordReply = handleRecordMessage(msg);
+    if (recordReply) {
+      void recordReply.then(sendResponse, (e: Error) => {
+        console.warn('[tabyard] record failed:', e);
+        sendResponse({ ok: false, error: e.message });
+      });
+      return true;
+    }
     // 来自 x.com 页面上的脚本或设置页的消息
     const reply = handleXMessage(msg);
     if (reply) {
@@ -272,6 +281,7 @@ export default defineBackground(() => {
     }
   });
 
+  watchRecording();
   watchBookmarksRequests();
   watchJobTabClosed();
   void syncXButton();

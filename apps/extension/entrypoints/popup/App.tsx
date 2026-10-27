@@ -8,6 +8,7 @@ import { loadConfig, patchSettings } from '@/utils/rules';
 import { Toaster } from 'sonner';
 import { ClipSection } from './ClipSection';
 import { CollectSection } from './CollectSection';
+import { RecordSection } from './RecordSection';
 import { ScreenshotSection } from './ScreenshotSection';
 
 function MenuRow({
@@ -79,6 +80,7 @@ export default function App() {
         <TabsList className="mx-4 mb-3 flex w-auto">
           <TabsTrigger value="general" className="flex-1">{t('popup.tabGeneral')}</TabsTrigger>
           <TabsTrigger value="screenshot" className="flex-1">{t('popup.tabScreenshot')}</TabsTrigger>
+          <TabsTrigger value="record" className="flex-1">{t('popup.tabRecord')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="general" className="space-y-0">
@@ -111,6 +113,10 @@ export default function App() {
 
         <TabsContent value="screenshot" className="px-4 pb-4">
           {activeTab === undefined ? null : <ScreenshotSection activeTab={activeTab ?? undefined} />}
+        </TabsContent>
+
+        <TabsContent value="record" className="px-4 pb-4">
+          {activeTab === undefined ? null : <RecordSection activeTab={activeTab ?? undefined} />}
         </TabsContent>
       </Tabs>
       <Toaster position="top-center" richColors />

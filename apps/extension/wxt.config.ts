@@ -22,6 +22,13 @@ export default defineConfig({
 			"scripting",
 			"webRequest",
 			"unlimitedStorage",
+			// 录屏：捕获当前标签页，并在 popup 关闭后由 offscreen 文档继续录制
+			"tabCapture",
+			"offscreen",
+		],
+		// 录屏时摄像头小窗以 iframe 嵌入被录制的页面
+		web_accessible_resources: [
+			{ resources: ["camera.html"], matches: ["<all_urls>"], use_dynamic_url: true },
 		],
 		// AI 整理所用的模型服务域名由用户填写，保存配置时再按域名单独申请
 		optional_host_permissions: ["*://*/*"],

@@ -104,7 +104,7 @@ export async function startXFetch(full: boolean): Promise<void> {
     func: (job: XFetchJob) => { window.__tabyardXFetch = job; },
     args: [{ url: template.url, headers: template.headers }],
   });
-  await browser.scripting.executeScript({ target: { tabId: tab.id }, files: ['x-fetch.js'] });
+  await browser.scripting.executeScript({ target: { tabId: tab.id }, files: ['/x-fetch.js'] });
 }
 
 const pageMessageSchema = z.object({ type: z.literal('x-fetch-page'), tweets: z.array(z.unknown()).max(200) });

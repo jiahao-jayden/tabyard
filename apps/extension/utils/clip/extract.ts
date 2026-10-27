@@ -11,7 +11,7 @@ export async function extractTab(tab: { id: number; title?: string }, url: strin
   const xhsNote = isXhsNoteUrl(url)
     ? (await browser.scripting.executeScript({ target: { tabId: tab.id }, world: 'MAIN', func: readXhsNote }))[0]?.result ?? null
     : null;
-  await browser.scripting.executeScript({ target: { tabId: tab.id }, files: ['content-scripts/clip.js'] });
+  await browser.scripting.executeScript({ target: { tabId: tab.id }, files: ['/content-scripts/clip.js'] });
   const res: ExtractResponse | undefined = await browser.tabs.sendMessage(tab.id, { type: CLIP_EXTRACT, xhsNote });
   if (!res?.ok) throw new Error(res?.error ?? 'No response from page');
   // 标签页标题是用户在浏览器里看到的标题，比页面内抽取的更稳定
