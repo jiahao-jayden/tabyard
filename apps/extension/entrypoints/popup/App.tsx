@@ -3,10 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { browser, type Browser } from 'wxt/browser';
 import { Bookmark, ChevronRight, LoaderCircle, Settings2, Sparkles } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { loadConfig, patchSettings } from '@/utils/rules';
 import { Toaster } from 'sonner';
 import { ClipSection } from './ClipSection';
 import { CollectSection } from './CollectSection';
+import { ScreenshotSection } from './ScreenshotSection';
 
 function MenuRow({
   icon, label, onClick, disabled, chevron = true,
@@ -73,31 +75,44 @@ export default function App() {
         <Switch checked={enabled} onCheckedChange={(v) => void toggle(v)} aria-label={t('popup.toggleLabel')} />
       </header>
 
-      <div className="px-4 pb-4">
-        {activeTab === undefined ? null : <CollectSection activeTab={activeTab ?? undefined} />}
-      </div>
+      <Tabs defaultValue="general" className="gap-0">
+        <TabsList className="mx-4 mb-3 flex w-auto">
+          <TabsTrigger value="general" className="flex-1">{t('popup.tabGeneral')}</TabsTrigger>
+          <TabsTrigger value="screenshot" className="flex-1">{t('popup.tabScreenshot')}</TabsTrigger>
+        </TabsList>
 
-      <div className="border-t px-4 py-3">
-        {activeTab === undefined ? null : <ClipSection activeTab={activeTab ?? undefined} />}
-      </div>
+        <TabsContent value="general" className="space-y-0">
+          <div className="px-4 pb-4">
+            {activeTab === undefined ? null : <CollectSection activeTab={activeTab ?? undefined} />}
+          </div>
 
-      <MenuRow
-        icon={busy ? <LoaderCircle className="animate-spin" /> : <Sparkles />}
-        label={busy ? t('popup.regrouping') : t('popup.regroup')}
-        onClick={() => void regroup()}
-        disabled={busy}
-        chevron={false}
-      />
-      <MenuRow
-        icon={<Bookmark />}
-        label={t('popup.collectOpen')}
-        onClick={() => void browser.tabs.create({ url: `${location.origin}/options.html#collect` })}
-      />
-      <MenuRow
-        icon={<Settings2 />}
-        label={t('popup.settings')}
-        onClick={() => void browser.runtime.openOptionsPage()}
-      />
+          <div className="border-t px-4 py-3">
+            {activeTab === undefined ? null : <ClipSection activeTab={activeTab ?? undefined} />}
+          </div>
+
+          <MenuRow
+            icon={busy ? <LoaderCircle className="animate-spin" /> : <Sparkles />}
+            label={busy ? t('popup.regrouping') : t('popup.regroup')}
+            onClick={() => void regroup()}
+            disabled={busy}
+            chevron={false}
+          />
+          <MenuRow
+            icon={<Bookmark />}
+            label={t('popup.collectOpen')}
+            onClick={() => void browser.tabs.create({ url: `${location.origin}/options.html#collect` })}
+          />
+          <MenuRow
+            icon={<Settings2 />}
+            label={t('popup.settings')}
+            onClick={() => void browser.runtime.openOptionsPage()}
+          />
+        </TabsContent>
+
+        <TabsContent value="screenshot" className="px-4 pb-4">
+          {activeTab === undefined ? null : <ScreenshotSection activeTab={activeTab ?? undefined} />}
+        </TabsContent>
+      </Tabs>
       <Toaster position="top-center" richColors />
     </div>
   );

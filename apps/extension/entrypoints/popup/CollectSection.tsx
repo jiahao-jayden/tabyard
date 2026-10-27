@@ -1,21 +1,13 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Browser } from 'wxt/browser';
-import { BookmarkCheck, BookmarkPlus, Check, LoaderCircle, Plus, X } from 'lucide-react';
+import { BookmarkCheck, BookmarkPlus, LoaderCircle } from 'lucide-react';
+import { FolderPicker } from '@/components/FolderPicker';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import {
-  Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, SelectValue,
-} from '@/components/ui/select';
 import { capturePage, isCollectable, type PageInfo } from '@/utils/collect/capture';
-import {
-  addBookmark, addFolder, loadCollect, type Folder,
-} from '@/utils/collect/store';
+import { addBookmark, loadCollect, type Folder } from '@/utils/collect/store';
 import { normalizeUrl } from '@/utils/collect/url';
 import { PagePreview } from './PagePreview';
-
-const UNFILED = 'none';
-const NEW_FOLDER = '__new__';
 
 interface CurrentTab {
   id?: number;
@@ -29,11 +21,9 @@ export function CollectSection({ activeTab }: { activeTab: Browser.tabs.Tab | un
   const [tab, setTab] = useState<CurrentTab | null>(null);
   const [page, setPage] = useState<PageInfo | null>(null);
   const [folders, setFolders] = useState<Folder[]>([]);
-  const [folder, setFolder] = useState(UNFILED);
+  const [folder, setFolder] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [creating, setCreating] = useState(false);
-  const [newName, setNewName] = useState('');
   useEffect(() => {
     void loadCollect().then((data) => {
       setFolders(data.folders);
@@ -44,26 +34,16 @@ export function CollectSection({ activeTab }: { activeTab: Browser.tabs.Tab | un
       const existing = data.bookmarks.find((b) => b.url === normalizeUrl(current.url));
       if (existing) {
         setSaved(true);
-        setFolder(existing.folderId ?? UNFILED);
+        setFolder(existing.folderId);
       }
     });
   }, [activeTab]);
-
-  const createFolder = async (event: FormEvent) => {
-    event.preventDefault();
-    if (!newName.trim()) return;
-    const created = await addFolder(newName);
-    setFolders((list) => [...list, created]);
-    setFolder(created.id);
-    setNewName('');
-    setCreating(false);
-  };
 
   const save = async () => {
     if (!page) return;
     setBusy(true);
     try {
-      await addBookmark({ ...page, folderId: folder === UNFILED ? null : folder });
+      await addBookmark({ ...page, folderId: folder });
       setSaved(true);
     } finally {
       setBusy(false);
@@ -73,45 +53,14 @@ export function CollectSection({ activeTab }: { activeTab: Browser.tabs.Tab | un
   return (
     <div className="space-y-3">
       {tab && <PagePreview page={page} />}
-      {creating ? (
-        <form onSubmit={(e) => void createFolder(e)} className="flex items-center gap-1">
-          <Input
-            autoFocus
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            placeholder={t('collect.newFolder')}
-            maxLength={40}
-            className="h-9 rounded-full"
-          />
-          <Button type="submit" size="icon" disabled={!newName.trim()} aria-label={t('collect.addFolder')}>
-            <Check />
-          </Button>
-          <Button type="button" variant="ghost" size="icon" onClick={() => setCreating(false)} aria-label={t('popup.collectCancel')}>
-            <X />
-          </Button>
-        </form>
-      ) : (
-      <Select
+      <FolderPicker
+        folders={folders}
         value={folder}
-        onValueChange={(v) => (v === NEW_FOLDER ? setCreating(true) : setFolder(v))}
+        onChange={setFolder}
+        onCreated={(created) => setFolders((list) => [...list, created])}
         disabled={!tab}
-      >
-        <SelectTrigger className="h-9 w-full rounded-full bg-card" aria-label={t('popup.collectFolder')}>
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value={UNFILED}>{t('collect.unfiled')}</SelectItem>
-          {folders.map((f) => (
-            <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
-          ))}
-          <SelectSeparator />
-          <SelectItem value={NEW_FOLDER}>
-            <Plus />
-            {t('popup.collectNewFolder')}
-          </SelectItem>
-        </SelectContent>
-      </Select>
-      )}
+        className="w-full"
+      />
       <Button
         size="lg"
         className="h-9 w-full rounded-full"

@@ -110,7 +110,27 @@
     "collectFolder": "Folder",
     "collectOpen": "Website collection",
     "collectNewFolder": "New folder…",
-    "collectCancel": "Cancel"
+    "collectCancel": "Cancel",
+    "tabGeneral": "General",
+    "tabScreenshot": "Screenshot"
+  },
+  "screenshot": {
+    "visible": "Visible area",
+    "full": "Full page",
+    "region": "Select area",
+    "regionHint": "Drag to select an area · Esc to cancel",
+    "unsupported": "This page can't be captured",
+    "failed": "Screenshot failed: {{msg}}",
+    "pageTitle": "Screenshot",
+    "copy": "Copy image",
+    "download": "Download PNG",
+    "copied": "Copied to clipboard",
+    "copyFailed": "Copy failed: {{msg}}",
+    "downloaded": "Downloaded {{name}}",
+    "collect": "Save to collection",
+    "collected": "Saved to collection with this screenshot as cover",
+    "collectFailed": "Couldn't save: {{msg}}",
+    "missing": "This screenshot is no longer available. Take a new one from the popup."
   },
   "importSource": {
     "title": "Import rule pack",

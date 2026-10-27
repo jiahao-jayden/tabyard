@@ -110,7 +110,27 @@
     "collectFolder": "文件夹",
     "collectOpen": "网页收藏集",
     "collectNewFolder": "新建文件夹…",
-    "collectCancel": "取消"
+    "collectCancel": "取消",
+    "tabGeneral": "常规",
+    "tabScreenshot": "截图"
+  },
+  "screenshot": {
+    "visible": "可视区域",
+    "full": "整个页面",
+    "region": "选择区域",
+    "regionHint": "拖动选择区域 · Esc 取消",
+    "unsupported": "此页面无法截图",
+    "failed": "截图失败：{{msg}}",
+    "pageTitle": "截图",
+    "copy": "复制图片",
+    "download": "下载 PNG",
+    "copied": "已复制到剪贴板",
+    "copyFailed": "复制失败：{{msg}}",
+    "downloaded": "已下载 {{name}}",
+    "collect": "收藏",
+    "collected": "已收藏，封面使用这张截图",
+    "collectFailed": "收藏失败：{{msg}}",
+    "missing": "这张截图已失效，请从弹窗重新截图。"
   },
   "importSource": {
     "title": "导入规则包",

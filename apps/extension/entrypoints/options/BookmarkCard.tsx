@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Globe, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import { hostnameOf } from '@tabyard/shared';
@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { getCover } from '@/utils/collect/covers';
 import { deleteBookmarks, moveBookmarks, type Bookmark, type Folder } from '@/utils/collect/store';
 import { cn } from '@/lib/utils';
 import { FolderMenuItems } from './FolderMenuItems';
@@ -16,6 +17,27 @@ import { TweetCardBody } from './TweetCardBody';
 function Cover({ bookmark }: { bookmark: Bookmark }) {
   const [imageFailed, setImageFailed] = useState(false);
   const [iconFailed, setIconFailed] = useState(false);
+  /** 本机保存的截图封面优先于网页 og 图 */
+  const [localCover, setLocalCover] = useState('');
+
+  useEffect(() => {
+    let url = '';
+    let alive = true;
+    void getCover(bookmark.url).then((blob) => {
+      if (!alive || !blob) return;
+      url = URL.createObjectURL(blob);
+      setLocalCover(url);
+    });
+    return () => {
+      alive = false;
+      if (url) URL.revokeObjectURL(url);
+      setLocalCover('');
+    };
+  }, [bookmark.url]);
+
+  if (localCover) {
+    return <img src={localCover} alt="" className="aspect-[16/10] w-full object-cover object-top" />;
+  }
 
   if (bookmark.image && !imageFailed) {
     return (
