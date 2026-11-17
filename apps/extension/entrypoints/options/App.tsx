@@ -15,6 +15,7 @@ import { loadLanguagePref, type LanguagePref } from '@/utils/rules';
 import { AccountButton } from './AccountButton';
 import { ClipPanel } from './ClipPanel';
 import { CollectionPanel } from './CollectionPanel';
+import { NewtabCard } from './NewtabCard';
 import { TabGroupsPanel } from './TabGroupsPanel';
 
 type PanelId = 'groups' | 'collect' | 'clip';
@@ -85,6 +86,8 @@ export default function App() {
           </Select>
         </div>
       </div>
+
+      <NewtabCard />
 
       <Tabs value={panel} onValueChange={(v) => setPanel(v as PanelId)}>
         <TabsList>

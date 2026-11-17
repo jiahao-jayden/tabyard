@@ -32,12 +32,6 @@ export function parseBaseURL(input: string): string | null {
   }
 }
 
-/** 为模型服务的域名申请访问权限；必须在用户点击事件里调用 */
-export async function requestModelPermission(baseURL: string): Promise<boolean> {
-  const origins = [`${new URL(baseURL).origin}/*`];
-  return (await browser.permissions.contains({ origins })) || browser.permissions.request({ origins });
-}
-
 export function createModel(config: ModelConfig) {
   const provider = createOpenAICompatible({
     name: 'custom',

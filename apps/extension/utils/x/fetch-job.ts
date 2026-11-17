@@ -4,7 +4,6 @@ import { browser, type Browser } from 'wxt/browser';
 import {
   beginXFetch, finishXFetch, loadXState, mergeXPage, saveXState, XFETCH_STALE_MS,
 } from './cache';
-import { X_ORIGINS } from './origins';
 import { extractedTweetSchema } from './tweet';
 import { z } from 'zod';
 import type { XFetchJob } from '../../entrypoints/x-fetch';
@@ -33,22 +32,17 @@ function captureTemplate(details: Browser.webRequest.OnBeforeSendHeadersDetails)
 
 function registerListener(): void {
   if (!browser.webRequest?.onBeforeSendHeaders) return;
-  try {
-    browser.webRequest.onBeforeSendHeaders.removeListener(captureTemplate);
-    browser.webRequest.onBeforeSendHeaders.addListener(
-      captureTemplate,
-      { urls: ['*://x.com/i/api/graphql/*', '*://twitter.com/i/api/graphql/*'] },
-      ['requestHeaders', 'extraHeaders'],
-    );
-  } catch {
-    /* 未授予 x.com 权限时无法监听，抓取时会给出提示 */
-  }
+  browser.webRequest.onBeforeSendHeaders.removeListener(captureTemplate);
+  browser.webRequest.onBeforeSendHeaders.addListener(
+    captureTemplate,
+    { urls: ['*://x.com/i/api/graphql/*', '*://twitter.com/i/api/graphql/*'] },
+    ['requestHeaders', 'extraHeaders'],
+  );
 }
 
-/** 授权 x.com 之后重新注册，确保新授予的权限立即生效 */
+/** 后台启动时注册，监听 X 页面发出的书签请求 */
 export function watchBookmarksRequests(): void {
   registerListener();
-  browser.permissions?.onAdded.addListener(registerListener);
 }
 
 async function waitForTemplate(since: number): Promise<Template | null> {
@@ -78,11 +72,6 @@ async function closeJobTab(): Promise<void> {
 export async function startXFetch(full: boolean): Promise<void> {
   const state = await loadXState();
   if (state.status === 'running' && Date.now() - state.updatedAt < XFETCH_STALE_MS) return;
-
-  if (!(await browser.permissions.contains({ origins: X_ORIGINS }))) {
-    await saveXState({ status: 'error', error: 'permission' });
-    return;
-  }
 
   const since = Date.now();
   const tab = await browser.tabs.create({ url: BOOKMARKS_PAGE, active: false });

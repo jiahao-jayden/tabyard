@@ -26,7 +26,7 @@ npm run zip -w @tabyard/extension        # 打包扩展
 npm run cf-typegen -w @tabyard/web       # 重新生成 Cloudflare 绑定类型
 ```
 
-扩展需要在 `apps/extension/.env.*` 中配置有效的 `WXT_API_URL`；WXT 配置会据此生成 host permissions。网站本地密钥放在 `apps/web/.dev.vars`。缺少配置时应说明阻塞项，不要伪造凭据或改用生产密钥。
+扩展需要在 `apps/extension/.env.*` 中配置有效的 `WXT_API_URL`；网站本地密钥放在 `apps/web/.dev.vars`。缺少配置时应说明阻塞项，不要伪造凭据或改用生产密钥。
 
 本地数据库初始化或升级：
 

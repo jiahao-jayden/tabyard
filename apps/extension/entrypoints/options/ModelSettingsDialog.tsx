@@ -12,7 +12,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import {
-  fetchModels, loadModelConfig, parseBaseURL, requestModelPermission, saveModelConfig,
+  fetchModels, loadModelConfig, parseBaseURL, saveModelConfig,
 } from '@/utils/collect/llm';
 
 function ModelForm({ onSaved, onClose }: { onSaved: () => void; onClose: () => void }) {
@@ -41,11 +41,6 @@ function ModelForm({ onSaved, onClose }: { onSaved: () => void; onClose: () => v
     }
     setLoading(true);
     try {
-      // 权限申请依赖本次点击，必须先于其他异步操作
-      if (!(await requestModelPermission(url))) {
-        toast.error(t('ai.permissionDenied'));
-        return;
-      }
       const list = await fetchModels(url, apiKey.trim());
       if (list.length === 0) toast.error(t('ai.noModels'));
       setModels(list);
@@ -60,11 +55,6 @@ function ModelForm({ onSaved, onClose }: { onSaved: () => void; onClose: () => v
     const url = parseBaseURL(baseURL);
     if (!url || !model.trim()) {
       toast.error(t('ai.invalid'));
-      return;
-    }
-    // 权限申请依赖本次点击，必须先于其他异步操作
-    if (!(await requestModelPermission(url))) {
-      toast.error(t('ai.permissionDenied'));
       return;
     }
     await saveModelConfig({ baseURL: url, apiKey: apiKey.trim(), model: model.trim() });

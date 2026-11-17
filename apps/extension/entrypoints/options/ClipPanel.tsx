@@ -7,7 +7,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { requestModelPermission } from '@/utils/collect/llm';
 import {
   loadClipSettings, normalizeClipSettings, saveClipSettings, testVaultConnection, validateClipSettings,
   type ClipSettings,
@@ -48,11 +47,6 @@ export function ClipPanel() {
     if (!settings) return;
     setTesting(true);
     try {
-      // 权限申请依赖本次点击，必须先于其他异步操作
-      if (!(await requestModelPermission(settings.restUrl))) {
-        toast.error(t('clip.permissionDenied'));
-        return;
-      }
       await testVaultConnection(settings);
       toast.success(t('clip.testOk'));
     } catch (error) {
@@ -66,10 +60,6 @@ export function ClipPanel() {
     // 关闭导出时不校验，允许保留半填的配置
     const settings = form.exportEnabled ? checked() : normalizeClipSettings(form);
     if (!settings) return;
-    if (settings.exportEnabled && !(await requestModelPermission(settings.restUrl))) {
-      toast.error(t('clip.permissionDenied'));
-      return;
-    }
     await saveClipSettings(settings);
     setForm(settings);
     toast.success(t('clip.settingsSaved'));

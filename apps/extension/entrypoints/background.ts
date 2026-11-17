@@ -3,6 +3,7 @@ import { browser, type Browser } from 'wxt/browser';
 import { defineBackground } from 'wxt/utils/define-background';
 import type { Group } from '@tabyard/shared';
 import { findBestGroup } from '@/utils/match';
+import { redirectNativeNewtab } from '@/utils/newtab';
 import { refreshPlan } from '@/utils/plan';
 import { loadConfig } from '@/utils/rules';
 import { syncIfPro, syncNow } from '@/utils/sync';
@@ -226,6 +227,7 @@ export default defineBackground(() => {
   browser.runtime.onStartup.addListener(() => void groupAllTabs());
 
   browser.tabs.onCreated.addListener((tab) => {
+    void redirectNativeNewtab(tab);
     if (tab.id == null) return;
     scheduleGroupTab(tab.id, true);
   });

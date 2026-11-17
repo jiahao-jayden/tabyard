@@ -1,4 +1,4 @@
-// 「在 X 帖子上显示收藏按钮」：用户开启时才申请 x.com 权限，并运行时注册内容脚本
+// 「在 X 帖子上显示收藏按钮」：用户开启时才运行时注册内容脚本
 import { browser } from 'wxt/browser';
 import { X_ORIGINS } from './origins';
 
@@ -17,17 +17,12 @@ async function register(): Promise<void> {
 }
 
 export async function isXButtonEnabled(): Promise<boolean> {
-  if (!browser.scripting || !browser.permissions) return false;
-  const stored = (await browser.storage.local.get(FLAG_KEY))[FLAG_KEY];
-  return stored === true && (await browser.permissions.contains({ origins: X_ORIGINS }));
+  return (await browser.storage.local.get(FLAG_KEY))[FLAG_KEY] === true;
 }
 
-/** 必须在用户点击事件里调用（要弹出权限请求） */
-export async function enableXButton(): Promise<boolean> {
-  if (!(await browser.permissions.request({ origins: X_ORIGINS }))) return false;
+export async function enableXButton(): Promise<void> {
   await register();
   await browser.storage.local.set({ [FLAG_KEY]: true });
-  return true;
 }
 
 export async function disableXButton(): Promise<void> {

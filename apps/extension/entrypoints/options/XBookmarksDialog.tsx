@@ -17,7 +17,6 @@ import { disableXButton, enableXButton, isXButtonEnabled } from '@/utils/x/butto
 import {
   loadXCache, loadXState, X_STATE_KEY, XFETCH_STALE_MS, type XCache, type XFetchState,
 } from '@/utils/x/cache';
-import { X_ORIGINS } from '@/utils/x/origins';
 import { tweetToBookmark } from '@/utils/x/tweet';
 
 /** 缓存和抓取状态都在 storage 里，后台任务更新时界面自动跟随 */
@@ -61,21 +60,14 @@ function XBookmarksBody({ data, onClose }: { data: CollectData; onClose: () => v
   const visibleImportable = visible.filter((tw) => !inCollection.has(tw.url));
   const running = state?.status === 'running' && Date.now() - state.updatedAt < XFETCH_STALE_MS;
 
-  const startFetch = async (full: boolean) => {
-    // 权限申请依赖本次点击，必须先于其他异步操作
-    if (!(await browser.permissions.request({ origins: X_ORIGINS }))) {
-      toast.error(t('x.permissionDenied'));
-      return;
-    }
+  const startFetch = (full: boolean) => {
     void browser.runtime.sendMessage({ type: 'x-fetch-start', full });
   };
 
   const toggleButton = async (on: boolean) => {
-    if (on) setButtonOn(await enableXButton());
-    else {
-      await disableXButton();
-      setButtonOn(false);
-    }
+    if (on) await enableXButton();
+    else await disableXButton();
+    setButtonOn(on);
   };
 
   const toggle = (url: string) =>
@@ -95,10 +87,9 @@ function XBookmarksBody({ data, onClose }: { data: CollectData; onClose: () => v
   };
 
   const errorText = (error: string) =>
-    error === 'permission' ? t('x.permissionDenied')
-      : error === 'not-logged-in' ? t('x.notLoggedIn')
-        : error === 'interrupted' ? t('x.interrupted')
-          : t('x.failed', { msg: error });
+    error === 'not-logged-in' ? t('x.notLoggedIn')
+      : error === 'interrupted' ? t('x.interrupted')
+        : t('x.failed', { msg: error });
 
   return (
     <div className="space-y-4">
