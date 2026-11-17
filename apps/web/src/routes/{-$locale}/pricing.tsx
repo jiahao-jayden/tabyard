@@ -40,7 +40,7 @@ function Pricing() {
           i={2}
           name={t.planFree}
           price={t.free}
-          features={[t.freeGroups, t.freeRules, t.freePacks, t.freeCollect, t.freeClip]}
+          features={[t.freeGroups, t.freeRules, t.freePacks, t.freeCollect, t.freeNewtab, t.freeClip]}
         />
         <Plan
           i={3}

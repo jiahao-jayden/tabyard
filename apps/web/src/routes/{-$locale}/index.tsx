@@ -49,6 +49,20 @@ function Landing() {
         </div>
       </section>
 
+      <section className="grid grid-cols-[minmax(0,1fr)] items-center gap-8 pb-20 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] lg:gap-14">
+        <div className="max-w-sm lg:order-last">
+          <h2 className="text-2xl font-medium tracking-tight md:text-3xl">{t.bentoNewtabTitle}</h2>
+          <p className="mt-4 text-base leading-relaxed text-slate-600 dark:text-slate-300">{t.bentoNewtabDesc}</p>
+        </div>
+        <div className="frost rounded-[20px] p-3">
+          <img src="/newtab.webp" alt="" width={2048} height={1268} loading="lazy" className="w-full rounded-2xl" />
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:order-last lg:col-span-2">
+          <ShotCard title={t.bentoSearchTitle} desc={t.bentoSearchDesc} src="/newtab-search.webp" />
+          <ShotCard title={t.bentoWallpaperTitle} desc={t.bentoWallpaperDesc} src="/newtab-settings.webp" />
+        </div>
+      </section>
+
       <section className="grid grid-cols-[minmax(0,1fr)] items-center gap-8 pb-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.7fr)] lg:gap-14">
         <div className="max-w-sm">
           <h2 className="text-2xl font-medium tracking-tight md:text-3xl">{t.bentoCollectTitle}</h2>

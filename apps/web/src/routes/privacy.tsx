@@ -19,7 +19,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function Privacy() {
   return (
     <div className="mx-auto max-w-3xl px-5 py-12">
-      <p className="text-sm text-slate-500">最后更新：2026 年 10 月 27 日 · 适用产品：Tabyard Chrome 扩展</p>
+      <p className="text-sm text-slate-500">最后更新：2026 年 11 月 17 日 · 适用产品：Tabyard Chrome 扩展</p>
       <h1 className="mt-2 text-3xl font-medium tracking-tight">隐私政策</h1>
       <p className="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
         Tabyard（以下简称"我们"）是一款 Chrome 扩展，可根据你自定义的规则将标签页自动归入 Chrome
@@ -40,7 +40,17 @@ function Privacy() {
             <strong className="text-ink dark:text-slate-100">截图、录屏与网页剪藏</strong>：仅在你主动操作时读取当前标签页的画面与页面内容，录屏时还会使用你开启的标签页声音、麦克风或摄像头。截图、录屏文件与收藏封面图只保存在本机浏览器存储中，由你自行预览、复制或下载，
             <strong className="text-ink dark:text-slate-100">不会上传到我们的服务器</strong>，封面图也不参与云同步。
           </li>
+          <li>
+            <strong className="text-ink dark:text-slate-100">新标签页（可选，默认关闭）</strong>：开启后，通过 <code>bookmarks</code>{' '}
+            权限读取浏览器书签，用于在页面上展示；开启「搜索浏览历史」后，通过 <code>history</code>{' '}
+            权限在本地检索历史记录。快捷方式、壁纸、本地上传的图片和页面设置只保存在本机，
+            <strong className="text-ink dark:text-slate-100">不会上传到我们的服务器</strong>，也不参与云同步。
+          </li>
         </ul>
+        <p>
+          新标签页还会在你使用相应功能时直接向第三方服务发起请求，这些请求不经过我们的服务器：搜索联想会把你输入的内容发送给当前选择的搜索引擎（可在新标签页设置中关闭）；
+          添加快捷方式时会访问对应网站和 Google 图标服务以获取图标；壁纸会向必应、Lorem Picsum 或克利夫兰艺术博物馆获取图片。
+        </p>
       </Section>
 
       <Section title="二、同步到服务器的数据（仅 Pro / 登录用户）">
@@ -83,7 +93,7 @@ function Privacy() {
 
       <hr className="my-12 border-slate-200 dark:border-slate-700" />
 
-      <p className="text-sm text-slate-500">Last updated: October 27, 2026 · Applies to: Tabyard Chrome extension</p>
+      <p className="text-sm text-slate-500">Last updated: November 17, 2026 · Applies to: Tabyard Chrome extension</p>
       <h1 className="mt-2 text-3xl font-medium tracking-tight">Privacy Policy</h1>
       <p className="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
         Tabyard ("we", "our") is a Chrome extension that automatically sorts your browser tabs into native Chrome tab
@@ -112,7 +122,21 @@ function Privacy() {
             <strong className="text-ink dark:text-slate-100">They are never uploaded to our servers</strong>, and cover
             images are not included in cloud sync.
           </li>
+          <li>
+            <strong className="text-ink dark:text-slate-100">New tab page (optional, off by default)</strong>: when on, the{' '}
+            <code>bookmarks</code> permission lets the page show your browser bookmarks, and, if you turn on history
+            search, the <code>history</code> permission lets it search your history locally. Shortcuts, wallpapers,
+            uploaded images, and page settings stay in local storage,{' '}
+            <strong className="text-ink dark:text-slate-100">are never uploaded to our servers</strong>, and are not
+            part of cloud sync.
+          </li>
         </ul>
+        <p>
+          The new tab page also contacts third-party services directly when you use the matching feature, never through
+          our servers: search suggestions send what you type to the search engine you picked (can be turned off in new tab
+          settings); adding a shortcut visits that site and Google's icon service to fetch its icon; wallpapers load
+          images from Bing, Lorem Picsum, or the Cleveland Museum of Art.
+        </p>
       </Section>
 
       <Section title="2. Data synced to our servers (Pro / signed-in users only)">

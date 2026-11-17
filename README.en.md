@@ -15,13 +15,18 @@ A browser extension that files tabs into Chrome's native tab groups by rule, wit
 - **Unmatched tabs**: send them to an "Other" group, group each by domain, or leave them ungrouped.
 - **Rule packs**: import, export, publish, and share rules. A short code imports a pack in one paste. The site lists official packs.
 - **Web collection**: save the current page from the popup (title, description, and cover image are filled in automatically), organize by folder, and search, edit, move, or delete in bulk. There is no folder limit.
-- **X bookmarks**: fetch bookmarks through X's own API into a local cache, then import a selection in bulk. You can also save from a post's action bar. That needs permission for x.com and is off by default.
+- **X bookmarks**: fetch bookmarks through X's own API into a local cache, then import a selection in bulk. You can also save from a post's action bar. It is off by default and turned on in settings.
 - **AI organize**: connect your own OpenAI-compatible model to file unsorted items into existing folders and suggest new ones. Preview before applying. You can undo.
 - **Page clipper**: extract the current page as clean Markdown, then copy or download it. Optionally save into a vault through the Obsidian Local REST API (turn it on from the Clip tab in settings).
+- **New tab page**: optional. Turn it on in settings and new tabs open the Tabyard start page. It has a clock, a search box (engine switching, site search, suggestions, and optional browsing-history search), shortcuts, browser bookmarks (folders, nested list, or top bar), tab groups, and your collection. Wallpapers come from Bing's daily image, curated landscapes and paintings, or your own pictures, with adjustable overlay, blur, and grain, plus light and dark themes. Its data stays on your device and is not synced.
 - **Pro**: only cloud sync across devices is paid (rules, settings, and collections). Everything else is free.
 - **Languages**: Chinese and English. The UI and the default group name follow the language.
 
 ## Screenshots
+
+New tab page:
+
+![New tab page](img/newtab.webp)
 
 Website home:
 
