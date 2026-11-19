@@ -49,7 +49,6 @@ const settingsSchema = z.object({
     shortcuts: z.boolean(),
     bookmarks: z.boolean(),
     collect: z.boolean(),
-    groups: z.boolean(),
     clock: z.boolean(),
   }),
   bookmarksMode: z.enum(BOOKMARKS_MODES),
@@ -69,7 +68,7 @@ const settingsSchema = z.object({
 export type NewtabSettings = z.infer<typeof settingsSchema>;
 
 export const DEFAULT_NEWTAB_SETTINGS: NewtabSettings = {
-  sections: { shortcuts: true, bookmarks: true, collect: true, groups: true, clock: true },
+  sections: { shortcuts: true, bookmarks: true, collect: true, clock: true },
   bookmarksMode: 'folders',
   clock24h: true,
   theme: 'auto',

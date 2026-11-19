@@ -8,7 +8,6 @@ import { Background } from './Background';
 import { BookmarksSection } from './BookmarksSection';
 import { Clock } from './Clock';
 import { CollectSection } from './CollectSection';
-import { GroupsSection } from './GroupsSection';
 import { SearchBox, type Candidate } from './SearchBox';
 import { SettingsSheet } from './SettingsSheet';
 import { Shortcuts } from './Shortcuts';
@@ -60,7 +59,6 @@ export default function App() {
               openInNewTab={settings.openInNewTab}
             />
           )}
-          {settings.sections.groups && <GroupsSection />}
           {settings.sections.collect && collect && <CollectSection data={collect} openInNewTab={settings.openInNewTab} />}
         </div>
       </main>

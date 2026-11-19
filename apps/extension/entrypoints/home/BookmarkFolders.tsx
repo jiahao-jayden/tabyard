@@ -26,11 +26,12 @@ export function BookmarkFolders({ roots, openInNewTab, mode, onModeChange }: {
   onModeChange: (mode: BookmarksMode) => void;
 }) {
   const { t } = useTranslation();
-  // null 表示最上层（书签栏、其他书签）
+  // null 表示最上层（书签栏、其他书签）；只有一个根目录时直接展示其内容，省去多余的一层
+  const top = roots.length === 1 ? roots[0]!.children ?? [] : roots;
   const [history, setHistory] = useState<{ ids: (string | null)[]; index: number }>({ ids: [null], index: 0 });
   const id = history.ids[history.index] ?? null;
   const folder = id ? findFolder(roots, id) : undefined;
-  const items = (folder ? folder.children ?? [] : roots).filter((n) => isFolder(n) || isLink(n));
+  const items = (folder ? folder.children ?? [] : top).filter((n) => isFolder(n) || isLink(n));
 
   const open = (next: string) =>
     setHistory((h) => ({ ids: [...h.ids.slice(0, h.index + 1), next], index: h.index + 1 }));

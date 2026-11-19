@@ -385,7 +385,6 @@
     "section": {
       "shortcuts": "快捷方式",
       "bookmarks": "浏览器书签",
-      "groups": "标签组",
       "collect": "收藏",
       "clock": "时钟"
     },
@@ -433,8 +432,6 @@
     "collectTitle": "收藏",
     "collectAll": "全部",
     "collectMore": "查看全部",
-    "groupsTitle": "当前窗口的标签组",
-    "untitledGroup": "未命名分组",
     "localHeading": "快捷方式与收藏",
     "openAddress": "打开",
     "searchWith": "用 {{engine}} 搜索",

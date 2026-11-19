@@ -385,7 +385,6 @@
     "section": {
       "shortcuts": "Shortcuts",
       "bookmarks": "Browser bookmarks",
-      "groups": "Tab groups",
       "collect": "Collection",
       "clock": "Clock"
     },
@@ -433,8 +432,6 @@
     "collectTitle": "Collection",
     "collectAll": "All",
     "collectMore": "View all",
-    "groupsTitle": "Tab groups in this window",
-    "untitledGroup": "Untitled group",
     "localHeading": "Shortcuts & collection",
     "openAddress": "Open",
     "searchWith": "Search with {{engine}}",

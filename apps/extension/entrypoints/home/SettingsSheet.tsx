@@ -10,7 +10,7 @@ import { WallpaperSection } from './WallpaperSection';
 const update = (patch: Partial<NewtabSettings>) => mutateNewtabSettings((s) => ({ ...s, ...patch }));
 
 type SectionKey = keyof NewtabSettings['sections'];
-const SECTIONS: SectionKey[] = ['shortcuts', 'bookmarks', 'groups', 'collect', 'clock'];
+const SECTIONS: SectionKey[] = ['shortcuts', 'bookmarks', 'collect', 'clock'];
 
 export function SettingsSheet({ open, onClose, settings }: {
   open: boolean;
