@@ -9,7 +9,8 @@ import { linkProps } from './address';
 import { FolderIcon } from './BookmarkParts';
 import { isFolder, isLink, type BookmarkNode } from './useBookmarkTree';
 
-const panel = 'max-h-[70vh] w-60 overflow-y-auto';
+// 高度跟随 Radix 按碰撞计算出的可用空间，避免在页面下方展开时超出视口
+const panel = 'max-h-(--radix-dropdown-menu-content-available-height) w-60 overflow-y-auto';
 
 function MenuNodes({ nodes, openInNewTab }: { nodes: BookmarkNode[]; openInNewTab: boolean }) {
   const { t } = useTranslation();
@@ -32,7 +33,7 @@ function MenuNodes({ nodes, openInNewTab }: { nodes: BookmarkNode[]; openInNewTa
           <FolderIcon className="size-4" />
           <span className="truncate">{node.title}</span>
         </DropdownMenuSubTrigger>
-        <DropdownMenuSubContent className={panel}>
+        <DropdownMenuSubContent collisionPadding={8} className={panel}>
           <MenuNodes nodes={node.children ?? []} openInNewTab={openInNewTab} />
         </DropdownMenuSubContent>
       </DropdownMenuSub>
@@ -51,7 +52,7 @@ export function FolderMenu({ title, nodes, openInNewTab, triggerClassName, child
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className={triggerClassName}>{children}</DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className={panel}>
+      <DropdownMenuContent align="start" collisionPadding={8} className={panel}>
         <DropdownMenuLabel className="truncate">{title}</DropdownMenuLabel>
         <MenuNodes nodes={nodes} openInNewTab={openInNewTab} />
       </DropdownMenuContent>

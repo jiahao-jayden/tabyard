@@ -164,7 +164,7 @@ export function SearchBox({ settings, candidates, onOpenSettings }: {
     >
       <div className={cn(
         'flex h-12 items-center gap-1 rounded-full border border-border bg-card pr-2 pl-4 shadow-xs backdrop-blur transition-colors',
-        focused && 'border-ring',
+        focused && 'border-ring/40',
       )}>
         <button
           type="button"
