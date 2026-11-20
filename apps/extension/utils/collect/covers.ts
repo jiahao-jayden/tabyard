@@ -1,5 +1,6 @@
 // 截图收藏的封面：图片太大，不进收藏集和云同步，只存本机 IndexedDB，按规范化网址关联
 import { createStore, get, set } from 'idb-keyval';
+import { browser } from 'wxt/browser';
 import { normalizeUrl } from './url';
 
 const store = createStore('tabyard-covers', 'covers');
@@ -24,4 +25,14 @@ export function putCover(url: string, cover: Blob): Promise<void> {
 
 export function getCover(url: string): Promise<Blob | undefined> {
   return get<Blob>(normalizeUrl(url), store);
+}
+
+/** 网页没有 og 图时，用当前可见区域做封面；依赖 popup 点击时授予的 activeTab，失败则不设封面 */
+export async function captureCover(windowId: number, url: string): Promise<void> {
+  try {
+    const dataUrl = await browser.tabs.captureVisibleTab(windowId, { format: 'jpeg', quality: 90 });
+    await putCover(url, await makeCover(await (await fetch(dataUrl)).blob()));
+  } catch {
+    /* 截图被拒绝（受限页面、窗口最小化）时保持无封面 */
+  }
 }
