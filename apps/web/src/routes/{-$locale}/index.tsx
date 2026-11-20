@@ -27,7 +27,7 @@ function Landing() {
           <div className="rise mt-9 flex flex-wrap items-center gap-3" style={{ '--i': 2 } as React.CSSProperties}>
             <a
               href={INSTALL_URL}
-              className="rounded-full bg-ink px-6 py-3 text-sm font-medium text-white shadow-[0_8px_24px_rgb(34_43_53/0.18)] transition hover:bg-ink/85 active:scale-[0.98] dark:bg-slate-100 dark:text-ink"
+              className="rounded-full bg-ink px-6 py-3 text-sm font-medium text-white shadow-[0_8px_24px_rgb(34_43_53/0.18)] transition hover:bg-ink/85 active:scale-[0.98] dark:bg-slate-100 dark:text-ink dark:hover:bg-slate-100/85"
             >
               {t.install}
             </a>

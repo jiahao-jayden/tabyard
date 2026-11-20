@@ -30,7 +30,7 @@ function Login() {
           key={provider}
           type="button"
           onClick={() => authClient.signIn.social({ provider, callbackURL })}
-          className="flex h-11 items-center justify-center gap-2 rounded-full bg-ink text-sm text-white transition hover:bg-ink/85 active:scale-[0.98] dark:bg-slate-100 dark:text-ink"
+          className="flex h-11 items-center justify-center gap-2 rounded-full bg-ink text-sm text-white transition hover:bg-ink/85 active:scale-[0.98] dark:bg-slate-100 dark:text-ink dark:hover:bg-slate-100/85"
         >
           <Icon size={18} weight="fill" />
           {label}

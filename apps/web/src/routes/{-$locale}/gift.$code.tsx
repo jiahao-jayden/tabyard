@@ -11,7 +11,7 @@ export const Route = createFileRoute('/{-$locale}/gift/$code')({
 });
 
 const primaryButton =
-  'flex h-11 items-center justify-center rounded-full bg-ink px-6 text-sm font-medium text-white transition hover:bg-ink/85 active:scale-[0.98] dark:bg-slate-100 dark:text-ink';
+  'flex h-11 items-center justify-center rounded-full bg-ink px-6 text-sm font-medium text-white transition hover:bg-ink/85 active:scale-[0.98] dark:bg-slate-100 dark:text-ink dark:hover:bg-slate-100/85';
 
 function Gift() {
   const { locale: param, code } = Route.useParams();

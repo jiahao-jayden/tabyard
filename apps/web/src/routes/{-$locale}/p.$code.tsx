@@ -100,7 +100,7 @@ function Detail() {
           <p className="mt-1 font-mono text-3xl tracking-[0.2em]">{detail.code}</p>
           <button
             onClick={() => void copy()}
-            className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink py-2.5 text-sm text-white transition hover:bg-ink/85 active:scale-[0.98] dark:bg-slate-100 dark:text-ink"
+            className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink py-2.5 text-sm text-white transition hover:bg-ink/85 active:scale-[0.98] dark:bg-slate-100 dark:text-ink dark:hover:bg-slate-100/85"
           >
             {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
             {copied ? t.copied : t.copy}

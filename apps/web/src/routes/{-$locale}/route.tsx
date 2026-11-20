@@ -124,7 +124,7 @@ function Layout() {
           )}
           <a
             href={INSTALL_URL}
-            className="hidden rounded-full bg-ink px-4 py-1.5 text-white sm:block transition hover:bg-ink/85 active:scale-[0.98] dark:bg-slate-100 dark:text-ink"
+            className="hidden rounded-full bg-ink px-4 py-1.5 text-white sm:block transition hover:bg-ink/85 active:scale-[0.98] dark:bg-slate-100 dark:text-ink dark:hover:bg-slate-100/85"
           >
             {t.install}
           </a>
