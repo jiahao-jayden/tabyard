@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import type { BookmarksMode } from '@/utils/newtab-settings';
 import { Favicon } from './Favicon';
 import { linkProps } from './address';
@@ -30,9 +31,29 @@ export function BookmarkBar({ roots, openInNewTab, mode, onModeChange }: {
 }) {
   const barItems = roots.find((r) => r.id === BAR_ID)?.children ?? [];
   const others = roots.filter((r) => r.id !== BAR_ID);
+  const scrollerRef = useRef<HTMLDivElement>(null);
+
+  // 横向滚动条已隐藏，把滚轮（含触控板横滑）转成书签栏的左右滚动；滚到头再把滚动交还给页面
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const onWheel = (event: WheelEvent) => {
+      const max = el.scrollWidth - el.clientWidth;
+      if (max <= 0) return;
+      const scale = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? el.clientWidth : 1;
+      const raw = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+      const next = Math.max(0, Math.min(max, el.scrollLeft + raw * scale));
+      if (next === el.scrollLeft) return;
+      event.preventDefault();
+      el.scrollLeft = next;
+    };
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
+  }, []);
+
   return (
     <nav className="fixed inset-x-0 top-0 z-20 flex h-12 items-center gap-2 border-b border-border bg-card/60 px-3 backdrop-blur">
-      <div className="no-scrollbar flex min-w-0 flex-1 items-center gap-1 overflow-x-auto">
+      <div ref={scrollerRef} className="no-scrollbar flex min-w-0 flex-1 items-center gap-1 overflow-x-auto">
         {barItems.map((node) =>
           isLink(node) ? (
             <a key={node.id} href={node.url} {...linkProps(openInNewTab)} className={item}>
