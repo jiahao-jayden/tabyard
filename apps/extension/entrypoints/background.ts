@@ -52,6 +52,21 @@ async function markManaged(title: string): Promise<void> {
   }
 }
 
+/** 同一窗口里同样会落入该兜底分组的其他未分组标签页 */
+async function fallbackPeerIds(
+  tab: Browser.tabs.Tab,
+  groupName: string,
+  settings: GroupSettings,
+  groups: Group[],
+): Promise<number[]> {
+  const windowTabs = await browser.tabs.query({ windowId: tab.windowId });
+  return windowTabs
+    .filter((t) =>
+      t.id != null && t.id !== tab.id && t.groupId === -1 && isGroupableUrl(t.url)
+      && !findBestGroup(t, groups) && fallbackGroupFor(t, settings)?.groupName === groupName)
+    .map((t) => t.id!);
+}
+
 async function groupTab(
   tab: Browser.tabs.Tab,
   settings: GroupSettings,
@@ -79,7 +94,11 @@ async function groupTab(
     color = matched.color as Browser.tabGroups.Color;
   } else {
     const fb = fallbackGroupFor(tab, settings);
-    if (!fb) return;
+    if (!fb) {
+      // 不再有归属：原先在受管分组里的标签页移出来
+      if (currentTitle != null) await browser.tabs.ungroup(tab.id!);
+      return;
+    }
     groupName = fb.groupName;
     color = fb.color as Browser.tabGroups.Color;
   }
@@ -117,9 +136,15 @@ async function groupTab(
         await browser.tabs.move(tab.id!, { index: first });
       }
     } else {
+      // 兜底分组（未命中规则）至少要有 2 个标签页才新建，否则关掉单个标签页后会在 Chrome 里留下已保存的空分组
+      const peerIds = matched ? [] : await fallbackPeerIds(tab, groupName, settings, groups);
+      if (!matched && peerIds.length === 0) {
+        if (currentTitle != null) await browser.tabs.ungroup(tab.id!);
+        return;
+      }
       // Without windowId, Chrome creates the group in the focused window and moves the tab there.
       const groupId = await browser.tabs.group({
-        tabIds: [tab.id!],
+        tabIds: [tab.id!, ...peerIds],
         createProperties: { windowId: tab.windowId },
       });
       await browser.tabGroups.update(groupId, {
@@ -199,27 +224,30 @@ async function groupAllTabs(): Promise<void> {
   }
 }
 
-// 按当前规则重新整理：先解散插件管理过的分组，再全部重新分组
+// 按当前规则重新整理：不拆散已有分组，只把需要换组的标签页移过去。
+// 拆散重建会让 Chrome 每次都多存一份同名分组，而扩展看不到、也删不掉已保存的分组
 async function regroupAll(): Promise<void> {
-  const { settings, groups: allGroups } = await loadConfig();
+  const { settings, groups } = await loadConfig();
   if (!settings.enabled) return;
-  const owned = await getOwnedTitles(settings, allGroups);
-  const chromeGroups = await browser.tabGroups.query({});
-  const managedIds = new Set(
-    chromeGroups.filter((g) => owned.has(g.title ?? '')).map((g) => g.id),
-  );
-  if (managedIds.size > 0) {
-    const tabs = await browser.tabs.query({});
-    const toFree = tabs
-      .filter((t) => t.groupId != null && t.groupId !== -1 && managedIds.has(t.groupId))
-      .map((t) => t.id!);
-    if (toFree.length > 0) {
-      await browser.tabs.ungroup(toFree as [number, ...number[]]).catch((e) => {
-        console.warn('[tabyard] ungroup failed:', e);
-      });
+  const owned = await getOwnedTitles(settings, groups);
+  const tabs = await browser.tabs.query({});
+  for (const tab of tabs) {
+    if (!isGroupableUrl(tab.url)) continue;
+    try {
+      await groupTab(tab, settings, groups, owned);
+    } catch (e) {
+      console.warn('[tabyard] regroupAll failed:', e);
     }
   }
-  await groupAllTabs();
+  // 已在正确分组里的标签页不会触发更新，规则里改的颜色在这里同步
+  const colors = new Map<string, string>(groups.filter((g) => g.enabled).map((g) => [g.name.trim(), g.color]));
+  if (settings.fallback === 'other') colors.set(settings.otherGroupName.trim(), settings.otherColor);
+  for (const live of await browser.tabGroups.query({})) {
+    const color = colors.get(live.title ?? '');
+    if (color && color !== live.color) {
+      await browser.tabGroups.update(live.id, { color: color as Browser.tabGroups.Color }).catch(() => {});
+    }
+  }
 }
 
 export default defineBackground(() => {
