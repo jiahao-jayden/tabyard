@@ -137,3 +137,38 @@
     linear-gradient(rgb(244 240 230 / 0.55), rgb(244 240 230 / 0.8)) fixed,
     url('/bg.webp') 50% 45% / cover fixed;
 }
+
+/*
+ * Windows 的经典滚动条会占位（macOS 默认悬浮不占位）。
+ * 新标签页两侧预留等宽沟槽，纵向滚动条出现或消失时居中内容都不会左右跳。
+ */
+html.newtab {
+  scrollbar-gutter: stable both-edges;
+}
+
+/* 书签栏需要横向滚动，但固定 48px 高度里再挤一条滚动条会压扁书签 */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* 设置抽屉等面板：细滚动条 + 常驻沟槽，Windows 下右侧内容不会被挤压 */
+.panel-scrollbar {
+  scrollbar-gutter: stable;
+}
+.panel-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.panel-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.panel-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background-color: var(--border);
+}
+.panel-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--muted-foreground);
+}

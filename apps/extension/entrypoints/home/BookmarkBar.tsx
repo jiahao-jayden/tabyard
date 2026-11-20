@@ -32,7 +32,7 @@ export function BookmarkBar({ roots, openInNewTab, mode, onModeChange }: {
   const others = roots.filter((r) => r.id !== BAR_ID);
   return (
     <nav className="fixed inset-x-0 top-0 z-20 flex h-12 items-center gap-2 border-b border-border bg-card/60 px-3 backdrop-blur">
-      <div className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto">
+      <div className="no-scrollbar flex min-w-0 flex-1 items-center gap-1 overflow-x-auto">
         {barItems.map((node) =>
           isLink(node) ? (
             <a key={node.id} href={node.url} {...linkProps(openInNewTab)} className={item}>
