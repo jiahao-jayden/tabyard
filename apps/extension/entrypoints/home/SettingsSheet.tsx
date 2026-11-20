@@ -20,7 +20,7 @@ export function SettingsSheet({ open, onClose, settings }: {
   const { t } = useTranslation();
   return (
     <Sheet open={open} onOpenChange={(next) => !next && onClose()}>
-      <SheetContent>
+      <SheetContent className="panel-scrollbar pr-3">
         <SheetHeader>
           <SheetTitle>{t('newtab.settings')}</SheetTitle>
           <SheetDescription className="sr-only">{t('newtab.settings')}</SheetDescription>

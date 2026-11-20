@@ -113,8 +113,8 @@ async function groupTab(
   groupLocks.set(lockKey, previous.then(() => current));
   await previous;
   try {
-    const groups = await browser.tabGroups.query({ windowId: tab.windowId });
-    const [existing, ...duplicates] = groups.filter((g) => g.title === groupName);
+    const windowGroups = await browser.tabGroups.query({ windowId: tab.windowId });
+    const [existing, ...duplicates] = windowGroups.filter((g) => g.title === groupName);
 
     if (existing) {
       if (existing.color !== color) {
