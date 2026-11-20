@@ -3,6 +3,9 @@ import { browser } from 'wxt/browser';
 
 export type BookmarkNode = Browser.bookmarks.BookmarkTreeNode;
 
+// Chrome 和 Edge 里书签栏的节点 id 都是 '1'
+export const BAR_ID = '1';
+
 export const isFolder = (node: BookmarkNode) => node.children !== undefined;
 export const isLink = (node: BookmarkNode): node is BookmarkNode & { url: string } =>
   !!node.url && /^https?:\/\//i.test(node.url);

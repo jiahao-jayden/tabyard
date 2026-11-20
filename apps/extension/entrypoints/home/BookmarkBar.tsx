@@ -3,10 +3,8 @@ import { Favicon } from './Favicon';
 import { linkProps } from './address';
 import { FolderMenu } from './BookmarkMenu';
 import { BookmarkModeMenu, FolderIcon } from './BookmarkParts';
-import { isFolder, isLink, type BookmarkNode } from './useBookmarkTree';
+import { BAR_ID, isFolder, isLink, type BookmarkNode } from './useBookmarkTree';
 
-// Chrome 和 Edge 里书签栏的节点 id 都是 '1'
-const BAR_ID = '1';
 const item = 'flex shrink-0 max-w-44 items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition-colors hover:bg-muted';
 
 function BarFolder({ node, openInNewTab }: { node: BookmarkNode; openInNewTab: boolean }) {

@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Favicon } from './Favicon';
 import { linkProps } from './address';
 import { BookmarkModeMenu, BookmarkSection, FolderIcon, IconButton, tileClass } from './BookmarkParts';
-import { isFolder, isLink, type BookmarkNode } from './useBookmarkTree';
+import { BAR_ID, isFolder, isLink, type BookmarkNode } from './useBookmarkTree';
 import type { BookmarksMode } from '@/utils/newtab-settings';
 
 const MAX_SHOWN = 48;
@@ -26,8 +26,8 @@ export function BookmarkFolders({ roots, openInNewTab, mode, onModeChange }: {
   onModeChange: (mode: BookmarksMode) => void;
 }) {
   const { t } = useTranslation();
-  // null 表示最上层（书签栏、其他书签）；只有一个根目录时直接展示其内容，省去多余的一层
-  const top = roots.length === 1 ? roots[0]!.children ?? [] : roots;
+  // null 表示最上层：书签栏（及只有一个根目录时的该根目录）直接平铺其内容，其他根目录（如其他书签）仍为文件夹
+  const top = roots.flatMap((root) => (root.id === BAR_ID || roots.length === 1 ? root.children ?? [] : [root]));
   const [history, setHistory] = useState<{ ids: (string | null)[]; index: number }>({ ids: [null], index: 0 });
   const id = history.ids[history.index] ?? null;
   const folder = id ? findFolder(roots, id) : undefined;
