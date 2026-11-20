@@ -132,18 +132,29 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.552 0.016 285.938);
 }
+
+/* 网站底图：固定成 100vw × 100vh 的独立图层，滚动条出现或消失都不会重算 cover 尺寸 */
 .painted {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
   background:
-    linear-gradient(rgb(244 240 230 / 0.55), rgb(244 240 230 / 0.8)) fixed,
-    url('/bg.webp') 50% 45% / cover fixed;
+    linear-gradient(rgb(244 240 230 / 0.55), rgb(244 240 230 / 0.8)),
+    url('/bg.webp') 50% 45% / cover;
 }
 
 /*
  * Windows 的经典滚动条会占位（macOS 默认悬浮不占位）。
- * 新标签页两侧预留等宽沟槽，纵向滚动条出现或消失时居中内容都不会左右跳。
+ * 新标签页是整屏壁纸，隐藏滚动条，避免它出现或消失时内容和壁纸一起抖动。
  */
 html.newtab {
-  scrollbar-gutter: stable both-edges;
+  scrollbar-width: none;
+}
+html.newtab::-webkit-scrollbar {
+  display: none;
 }
 
 /* 书签栏需要横向滚动，但固定 48px 高度里再挤一条滚动条会压扁书签 */
