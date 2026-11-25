@@ -1,5 +1,6 @@
 // 录屏在 popup、后台、offscreen 文档和页面控制栏之间传递的数据
 import type { Region } from '../page';
+import type { WatermarkConfig } from '../watermark';
 
 export type RecordMode = 'tab' | 'region';
 export type RecordQuality = '720p' | '1080p';
@@ -70,6 +71,8 @@ export type OffscreenCommand =
     streamId: string;
     options: RecordOptions;
     region: Region | null;
+    /** offscreen 文档读不了 storage，由后台传入 */
+    watermark: WatermarkConfig | null;
     title: string;
     url: string;
   }

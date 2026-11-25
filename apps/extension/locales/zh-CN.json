@@ -9,7 +9,7 @@
     "pageTitle": "Tabyard 归处 · 规则设置"
   },
   "master": {
-    "title": "总开关",
+    "title": "分组设置",
     "enabled": "启用自动分组",
     "autoCollapse": "新建分组默认折叠",
     "insertPosition": "新标签页加入分组的位置",
@@ -230,7 +230,24 @@
   "tabs": {
     "groups": "标签页设置",
     "collect": "收藏集",
-    "clip": "剪藏"
+    "clip": "剪藏",
+    "general": "通用"
+  },
+  "capture": {
+    "title": "截图与录屏",
+    "desc": "截图和录屏的通用选项。",
+    "watermark": "添加水印",
+    "watermarkHint": "在截图和录屏上加上 Tabyard 标识和网址。修改后对下一次截图或录屏生效。",
+    "position": "水印位置",
+    "pos": {
+      "top-left": "左上角",
+      "top-right": "右上角",
+      "bottom-left": "左下角",
+      "bottom-right": "右下角"
+    },
+    "showUser": "显示我的头像和用户名",
+    "showUserHint": "在水印里加上「{{name}}」。它会直接烧进图片或视频，分享出去后无法撤回。",
+    "showUserSignIn": "登录后可以把头像和用户名加进水印。"
   },
   "collect": {
     "title": "收藏集",

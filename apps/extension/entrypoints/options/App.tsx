@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Toaster } from 'sonner';
 import { browser } from 'wxt/browser';
-import { Bookmark, Crown, Github, Layers, Scissors } from 'lucide-react';
+import { Bookmark, Crown, Github, Layers, Scissors, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -15,11 +15,11 @@ import { loadLanguagePref, type LanguagePref } from '@/utils/rules';
 import { AccountButton } from './AccountButton';
 import { ClipPanel } from './ClipPanel';
 import { CollectionPanel } from './CollectionPanel';
-import { NewtabCard } from './NewtabCard';
+import { GeneralPanel } from './GeneralPanel';
 import { TabGroupsPanel } from './TabGroupsPanel';
 
-type PanelId = 'groups' | 'collect' | 'clip';
-const PANELS: PanelId[] = ['groups', 'collect', 'clip'];
+type PanelId = 'groups' | 'collect' | 'clip' | 'general';
+const PANELS: PanelId[] = ['groups', 'collect', 'clip', 'general'];
 
 export default function App() {
   const { t, i18n } = useTranslation();
@@ -87,8 +87,6 @@ export default function App() {
         </div>
       </div>
 
-      <NewtabCard />
-
       <Tabs value={panel} onValueChange={(v) => setPanel(v as PanelId)}>
         <TabsList>
           <TabsTrigger value="groups">
@@ -103,6 +101,10 @@ export default function App() {
             <Scissors />
             {t('tabs.clip')}
           </TabsTrigger>
+          <TabsTrigger value="general">
+            <Settings />
+            {t('tabs.general')}
+          </TabsTrigger>
         </TabsList>
         {/* forceMount：切换时保留编辑状态，避免未落盘的自动保存被卸载取消 */}
         <TabsContent value="groups" forceMount>
@@ -113,6 +115,10 @@ export default function App() {
         </TabsContent>
         <TabsContent value="clip">
           <ClipPanel />
+        </TabsContent>
+        {/* forceMount：云同步在打开设置页时自动触发，不依赖当前停留的标签 */}
+        <TabsContent value="general" forceMount>
+          <GeneralPanel plan={plan} />
         </TabsContent>
       </Tabs>
 

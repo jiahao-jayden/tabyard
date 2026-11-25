@@ -39,6 +39,7 @@ export function CollectSection({ data, openInNewTab }: { data: CollectData; open
 
   if (data.bookmarks.length === 0) return null;
 
+  const collectUrl = browser.runtime.getURL('/options.html#collect');
   const shown = data.bookmarks.filter((b) => folderId == null || b.folderId === folderId);
   const pill = (active: boolean) => cn(
     'rounded-full px-3 py-1 text-xs transition-colors',
@@ -48,9 +49,13 @@ export function CollectSection({ data, openInNewTab }: { data: CollectData; open
   return (
     <section className="w-full space-y-3">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="text-sm font-medium dark:[text-shadow:0_1px_6px_rgb(0_0_0/0.5)]">{t('newtab.collectTitle')}</h2>
+        <h2 className="text-sm font-medium dark:[text-shadow:0_1px_6px_rgb(0_0_0/0.5)]">
+          <a href={collectUrl} target="_blank" rel="noopener" className="hover:underline">
+            {t('newtab.collectTitle')}
+          </a>
+        </h2>
         <a
-          href={browser.runtime.getURL('/options.html#collect')}
+          href={collectUrl}
           target="_blank"
           rel="noopener"
           className="text-xs text-muted-foreground hover:text-foreground dark:[text-shadow:0_1px_6px_rgb(0_0_0/0.5)]"

@@ -1,6 +1,7 @@
 // 后台录屏控制：状态存 storage.session，实际录制交给 offscreen 文档，页面控制栏按需注入
 import { browser, type Browser } from 'wxt/browser';
 import { pageSelectRegion, runInTab } from '../page';
+import { loadWatermarkConfig } from '../watermark-settings';
 import { resetRecording } from './store';
 import {
   OVERLAY_REMOVE,
@@ -70,6 +71,7 @@ async function start({ tabId, options, hint }: Extract<RecordCommand, { type: 'r
     streamId,
     options,
     region,
+    watermark: await loadWatermarkConfig(),
     title: tab.title ?? '',
     url: tab.url ?? '',
   });

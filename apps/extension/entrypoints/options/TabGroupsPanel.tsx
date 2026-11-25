@@ -38,7 +38,7 @@ import { ImportPackDialog } from './ImportPackDialog';
 import { ImportSourceDialog } from './ImportSourceDialog';
 import { PublishDialog } from './PublishDialog';
 import { RulesTable } from './RulesTable';
-import { SyncCard } from './SyncCard';
+import { SettingRow } from './SettingRow';
 
 function cleanGroups(list: Group[]): Group[] {
   return list
@@ -223,24 +223,21 @@ export function TabGroupsPanel({ plan }: { plan: Plan }) {
           <CardTitle>{t('master.title')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="enabled">{t('master.enabled')}</Label>
+          <SettingRow id="enabled" label={t('master.enabled')}>
             <Switch
               id="enabled"
               checked={settings.enabled}
               onCheckedChange={(v) => setSettings((s) => ({ ...s, enabled: v }))}
             />
-          </div>
-          <div className="flex items-center justify-between">
-            <Label htmlFor="autoCollapse">{t('master.autoCollapse')}</Label>
+          </SettingRow>
+          <SettingRow id="autoCollapse" label={t('master.autoCollapse')}>
             <Switch
               id="autoCollapse"
               checked={settings.autoCollapse}
               onCheckedChange={(v) => setSettings((s) => ({ ...s, autoCollapse: v }))}
             />
-          </div>
-          <div className="flex items-center justify-between">
-            <Label>{t('master.insertPosition')}</Label>
+          </SettingRow>
+          <SettingRow label={t('master.insertPosition')}>
             <Select
               value={settings.insertPosition}
               onValueChange={(v) => setSettings((s) => ({ ...s, insertPosition: v as InsertPosition }))}
@@ -253,47 +250,41 @@ export function TabGroupsPanel({ plan }: { plan: Plan }) {
                 <SelectItem value="start">{t('master.insertStart')}</SelectItem>
               </SelectContent>
             </Select>
+          </SettingRow>
+
+          <div className="space-y-3 border-t pt-4">
+            <h3 className="text-sm font-medium">{t('fallback.title')}</h3>
+            <RadioGroup
+              value={settings.fallback}
+              onValueChange={(v) => setSettings((s) => ({ ...s, fallback: v as FallbackMode }))}
+              className="space-y-3"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="other" id="fb-other" />
+                <Label htmlFor="fb-other" className="flex items-center gap-2 font-normal">
+                  {t('fallback.joinPrefix')}
+                  <Input
+                    className="h-8 w-28"
+                    value={settings.otherGroupName}
+                    onChange={(e) => setSettings((s) => ({ ...s, otherGroupName: e.target.value }))}
+                  />
+                  {t('fallback.joinSuffix')}
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="domain" id="fb-domain" />
+                <Label htmlFor="fb-domain" className="font-normal">
+                  {t('fallback.domain')}
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="none" id="fb-none" />
+                <Label htmlFor="fb-none" className="font-normal">
+                  {t('fallback.none')}
+                </Label>
+              </div>
+            </RadioGroup>
           </div>
-        </CardContent>
-      </Card>
-
-      <SyncCard plan={plan} />
-
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('fallback.title')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <RadioGroup
-            value={settings.fallback}
-            onValueChange={(v) => setSettings((s) => ({ ...s, fallback: v as FallbackMode }))}
-            className="space-y-3"
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="other" id="fb-other" />
-              <Label htmlFor="fb-other" className="flex items-center gap-2 font-normal">
-                {t('fallback.joinPrefix')}
-                <Input
-                  className="h-8 w-28"
-                  value={settings.otherGroupName}
-                  onChange={(e) => setSettings((s) => ({ ...s, otherGroupName: e.target.value }))}
-                />
-                {t('fallback.joinSuffix')}
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="domain" id="fb-domain" />
-              <Label htmlFor="fb-domain" className="font-normal">
-                {t('fallback.domain')}
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="none" id="fb-none" />
-              <Label htmlFor="fb-none" className="font-normal">
-                {t('fallback.none')}
-              </Label>
-            </div>
-          </RadioGroup>
         </CardContent>
       </Card>
 

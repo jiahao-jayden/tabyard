@@ -3,6 +3,7 @@ import { browser } from 'wxt/browser';
 import type { Region } from '@/utils/page';
 import { putChunk, putMeta } from '@/utils/record/store';
 import type { OffscreenCommand, RecordFinished } from '@/utils/record/types';
+import { createWatermark, type Watermark } from '@/utils/watermark';
 
 // Insertable Streams 尚未进入 TypeScript 的 DOM 类型
 declare class MediaStreamTrackProcessor<T> {
@@ -32,33 +33,52 @@ function tabConstraints(streamId: string, extra: Record<string, unknown> = {}): 
   return { mandatory: { chromeMediaSource: 'tab', chromeMediaSourceId: streamId, ...extra } } as MediaTrackConstraints;
 }
 
-/** 用 VideoFrame 的 visibleRect 裁剪，不依赖隐藏文档里会被节流的定时器 */
-function cropTrack(track: MediaStreamTrack, region: Region): MediaStreamTrack {
-  const { width = region.width } = track.getSettings();
-  const scale = width / region.width;
+/**
+ * 逐帧处理画面：按区域裁剪（visibleRect，不依赖隐藏文档里会被节流的定时器），再叠加水印。
+ * 既不裁剪也没有水印时原样返回
+ */
+function processTrack(track: MediaStreamTrack, region: Region | null, mark: Watermark | null): MediaStreamTrack {
+  if (!region && !mark) return track;
+  const { width = region?.width ?? 0 } = track.getSettings();
+  const scale = region ? width / region.width : 1;
   // I420 帧的裁剪坐标和尺寸需为偶数
   const even = (n: number) => Math.floor(n / 2) * 2;
-  const rect = {
+  const rect = region && {
     x: even(region.x * scale),
     y: even(region.y * scale),
     width: Math.max(2, even(region.w * scale)),
     height: Math.max(2, even(region.h * scale)),
   };
+  let canvas: OffscreenCanvas | null = null;
   const processor = new MediaStreamTrackProcessor<VideoFrame>({ track });
   const generator = new MediaStreamTrackGenerator<VideoFrame>({ kind: 'video' });
   void processor.readable
     .pipeThrough(new TransformStream<VideoFrame, VideoFrame>({
-      transform(frame, controller) {
-        const x = Math.min(rect.x, frame.codedWidth - 2);
-        const y = Math.min(rect.y, frame.codedHeight - 2);
-        const visibleRect = {
-          x,
-          y,
-          width: even(Math.min(rect.width, frame.codedWidth - x)),
-          height: even(Math.min(rect.height, frame.codedHeight - y)),
-        };
-        controller.enqueue(new VideoFrame(frame, { visibleRect }));
-        frame.close();
+      transform(input, controller) {
+        let frame = input;
+        if (rect) {
+          const x = Math.min(rect.x, input.codedWidth - 2);
+          const y = Math.min(rect.y, input.codedHeight - 2);
+          const visibleRect = {
+            x,
+            y,
+            width: even(Math.min(rect.width, input.codedWidth - x)),
+            height: even(Math.min(rect.height, input.codedHeight - y)),
+          };
+          frame = new VideoFrame(input, { visibleRect });
+          input.close();
+        }
+        if (mark) {
+          const { displayWidth: w, displayHeight: h } = frame;
+          if (canvas?.width !== w || canvas.height !== h) canvas = new OffscreenCanvas(w, h);
+          const ctx = canvas.getContext('2d')!;
+          ctx.drawImage(frame, 0, 0);
+          mark.draw(ctx, w, h);
+          const marked = new VideoFrame(canvas, { timestamp: frame.timestamp, duration: frame.duration ?? undefined });
+          frame.close();
+          frame = marked;
+        }
+        controller.enqueue(frame);
       },
     }))
     .pipeTo(generator.writable)
@@ -76,7 +96,7 @@ async function start(cmd: Extract<OffscreenCommand, { type: 'start' }>): Promise
   const current: Session = { id: cmd.id, recorder: null!, streams: [tab], audio: null, writes: [] };
   try {
     const [video] = tab.getVideoTracks();
-    const tracks: MediaStreamTrack[] = [region ? cropTrack(video!, region) : video!];
+    const tracks: MediaStreamTrack[] = [processTrack(video!, region, cmd.watermark && (await createWatermark(cmd.watermark)))];
 
     const mic = options.mic ? await navigator.mediaDevices.getUserMedia({
       audio: { echoCancellation: true, ...(options.micDeviceId ? { deviceId: { exact: options.micDeviceId } } : {}) },

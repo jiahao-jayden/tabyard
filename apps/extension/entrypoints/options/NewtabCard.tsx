@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { isNewtabEnabled, setNewtabEnabled } from '@/utils/newtab';
+import { SettingRow } from './SettingRow';
 
 export function NewtabCard() {
   const { t } = useTranslation();
@@ -25,15 +25,14 @@ export function NewtabCard() {
         <CardDescription>{t('newtab.settingDesc')}</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex items-center justify-between">
-          <Label htmlFor="newtab-enabled">{t('newtab.settingEnabled')}</Label>
+        <SettingRow id="newtab-enabled" label={t('newtab.settingEnabled')}>
           <Switch
             id="newtab-enabled"
             checked={enabled === true}
             disabled={enabled === null}
             onCheckedChange={change}
           />
-        </div>
+        </SettingRow>
       </CardContent>
     </Card>
   );

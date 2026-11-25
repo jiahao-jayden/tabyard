@@ -2,6 +2,8 @@
 import { browser, type Browser } from 'wxt/browser';
 import { capturePage } from '../collect/capture';
 import { pageSelectRegion, runInTab } from '../page';
+import { createWatermark, type Watermark } from '../watermark';
+import { loadWatermarkConfig } from '../watermark-settings';
 import { putScreenshot } from './store';
 
 export type ScreenshotMode = 'visible' | 'full' | 'region';
@@ -74,18 +76,19 @@ function pageRestoreFull(x: number, y: number) {
   window.scrollTo(x, y);
 }
 
-async function toPng(canvas: OffscreenCanvas): Promise<Blob> {
+async function toPng(canvas: OffscreenCanvas, mark: Watermark | null): Promise<Blob> {
+  mark?.draw(canvas.getContext('2d')!, canvas.width, canvas.height);
   return canvas.convertToBlob({ type: 'image/png' });
 }
 
-async function captureVisible(tab: Browser.tabs.Tab): Promise<Blob> {
+async function captureVisible(tab: Browser.tabs.Tab, mark: Watermark | null): Promise<Blob> {
   const bitmap = await captureViewport(tab.windowId!);
   const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
   canvas.getContext('2d')!.drawImage(bitmap, 0, 0);
-  return toPng(canvas);
+  return toPng(canvas, mark);
 }
 
-async function captureFull(tab: Browser.tabs.Tab): Promise<Blob> {
+async function captureFull(tab: Browser.tabs.Tab, mark: Watermark | null): Promise<Blob> {
   const tabId = tab.id!;
   const page = await runInTab(tabId, pagePrepareFull);
   try {
@@ -106,13 +109,13 @@ async function captureFull(tab: Browser.tabs.Tab): Promise<Blob> {
     const canvas = new OffscreenCanvas(shots[0]!.bitmap.width, Math.round(height * scale));
     const ctx = canvas.getContext('2d')!;
     for (const { y, bitmap } of shots) ctx.drawImage(bitmap, 0, Math.round(y * scale));
-    return toPng(canvas);
+    return toPng(canvas, mark);
   } finally {
     await runInTab(tabId, pageRestoreFull, page.x, page.y).catch(() => {});
   }
 }
 
-async function captureRegion(tab: Browser.tabs.Tab, hint: string): Promise<Blob | null> {
+async function captureRegion(tab: Browser.tabs.Tab, hint: string, mark: Watermark | null): Promise<Blob | null> {
   const rect = await runInTab(tab.id!, pageSelectRegion, hint);
   if (!rect) return null;
   const bitmap = await captureViewport(tab.windowId!);
@@ -121,17 +124,19 @@ async function captureRegion(tab: Browser.tabs.Tab, hint: string): Promise<Blob 
   const h = Math.round(rect.h * scale);
   const canvas = new OffscreenCanvas(w, h);
   canvas.getContext('2d')!.drawImage(bitmap, Math.round(rect.x * scale), Math.round(rect.y * scale), w, h, 0, 0, w, h);
-  return toPng(canvas);
+  return toPng(canvas, mark);
 }
 
 /** 截图并在新标签页打开结果；用户取消框选时返回 false */
 export async function takeScreenshot({ mode, tabId, hint }: ScreenshotRequest): Promise<boolean> {
   const tab = await browser.tabs.get(tabId);
   if (tab.windowId == null) throw new Error('Tab has no window');
+  const config = await loadWatermarkConfig();
+  const mark = config && (await createWatermark(config));
   const blob =
-    mode === 'visible' ? await captureVisible(tab)
-      : mode === 'full' ? await captureFull(tab)
-        : await captureRegion(tab, hint);
+    mode === 'visible' ? await captureVisible(tab, mark)
+      : mode === 'full' ? await captureFull(tab, mark)
+        : await captureRegion(tab, hint, mark);
   if (!blob) return false;
   const page = await capturePage({ id: tabId, url: tab.url ?? '', title: tab.title, favIconUrl: tab.favIconUrl });
   const id = await putScreenshot({ blob, page });

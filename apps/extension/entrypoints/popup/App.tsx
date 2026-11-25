@@ -11,6 +11,10 @@ import { CollectSection } from './CollectSection';
 import { RecordSection } from './RecordSection';
 import { ScreenshotSection } from './ScreenshotSection';
 
+const TABS = ['general', 'screenshot', 'record'] as const;
+type PopupTab = (typeof TABS)[number];
+const TAB_KEY = 'popupTab';
+
 function MenuRow({
   icon, label, onClick, disabled, chevron = true,
 }: {
@@ -40,11 +44,20 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   /** undefined 表示还在读取；读取完成后可能没有活动标签页，用 null 表示 */
   const [activeTab, setActiveTab] = useState<Browser.tabs.Tab | null | undefined>(undefined);
+  /** 记住上次停留的标签；null 表示还在读取，读完再渲染，避免先闪一下默认页 */
+  const [tab, setTab] = useState<PopupTab | null>(null);
 
   useEffect(() => {
     void loadConfig().then(({ settings }) => setEnabled(settings.enabled));
+    void browser.storage.local.get(TAB_KEY).then((stored) =>
+      setTab(TABS.find((id) => id === stored[TAB_KEY]) ?? 'general'));
     void browser.tabs.query({ active: true, currentWindow: true }).then(([tab]) => setActiveTab(tab ?? null));
   }, []);
+
+  const changeTab = (next: string) => {
+    setTab(next as PopupTab);
+    void browser.storage.local.set({ [TAB_KEY]: next });
+  };
 
   const toggle = async (v: boolean) => {
     setEnabled(v);
@@ -76,49 +89,51 @@ export default function App() {
         <Switch checked={enabled} onCheckedChange={(v) => void toggle(v)} aria-label={t('popup.toggleLabel')} />
       </header>
 
-      <Tabs defaultValue="general" className="gap-0">
-        <TabsList className="mx-4 mb-3 flex w-auto">
-          <TabsTrigger value="general" className="flex-1">{t('popup.tabGeneral')}</TabsTrigger>
-          <TabsTrigger value="screenshot" className="flex-1">{t('popup.tabScreenshot')}</TabsTrigger>
-          <TabsTrigger value="record" className="flex-1">{t('popup.tabRecord')}</TabsTrigger>
-        </TabsList>
+      {tab && (
+        <Tabs value={tab} onValueChange={changeTab} className="gap-0">
+          <TabsList className="mx-4 mb-3 flex w-auto">
+            <TabsTrigger value="general" className="flex-1">{t('popup.tabGeneral')}</TabsTrigger>
+            <TabsTrigger value="screenshot" className="flex-1">{t('popup.tabScreenshot')}</TabsTrigger>
+            <TabsTrigger value="record" className="flex-1">{t('popup.tabRecord')}</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="general" className="space-y-0">
-          <div className="px-4 pb-4">
-            {activeTab === undefined ? null : <CollectSection activeTab={activeTab ?? undefined} />}
-          </div>
+          <TabsContent value="general" className="space-y-0">
+            <div className="px-4 pb-4">
+              {activeTab === undefined ? null : <CollectSection activeTab={activeTab ?? undefined} />}
+            </div>
 
-          <div className="border-t px-4 py-3">
-            {activeTab === undefined ? null : <ClipSection activeTab={activeTab ?? undefined} />}
-          </div>
+            <div className="border-t px-4 py-3">
+              {activeTab === undefined ? null : <ClipSection activeTab={activeTab ?? undefined} />}
+            </div>
 
-          <MenuRow
-            icon={busy ? <LoaderCircle className="animate-spin" /> : <Sparkles />}
-            label={busy ? t('popup.regrouping') : t('popup.regroup')}
-            onClick={() => void regroup()}
-            disabled={busy}
-            chevron={false}
-          />
-          <MenuRow
-            icon={<Bookmark />}
-            label={t('popup.collectOpen')}
-            onClick={() => void browser.tabs.create({ url: `${location.origin}/options.html#collect` })}
-          />
-          <MenuRow
-            icon={<Settings2 />}
-            label={t('popup.settings')}
-            onClick={() => void browser.runtime.openOptionsPage()}
-          />
-        </TabsContent>
+            <MenuRow
+              icon={busy ? <LoaderCircle className="animate-spin" /> : <Sparkles />}
+              label={busy ? t('popup.regrouping') : t('popup.regroup')}
+              onClick={() => void regroup()}
+              disabled={busy}
+              chevron={false}
+            />
+            <MenuRow
+              icon={<Bookmark />}
+              label={t('popup.collectOpen')}
+              onClick={() => void browser.tabs.create({ url: `${location.origin}/options.html#collect` })}
+            />
+            <MenuRow
+              icon={<Settings2 />}
+              label={t('popup.settings')}
+              onClick={() => void browser.runtime.openOptionsPage()}
+            />
+          </TabsContent>
 
-        <TabsContent value="screenshot" className="px-4 pb-4">
-          {activeTab === undefined ? null : <ScreenshotSection activeTab={activeTab ?? undefined} />}
-        </TabsContent>
+          <TabsContent value="screenshot" className="px-4 pb-4">
+            {activeTab === undefined ? null : <ScreenshotSection activeTab={activeTab ?? undefined} />}
+          </TabsContent>
 
-        <TabsContent value="record" className="px-4 pb-4">
-          {activeTab === undefined ? null : <RecordSection activeTab={activeTab ?? undefined} />}
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="record" className="px-4 pb-4">
+            {activeTab === undefined ? null : <RecordSection activeTab={activeTab ?? undefined} />}
+          </TabsContent>
+        </Tabs>
+      )}
       <Toaster position="top-center" richColors />
     </div>
   );

@@ -9,7 +9,7 @@
     "pageTitle": "Tabyard · Rule settings"
   },
   "master": {
-    "title": "General",
+    "title": "Grouping",
     "enabled": "Enable auto grouping",
     "autoCollapse": "Collapse newly created groups",
     "insertPosition": "Where new tabs join a group",
@@ -230,7 +230,24 @@
   "tabs": {
     "groups": "Tab groups",
     "collect": "Collection",
-    "clip": "Clipper"
+    "clip": "Clipper",
+    "general": "General"
+  },
+  "capture": {
+    "title": "Screenshot & recording",
+    "desc": "Options for screenshots and screen recordings.",
+    "watermark": "Add watermark",
+    "watermarkHint": "Show the Tabyard logo and link on screenshots and recordings. Applies from the next capture.",
+    "position": "Watermark position",
+    "pos": {
+      "top-left": "Top left",
+      "top-right": "Top right",
+      "bottom-left": "Bottom left",
+      "bottom-right": "Bottom right"
+    },
+    "showUser": "Show my avatar and name",
+    "showUserHint": "Adds “{{name}}” to the watermark. It is baked into the image or video and can't be removed after sharing.",
+    "showUserSignIn": "Sign in to add your avatar and name to the watermark."
   },
   "collect": {
     "title": "Collection",
