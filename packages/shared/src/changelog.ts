@@ -15,7 +15,7 @@ export interface ChangelogEntry {
 /** 更新日志，最新在前。扩展升级提示和官网 /changelog 共用；发版时在最前面加一条，版本号与扩展 package.json 一致 */
 export const CHANGELOG: ChangelogEntry[] = [
   {
-    version: '1.8.0',
+    version: '1.7.2',
     date: '2026-11-26',
     chrome: 'review',
     zh: {
