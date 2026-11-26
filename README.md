@@ -97,6 +97,8 @@ npm run deploy                           # 构建并部署到 Cloudflare Workers
 npm run cf-typegen                       # 修改 wrangler.jsonc 后更新类型
 ```
 
+`.env` 文件不会打进 zip，也不要提交（已在 gitignore 里）。打包前看一眼 `apps/extension/.env`：`WXT_API_URL` 会在构建时写进扩展，接口地址和水印上的网址都用它。
+
 线上密钥用 `wrangler secret put` 设置,不要写进仓库。
 
 ## 云同步如何工作

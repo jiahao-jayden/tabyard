@@ -97,6 +97,8 @@ npm run deploy                           # build and deploy to Cloudflare Worker
 npm run cf-typegen                       # regenerate types after editing wrangler.jsonc
 ```
 
+The `.env` file is not included in the zip, and it is gitignored. Before zipping, check `apps/extension/.env`: `WXT_API_URL` is written into the extension at build time and is used for both the API and the watermark link.
+
 Set production secrets with `wrangler secret put`. Do not commit them.
 
 ## How cloud sync works
