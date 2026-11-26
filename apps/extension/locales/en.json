@@ -229,21 +229,9 @@
   },
   "mcp": {
     "title": "MCP",
-    "proHint": "Pro feature: create an API key so a client such as Cursor can read and organize your synced collection, and edit group rules. 1,000 tool calls per month.",
-    "signInHint": "Sign in to create an API key",
-    "usage": "{{used}} / {{limit}} calls used this month. Only tool calls count, and the count resets at the next UTC month. The extension syncs about every 30 minutes, or immediately when you open settings.",
-    "endpoint": "MCP endpoint",
-    "header": "Send Authorization: Bearer and this key. It changes the synced collection and group rules. It cannot move tabs that are already open.",
-    "generate": "Create key",
-    "regenerate": "Regenerate",
-    "regenerateConfirm": "The current key stops working immediately. Continue?",
-    "revoke": "Revoke",
-    "revokeConfirm": "Clients using this key will be disconnected. Continue?",
-    "keyOnce": "This is the only time the full key is shown. Copy it now.",
-    "copy": "Copy",
-    "copied": "Copied",
-    "retry": "Retry",
-    "failed": "Something went wrong, try again later"
+    "desc": "Let an MCP client such as Cursor or Claude read and organize your collection, and edit group rules. You create and manage the API key on the website.",
+    "proHint": "Pro feature: use an API key so an MCP client such as Cursor or Claude can read and organize your synced collection, and edit group rules. 1,000 tool calls per month.",
+    "manage": "Manage API key"
   },
   "tabs": {
     "groups": "Tab groups",

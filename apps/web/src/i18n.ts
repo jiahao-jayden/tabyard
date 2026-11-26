@@ -3,6 +3,7 @@ export type Locale = 'zh' | 'en';
 export const INSTALL_URL =
   'https://chromewebstore.google.com/detail/lnmhlchecohhbmpioimnfdhblolnflec';
 export const REPO_URL = 'https://github.com/jiahao-jayden/tabyard';
+export const MCP_URL = 'https://tabyard.jayden0.com/api/mcp';
 
 const zh = {
   siteName: 'Tabyard 归处',
@@ -91,6 +92,28 @@ const zh = {
   giftOk: '激活成功！重新打开扩展的设置页即可生效。',
   giftInvalid: '兑换码无效或已被使用。',
   giftLoginFirst: '登录后即可激活 Pro。',
+  mcpTitle: 'MCP',
+  mcpDesc: '用 API key 把 Cursor、Claude 等 MCP 客户端连到你的 Tabyard：读取、整理和添加收藏，创建、修改和删除分组规则。',
+  mcpSignInHint: '登录后即可生成 API key。',
+  mcpProOnly: 'MCP 是 Pro 功能。',
+  mcpEndpoint: 'MCP 地址',
+  mcpKeyTitle: 'API key',
+  mcpNoKey: '还没有密钥。',
+  mcpGenerate: '生成密钥',
+  mcpRegenerate: '重新生成',
+  mcpRegenerateConfirm: '重新生成后，旧密钥会立刻失效。继续？',
+  mcpRevoke: '作废',
+  mcpRevokeConfirm: '作废后，正在使用这把密钥的客户端会断开。继续？',
+  mcpKeyOnce: '这是唯一一次显示完整密钥，请现在复制。',
+  mcpUsageTitle: '本月调用',
+  mcpUsageNote: '每月 1000 次工具调用，只统计工具调用，下个 UTC 月重置。',
+  mcpConfigTitle: '接入示例',
+  mcpConfigHint: '以 Cursor 为例，写入 mcp.json。其他客户端在 HTTP 请求头里带上 Authorization: Bearer 和密钥即可。',
+  mcpNotes: '它操作的是已同步到云端的收藏和分组规则，不能移动浏览器里已经打开的标签。扩展约每 30 分钟同步一次，打开扩展设置页会立即同步。需要先登录并同步过一次。',
+  mcpCopy: '复制',
+  mcpCopied: '已复制',
+  mcpFailed: '操作失败，请稍后重试。',
+  navMcp: 'MCP',
 } as const;
 
 type Dict = { [K in keyof typeof zh]: string };
@@ -182,6 +205,28 @@ const en: Dict = {
   giftOk: "Activated! Reopen the extension's settings page to apply.",
   giftInvalid: 'This code is invalid or already used.',
   giftLoginFirst: 'Sign in to activate Pro.',
+  mcpTitle: 'MCP',
+  mcpDesc: 'Use an API key to connect an MCP client such as Cursor or Claude to Tabyard: read, organize, and add to your collection, and create, edit, and delete group rules.',
+  mcpSignInHint: 'Sign in to create an API key.',
+  mcpProOnly: 'MCP is a Pro feature.',
+  mcpEndpoint: 'MCP endpoint',
+  mcpKeyTitle: 'API key',
+  mcpNoKey: 'No key yet.',
+  mcpGenerate: 'Create key',
+  mcpRegenerate: 'Regenerate',
+  mcpRegenerateConfirm: 'The current key stops working immediately. Continue?',
+  mcpRevoke: 'Revoke',
+  mcpRevokeConfirm: 'Clients using this key will be disconnected. Continue?',
+  mcpKeyOnce: 'This is the only time the full key is shown. Copy it now.',
+  mcpUsageTitle: 'Calls this month',
+  mcpUsageNote: '1,000 tool calls per month. Only tool calls count, and the count resets at the next UTC month.',
+  mcpConfigTitle: 'Setup example',
+  mcpConfigHint: 'Cursor shown here, in mcp.json. For other clients, send Authorization: Bearer and the key as an HTTP header.',
+  mcpNotes: 'It works on the collection and group rules synced to the cloud, and cannot move tabs that are already open. The extension syncs about every 30 minutes, or right away when you open its settings page. You need to be signed in and have synced once.',
+  mcpCopy: 'Copy',
+  mcpCopied: 'Copied',
+  mcpFailed: 'Something went wrong, try again later.',
+  navMcp: 'MCP',
 };
 
 export type Dictionary = Dict;

@@ -17,7 +17,9 @@ import {
 } from './billing';
 import { normalizeCode } from '@tabyard/shared';
 import { GROUP_COLORS } from '@tabyard/shared';
+import { createMcpKey, getMcpKeyStatus, revokeMcpKey } from './mcp';
 import { getPack, listOfficialPacks, listPacks, updateOfficialPack } from './packs';
+import { requireProUser } from './sync';
 
 export const fetchPacks = createServerFn({ method: 'GET' })
   .validator((q: string) => q)
@@ -105,6 +107,21 @@ export const redeemGiftCode = createServerFn({ method: 'POST' })
     if (!session?.user) throw new Error('unauthorized');
     return redeemGift(session.user.id, data);
   });
+
+/** 未登录或不是 Pro 时返回 null，页面据此显示登录或升级入口 */
+export const fetchMcpStatus = createServerFn({ method: 'GET' }).handler(async () => {
+  const session = await auth.api.getSession({ headers: getRequestHeaders() });
+  if (!session?.user || !(await isPro(session.user.id))) return null;
+  return getMcpKeyStatus(session.user.id);
+});
+
+export const generateMcpKey = createServerFn({ method: 'POST' }).handler(async () =>
+  createMcpKey(await requireProUser(getRequestHeaders())),
+);
+
+export const removeMcpKey = createServerFn({ method: 'POST' }).handler(async () =>
+  revokeMcpKey(await requireProUser(getRequestHeaders())),
+);
 
 const officialPackSchema = z.object({
   code: z.string().min(1),

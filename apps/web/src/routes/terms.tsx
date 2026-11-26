@@ -58,7 +58,7 @@ function Terms() {
         <ul className="list-disc space-y-2 pl-5">
           <li>使用 Pro 云同步功能需要通过 GitHub 或 Google 账号登录。</li>
           <li>你的分组规则与扩展设置会同步到我们的服务器（https://tabyard.jayden0.com），以便在多设备间使用。你的标签页网址与标题不会被上传，详见《隐私政策》。</li>
-          <li>请妥善保管你的登录账号和 MCP API key。密钥泄露后，他人可以读取并修改已同步的收藏和分组规则，直到你在设置中作废它。它不能操作浏览器里已经打开的标签页。</li>
+          <li>请妥善保管你的登录账号和 MCP API key。密钥泄露后，他人可以读取并修改已同步的收藏和分组规则，直到你在网站 MCP 页面作废它。它不能操作浏览器里已经打开的标签页。</li>
         </ul>
       </Section>
 
@@ -128,7 +128,7 @@ function Terms() {
         <ul className="list-disc space-y-2 pl-5">
           <li>Pro cloud sync requires signing in with a GitHub or Google account.</li>
           <li>Your grouping rules and extension settings sync to our servers (https://tabyard.jayden0.com) for use across devices. Your tab URLs and page titles are never uploaded — see the Privacy Policy.</li>
-          <li>You are responsible for keeping your sign-in account and MCP API key secure. Anyone with the key can read and change your synced collection and group rules until you revoke it in settings. The key cannot move tabs that are already open.</li>
+          <li>You are responsible for keeping your sign-in account and MCP API key secure. Anyone with the key can read and change your synced collection and group rules until you revoke it on the website's MCP page. The key cannot move tabs that are already open.</li>
         </ul>
       </Section>
 

@@ -15,13 +15,13 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as Char123LocaleChar125RouteRouteImport } from './routes/{-$locale}/route'
 import { Route as ApiCheckoutRouteImport } from './routes/api/checkout'
 import { Route as ApiMcpRouteImport } from './routes/api/mcp'
-import { Route as ApiMcpKeyRouteImport } from './routes/api/mcp-key'
 import { Route as ApiPacksRouteImport } from './routes/api/packs'
 import { Route as ApiPlanRouteImport } from './routes/api/plan'
 import { Route as ApiPublishRouteImport } from './routes/api/publish'
 import { Route as ApiSyncRouteImport } from './routes/api/sync'
 import { Route as Char123LocaleChar125IndexRouteImport } from './routes/{-$locale}/index'
 import { Route as Char123LocaleChar125LoginRouteImport } from './routes/{-$locale}/login'
+import { Route as Char123LocaleChar125McpRouteImport } from './routes/{-$locale}/mcp'
 import { Route as Char123LocaleChar125PacksRouteImport } from './routes/{-$locale}/packs'
 import { Route as Char123LocaleChar125PricingRouteImport } from './routes/{-$locale}/pricing'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
@@ -61,11 +61,6 @@ const ApiMcpRoute = ApiMcpRouteImport.update({
   path: '/api/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiMcpKeyRoute = ApiMcpKeyRouteImport.update({
-  id: '/api/mcp-key',
-  path: '/api/mcp-key',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiPacksRoute = ApiPacksRouteImport.update({
   id: '/api/packs',
   path: '/api/packs',
@@ -98,6 +93,11 @@ const Char123LocaleChar125LoginRoute =
     path: '/login',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
+const Char123LocaleChar125McpRoute = Char123LocaleChar125McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
+  getParentRoute: () => Char123LocaleChar125RouteRoute,
+} as any)
 const Char123LocaleChar125PacksRoute =
   Char123LocaleChar125PacksRouteImport.update({
     id: '/packs',
@@ -145,12 +145,12 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/api/checkout': typeof ApiCheckoutRoute
   '/api/mcp': typeof ApiMcpRoute
-  '/api/mcp-key': typeof ApiMcpKeyRoute
   '/api/packs': typeof ApiPacksRouteWithChildren
   '/api/plan': typeof ApiPlanRoute
   '/api/publish': typeof ApiPublishRoute
   '/api/sync': typeof ApiSyncRoute
   '/{-$locale}/login': typeof Char123LocaleChar125LoginRoute
+  '/{-$locale}/mcp': typeof Char123LocaleChar125McpRoute
   '/{-$locale}/packs': typeof Char123LocaleChar125PacksRoute
   '/{-$locale}/pricing': typeof Char123LocaleChar125PricingRoute
   '/{-$locale}/': typeof Char123LocaleChar125IndexRoute
@@ -166,12 +166,12 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/api/checkout': typeof ApiCheckoutRoute
   '/api/mcp': typeof ApiMcpRoute
-  '/api/mcp-key': typeof ApiMcpKeyRoute
   '/api/packs': typeof ApiPacksRouteWithChildren
   '/api/plan': typeof ApiPlanRoute
   '/api/publish': typeof ApiPublishRoute
   '/api/sync': typeof ApiSyncRoute
   '/{-$locale}/login': typeof Char123LocaleChar125LoginRoute
+  '/{-$locale}/mcp': typeof Char123LocaleChar125McpRoute
   '/{-$locale}/packs': typeof Char123LocaleChar125PacksRoute
   '/{-$locale}/pricing': typeof Char123LocaleChar125PricingRoute
   '/{-$locale}': typeof Char123LocaleChar125IndexRoute
@@ -189,12 +189,12 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/api/checkout': typeof ApiCheckoutRoute
   '/api/mcp': typeof ApiMcpRoute
-  '/api/mcp-key': typeof ApiMcpKeyRoute
   '/api/packs': typeof ApiPacksRouteWithChildren
   '/api/plan': typeof ApiPlanRoute
   '/api/publish': typeof ApiPublishRoute
   '/api/sync': typeof ApiSyncRoute
   '/{-$locale}/login': typeof Char123LocaleChar125LoginRoute
+  '/{-$locale}/mcp': typeof Char123LocaleChar125McpRoute
   '/{-$locale}/packs': typeof Char123LocaleChar125PacksRoute
   '/{-$locale}/pricing': typeof Char123LocaleChar125PricingRoute
   '/{-$locale}/': typeof Char123LocaleChar125IndexRoute
@@ -213,12 +213,12 @@ export interface FileRouteTypes {
     | '/terms'
     | '/api/checkout'
     | '/api/mcp'
-    | '/api/mcp-key'
     | '/api/packs'
     | '/api/plan'
     | '/api/publish'
     | '/api/sync'
     | '/{-$locale}/login'
+    | '/{-$locale}/mcp'
     | '/{-$locale}/packs'
     | '/{-$locale}/pricing'
     | '/{-$locale}/'
@@ -234,12 +234,12 @@ export interface FileRouteTypes {
     | '/terms'
     | '/api/checkout'
     | '/api/mcp'
-    | '/api/mcp-key'
     | '/api/packs'
     | '/api/plan'
     | '/api/publish'
     | '/api/sync'
     | '/{-$locale}/login'
+    | '/{-$locale}/mcp'
     | '/{-$locale}/packs'
     | '/{-$locale}/pricing'
     | '/{-$locale}'
@@ -256,12 +256,12 @@ export interface FileRouteTypes {
     | '/terms'
     | '/api/checkout'
     | '/api/mcp'
-    | '/api/mcp-key'
     | '/api/packs'
     | '/api/plan'
     | '/api/publish'
     | '/api/sync'
     | '/{-$locale}/login'
+    | '/{-$locale}/mcp'
     | '/{-$locale}/packs'
     | '/{-$locale}/pricing'
     | '/{-$locale}/'
@@ -279,7 +279,6 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   ApiCheckoutRoute: typeof ApiCheckoutRoute
   ApiMcpRoute: typeof ApiMcpRoute
-  ApiMcpKeyRoute: typeof ApiMcpKeyRoute
   ApiPacksRoute: typeof ApiPacksRouteWithChildren
   ApiPlanRoute: typeof ApiPlanRoute
   ApiPublishRoute: typeof ApiPublishRoute
@@ -332,13 +331,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiMcpRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/mcp-key': {
-      id: '/api/mcp-key'
-      path: '/api/mcp-key'
-      fullPath: '/api/mcp-key'
-      preLoaderRoute: typeof ApiMcpKeyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/packs': {
       id: '/api/packs'
       path: '/api/packs'
@@ -379,6 +371,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/{-$locale}/login'
       preLoaderRoute: typeof Char123LocaleChar125LoginRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/mcp': {
+      id: '/{-$locale}/mcp'
+      path: '/mcp'
+      fullPath: '/{-$locale}/mcp'
+      preLoaderRoute: typeof Char123LocaleChar125McpRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
     '/{-$locale}/packs': {
@@ -435,6 +434,7 @@ declare module '@tanstack/react-router' {
 
 interface Char123LocaleChar125RouteRouteChildren {
   Char123LocaleChar125LoginRoute: typeof Char123LocaleChar125LoginRoute
+  Char123LocaleChar125McpRoute: typeof Char123LocaleChar125McpRoute
   Char123LocaleChar125PacksRoute: typeof Char123LocaleChar125PacksRoute
   Char123LocaleChar125PricingRoute: typeof Char123LocaleChar125PricingRoute
   Char123LocaleChar125IndexRoute: typeof Char123LocaleChar125IndexRoute
@@ -445,6 +445,7 @@ interface Char123LocaleChar125RouteRouteChildren {
 const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChildren =
   {
     Char123LocaleChar125LoginRoute: Char123LocaleChar125LoginRoute,
+    Char123LocaleChar125McpRoute: Char123LocaleChar125McpRoute,
     Char123LocaleChar125PacksRoute: Char123LocaleChar125PacksRoute,
     Char123LocaleChar125PricingRoute: Char123LocaleChar125PricingRoute,
     Char123LocaleChar125IndexRoute: Char123LocaleChar125IndexRoute,
@@ -476,7 +477,6 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   ApiCheckoutRoute: ApiCheckoutRoute,
   ApiMcpRoute: ApiMcpRoute,
-  ApiMcpKeyRoute: ApiMcpKeyRoute,
   ApiPacksRoute: ApiPacksRouteWithChildren,
   ApiPlanRoute: ApiPlanRoute,
   ApiPublishRoute: ApiPublishRoute,

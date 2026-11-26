@@ -60,7 +60,7 @@ function Privacy() {
           <li>你的分组规则、扩展设置与收藏集（包括主动收藏的网址、标题、描述、封面图链接、已导入的 X 推文及文件夹，用于 Pro 多设备云同步）；</li>
           <li>你主动发布或分享的规则包（通过短码分享）。</li>
           <li>
-            你在扩展设置中生成的 MCP API key。我们只保存密钥的哈希。持有该密钥的程序可以读取并修改已同步的收藏和分组规则，每月最多 1000 次工具调用。密钥只完整显示一次，可随时作废。我们不会把这些数据发给模型服务商；是否把密钥交给某个客户端由你决定。
+            你在网站 MCP 页面生成的 MCP API key。我们只保存密钥的哈希。持有该密钥的程序可以读取并修改已同步的收藏和分组规则，每月最多 1000 次工具调用。密钥只完整显示一次，可随时作废。我们不会把这些数据发给模型服务商；是否把密钥交给某个客户端由你决定。
           </li>
         </ul>
         <p>除你主动保存并通过 Pro 同步的收藏外，我们<strong className="text-ink dark:text-slate-100">不会</strong>上传标签页网址、标题或浏览记录。X 抓取缓存保留在本机，导入收藏集后才参与同步。</p>
@@ -152,7 +152,7 @@ function Privacy() {
           <li>Your grouping rules, extension settings, and collection (saved URLs, titles, descriptions, cover image links, imported X posts, and folders, for Pro multi-device cloud sync);</li>
           <li>Rule packs you choose to publish or share (via short codes).</li>
           <li>
-            The MCP API key you create in the extension settings. We store only a hash of the key. A program holding the key can read and change your synced collection and group rules, up to 1,000 tool calls per month. The full key is shown once and can be revoked. We do not send this data to model providers; you decide which client receives the key.
+            The MCP API key you create on the website's MCP page. We store only a hash of the key. A program holding the key can read and change your synced collection and group rules, up to 1,000 tool calls per month. The full key is shown once and can be revoked. We do not send this data to model providers; you decide which client receives the key.
           </li>
         </ul>
         <p>
