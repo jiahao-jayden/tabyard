@@ -11,7 +11,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Switch } from '@/components/ui/switch';
-import { isCollectable } from '@/utils/collect/capture';
+import { isScriptable } from '@/utils/collect/capture';
 import {
   DEFAULT_RECORD_OPTIONS,
   elapsedMs,
@@ -176,7 +176,7 @@ export function RecordSection({ activeTab }: { activeTab: Browser.tabs.Tab | und
     );
   }
 
-  if (tabId === undefined || !isCollectable(activeTab?.url)) {
+  if (tabId === undefined || !isScriptable(activeTab?.url)) {
     return <p className="text-xs text-muted-foreground">{t('record.unsupported')}</p>;
   }
 

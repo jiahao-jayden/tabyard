@@ -8,6 +8,13 @@ export function isCollectable(url: string | undefined): url is string {
   return !!url && /^https?:\/\//i.test(url);
 }
 
+/** 能注入脚本 / 截图的页面：Chrome 禁止在应用商店页面上做这些操作 */
+export function isScriptable(url: string | undefined): url is string {
+  if (!isCollectable(url)) return false;
+  const { hostname, pathname } = new URL(url);
+  return hostname !== 'chromewebstore.google.com' && !(hostname === 'chrome.google.com' && pathname.startsWith('/webstore'));
+}
+
 /** 在页面上下文执行，必须自包含 */
 function readPage() {
   const meta = (key: string) =>

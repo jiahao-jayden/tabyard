@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { browser, type Browser } from 'wxt/browser';
 import { AppWindow, Crop, LoaderCircle, ScrollText } from 'lucide-react';
-import { isCollectable } from '@/utils/collect/capture';
+import { isScriptable } from '@/utils/collect/capture';
 import type { ScreenshotMode, ScreenshotRequest } from '@/utils/screenshot/capture';
 
 function ModeTile({
@@ -32,7 +32,7 @@ export function ScreenshotSection({ activeTab }: { activeTab: Browser.tabs.Tab |
   const [busy, setBusy] = useState<ScreenshotMode | null>(null);
   const tabId = activeTab?.id;
 
-  if (tabId === undefined || !isCollectable(activeTab?.url)) {
+  if (tabId === undefined || !isScriptable(activeTab?.url)) {
     return <p className="text-xs text-muted-foreground">{t('screenshot.unsupported')}</p>;
   }
 

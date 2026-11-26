@@ -5,7 +5,7 @@ import type { Browser } from 'wxt/browser';
 import { ChevronRight, Copy, Download, LoaderCircle, Scissors } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { isCollectable } from '@/utils/collect/capture';
+import { isScriptable } from '@/utils/collect/capture';
 import { downloadMarkdown } from '@/utils/clip/download';
 import { extractTab } from '@/utils/clip/extract';
 import { toMarkdown, type RawCapture } from '@/utils/clip/normalize';
@@ -21,7 +21,7 @@ export function ClipSection({ activeTab }: { activeTab: Browser.tabs.Tab | undef
   const { t } = useTranslation();
   const tabId = activeTab?.id;
   const url = activeTab?.url;
-  const clippable = tabId !== undefined && isCollectable(url);
+  const clippable = tabId !== undefined && isScriptable(url);
 
   const [settings, setSettings] = useState<ClipSettings | null>(null);
   const [capture, setCapture] = useState<RawCapture | null>(null);
