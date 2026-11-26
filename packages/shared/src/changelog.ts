@@ -15,6 +15,27 @@ export interface ChangelogEntry {
 /** 更新日志，最新在前。扩展升级提示和官网 /changelog 共用；发版时在最前面加一条，版本号与扩展 package.json 一致 */
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '1.8.0',
+    date: '2026-11-26',
+    chrome: 'review',
+    zh: {
+      title: '新标签页更新提示，官网更新日志',
+      items: [
+        '升级后第一次打开新标签页，搜索框下方会提示新版本，点击跳转到官网更新日志。',
+        '官网新增更新日志页，列出每个版本的改动和发布状态。',
+        '弹窗收藏：已收藏的页面会提示所在文件夹，同一文件夹不再重复保存，换文件夹可直接移动。',
+      ],
+    },
+    en: {
+      title: 'Update notice on the new tab, changelog on the website',
+      items: [
+        'The first new tab after an upgrade shows a notice under the search box; click it to open the changelog on the website.',
+        'New changelog page on the website, listing the changes and release status of every version.',
+        'Saving from the popup: an already-saved page shows its folder, can no longer be saved twice to the same folder, and can be moved to another one.',
+      ],
+    },
+  },
+  {
     version: '1.7.1',
     date: '2026-11-26',
     chrome: 'live',
