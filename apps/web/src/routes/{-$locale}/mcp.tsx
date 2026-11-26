@@ -93,22 +93,33 @@ function Mcp() {
       </p>
 
       {!user || !status ? (
-        <div className="frost rise mt-8 flex max-w-xl flex-col items-start gap-4 rounded-[20px] p-6" style={{ '--i': 2 } as React.CSSProperties}>
-          <p className="text-sm text-slate-700 dark:text-slate-300">{user ? t.mcpProOnly : t.mcpSignInHint}</p>
-          {user ? (
-            <Link to="/{-$locale}/pricing" params={{ locale: param }} className={primaryButton}>
-              {t.buyPro}
-            </Link>
-          ) : (
-            <Link
-              to="/{-$locale}/login"
-              params={{ locale: param }}
-              search={{ redirect: param === 'zh' ? '/zh/mcp' : '/mcp' }}
-              className={primaryButton}
-            >
-              {t.signIn}
-            </Link>
-          )}
+        <div className="mt-8 grid max-w-3xl gap-4">
+          <section className="frost rise rounded-[20px] p-6" style={{ '--i': 2 } as React.CSSProperties}>
+            <h2 className="font-medium">{t.mcpAboutTitle}</h2>
+            <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{t.mcpAbout}</p>
+            <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm text-slate-700 dark:text-slate-200">
+              <li>{t.mcpExample1}</li>
+              <li>{t.mcpExample2}</li>
+              <li>{t.mcpExample3}</li>
+            </ul>
+          </section>
+          <div className="frost rise flex flex-col items-start gap-4 rounded-[20px] p-6" style={{ '--i': 3 } as React.CSSProperties}>
+            <p className="text-sm text-slate-700 dark:text-slate-300">{user ? t.mcpProOnly : t.mcpSignInHint}</p>
+            {user ? (
+              <Link to="/{-$locale}/pricing" params={{ locale: param }} className={primaryButton}>
+                {t.buyPro}
+              </Link>
+            ) : (
+              <Link
+                to="/{-$locale}/login"
+                params={{ locale: param }}
+                search={{ redirect: param === 'zh' ? '/zh/mcp' : '/mcp' }}
+                className={primaryButton}
+              >
+                {t.signIn}
+              </Link>
+            )}
+          </div>
         </div>
       ) : (
         <div className="mt-8 grid max-w-3xl gap-4">

@@ -56,6 +56,13 @@ function Layout() {
           >
             {t.navPricing}
           </Link>
+          <Link
+            to="/{-$locale}/mcp"
+            params={{ locale: param }}
+            className="frost rounded-full px-3 py-1.5 transition hover:bg-white/80 sm:px-4 dark:hover:bg-white/10"
+          >
+            {t.navMcp}
+          </Link>
           <a
             href={REPO_URL}
             target="_blank"
@@ -103,16 +110,6 @@ function Layout() {
               {menuOpen && (
                 <div className="frost absolute right-0 z-10 mt-2 w-44 rounded-2xl p-1.5 text-sm">
                   <div className="truncate px-3 py-2 text-ink/60 dark:text-slate-400">{user.name}</div>
-                  {user.pro && (
-                    <Link
-                      to="/{-$locale}/mcp"
-                      params={{ locale: param }}
-                      onClick={() => setMenuOpen(false)}
-                      className="block w-full rounded-xl px-3 py-2 text-left transition hover:bg-white/70 dark:hover:bg-white/10"
-                    >
-                      {t.navMcp}
-                    </Link>
-                  )}
                   <button
                     type="button"
                     onClick={() => authClient.signOut().then(() => location.reload())}
