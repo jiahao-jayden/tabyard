@@ -17,6 +17,7 @@ import {
 } from './billing';
 import { normalizeCode } from '@tabyard/shared';
 import { GROUP_COLORS } from '@tabyard/shared';
+import { getStoreVersion } from './chrome-store';
 import { createMcpKey, getMcpKeyStatus, revokeMcpKey } from './mcp';
 import { getPack, listOfficialPacks, listPacks, updateOfficialPack } from './packs';
 import { requireProUser } from './sync';
@@ -43,6 +44,9 @@ export const fetchPrice = createServerFn({ method: 'GET' }).handler(() =>
     return null;
   }),
 );
+
+/** 商店当前上架的版本，查不到返回 null */
+export const fetchStoreVersion = createServerFn({ method: 'GET' }).handler(() => getStoreVersion());
 
 async function requireAdmin() {
   const session = await auth.api.getSession({ headers: getRequestHeaders() });

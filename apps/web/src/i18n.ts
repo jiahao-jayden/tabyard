@@ -1,7 +1,7 @@
 export type Locale = 'zh' | 'en';
 
-export const INSTALL_URL =
-  'https://chromewebstore.google.com/detail/lnmhlchecohhbmpioimnfdhblolnflec';
+export const CHROME_EXTENSION_ID = 'lnmhlchecohhbmpioimnfdhblolnflec';
+export const INSTALL_URL = `https://chromewebstore.google.com/detail/${CHROME_EXTENSION_ID}`;
 export const REPO_URL = 'https://github.com/jiahao-jayden/tabyard';
 export const MCP_URL = 'https://tabyard.jayden0.com/api/mcp';
 

@@ -2,17 +2,32 @@ import { GithubLogo, GoogleChromeLogo } from '@phosphor-icons/react';
 import { createFileRoute } from '@tanstack/react-router';
 import { CHANGELOG } from '@tabyard/shared';
 import { dictionaries, INSTALL_URL, localeFromParam, REPO_URL } from '~/i18n';
+import { fetchStoreVersion } from '~/server/fns';
 
 const badge = 'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-medium transition hover:brightness-95';
 
 export const Route = createFileRoute('/{-$locale}/changelog')({
+  loader: () => fetchStoreVersion(),
   component: Changelog,
 });
+
+/** a <= b，按数字段比较 */
+function versionAtMost(a: string, b: string): boolean {
+  const x = a.split('.').map(Number);
+  const y = b.split('.').map(Number);
+  for (let i = 0; i < Math.max(x.length, y.length); i++) {
+    const d = (x[i] ?? 0) - (y[i] ?? 0);
+    if (d !== 0) return d < 0;
+  }
+  return true;
+}
 
 function Changelog() {
   const { locale: param } = Route.useParams();
   const locale = localeFromParam(param);
   const t = dictionaries[locale];
+  const storeVersion = Route.useLoaderData();
+  const isListed = (version: string) => !!storeVersion && versionAtMost(version, storeVersion);
 
   return (
     <div className="py-10">
@@ -57,19 +72,21 @@ function Changelog() {
                   <GithubLogo size={16} weight="fill" />
                   {t.releasedOnGithub}
                 </a>
-                <a
-                  href={INSTALL_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${badge} ${
-                    entry.chrome === 'live'
-                      ? 'border-emerald-300/80 bg-emerald-50 text-emerald-700 dark:border-emerald-400/30 dark:bg-emerald-400/10 dark:text-emerald-300'
-                      : 'border-amber-300/80 bg-amber-50 text-amber-700 dark:border-amber-400/30 dark:bg-amber-400/10 dark:text-amber-300'
-                  }`}
-                >
-                  <GoogleChromeLogo size={16} weight="bold" />
-                  {entry.chrome === 'live' ? t.chromeLive : t.chromeReview}
-                </a>
+                {storeVersion && (
+                  <a
+                    href={INSTALL_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`${badge} ${
+                      isListed(entry.version)
+                        ? 'border-emerald-300/80 bg-emerald-50 text-emerald-700 dark:border-emerald-400/30 dark:bg-emerald-400/10 dark:text-emerald-300'
+                        : 'border-amber-300/80 bg-amber-50 text-amber-700 dark:border-amber-400/30 dark:bg-amber-400/10 dark:text-amber-300'
+                    }`}
+                  >
+                    <GoogleChromeLogo size={16} weight="bold" />
+                    {isListed(entry.version) ? t.chromeLive : t.chromeReview}
+                  </a>
+                )}
               </div>
               <ul className="mt-4 list-disc space-y-2 pl-5 text-slate-600 dark:text-slate-300">
                 {entry[locale].items.map((item) => (
