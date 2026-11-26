@@ -31,6 +31,25 @@ export interface AccountUser {
   image: string | null;
 }
 
+export interface McpKeyStatus {
+  prefix: string | null;
+  createdAt: number | null;
+  used: number;
+  limit: number;
+}
+
+export function fetchMcpKey(): Promise<McpKeyStatus> {
+  return request<McpKeyStatus>('/api/mcp-key', { credentials: 'include' });
+}
+
+export function createMcpKey(): Promise<McpKeyStatus & { key: string }> {
+  return request<McpKeyStatus & { key: string }>('/api/mcp-key', { method: 'POST', credentials: 'include' });
+}
+
+export function revokeMcpKey(): Promise<{ ok: true }> {
+  return request<{ ok: true }>('/api/mcp-key', { method: 'DELETE', credentials: 'include' });
+}
+
 export async function fetchAccount(): Promise<AccountUser | null> {
   try {
     const session = await request<{ user?: { name: string; image?: string | null } } | null>(

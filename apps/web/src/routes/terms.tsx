@@ -19,7 +19,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function Terms() {
   return (
     <div className="mx-auto max-w-3xl px-5 py-12">
-      <p className="text-sm text-slate-500">最后更新：2026 年 10 月 9 日</p>
+      <p className="text-sm text-slate-500">最后更新：2026 年 11 月 26 日</p>
       <h1 className="mt-2 text-3xl font-medium tracking-tight">服务条款</h1>
       <p className="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
         欢迎使用 Tabyard（以下简称"本服务"）。Tabyard 是一款 Chrome 扩展，可根据你自定义的规则将标签页自动归入
@@ -30,11 +30,11 @@ function Terms() {
         <ul className="list-disc space-y-2 pl-5">
           <li>
             <strong className="text-ink dark:text-slate-100">免费版</strong>：
-            除云同步外的所有功能永久免费，包括不限数量的分组、按域名自动分组、网页收藏集、AI 整理和网页剪藏。
+            除云同步和 MCP 外的所有功能永久免费，包括不限数量的分组、按域名自动分组、网页收藏集、AI 整理和网页剪藏。
           </li>
           <li>
             <strong className="text-ink dark:text-slate-100">Pro 付费版</strong>：
-            仅包含多设备云同步。Pro 为订阅制，具体价格以网站公示为准。
+            包含多设备云同步，以及用 API key 读写已同步的收藏和分组规则（MCP，每月 1000 次工具调用）。Pro 为订阅制，具体价格以网站公示为准。
           </li>
         </ul>
       </Section>
@@ -58,7 +58,7 @@ function Terms() {
         <ul className="list-disc space-y-2 pl-5">
           <li>使用 Pro 云同步功能需要通过 GitHub 或 Google 账号登录。</li>
           <li>你的分组规则与扩展设置会同步到我们的服务器（https://tabyard.jayden0.com），以便在多设备间使用。你的标签页网址与标题不会被上传，详见《隐私政策》。</li>
-          <li>请妥善保管你的登录账号，因账号共享或泄露导致的损失由你自行承担。</li>
+          <li>请妥善保管你的登录账号和 MCP API key。密钥泄露后，他人可以读取并修改已同步的收藏和分组规则，直到你在设置中作废它。它不能操作浏览器里已经打开的标签页。</li>
         </ul>
       </Section>
 
@@ -88,7 +88,7 @@ function Terms() {
 
       <hr className="my-12 border-slate-200 dark:border-slate-700" />
 
-      <p className="text-sm text-slate-500">Last updated: October 9, 2026</p>
+      <p className="text-sm text-slate-500">Last updated: November 26, 2026</p>
       <h1 className="mt-2 text-3xl font-medium tracking-tight">Terms of Service</h1>
       <p className="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
         Welcome to Tabyard ("the Service"). Tabyard is a Chrome extension that automatically sorts your browser tabs
@@ -98,13 +98,13 @@ function Terms() {
       <Section title="1. The Service">
         <ul className="list-disc space-y-2 pl-5">
           <li>
-            <strong className="text-ink dark:text-slate-100">Free plan</strong>: every feature except cloud sync is free
+            <strong className="text-ink dark:text-slate-100">Free plan</strong>: every feature except cloud sync and MCP is free
             forever, including unlimited groups, per-domain auto grouping, web collection, AI organize, and the page clipper.
           </li>
           <li>
             <strong className="text-ink dark:text-slate-100">Pro plan</strong>: a paid subscription that includes
-            multi-device cloud sync only. Pricing is as displayed on the
-            website.
+            multi-device cloud sync, and an API key that can read and change the synced collection and group rules
+            (MCP, 1,000 tool calls per month). Pricing is as displayed on the website.
           </li>
         </ul>
       </Section>
@@ -128,7 +128,7 @@ function Terms() {
         <ul className="list-disc space-y-2 pl-5">
           <li>Pro cloud sync requires signing in with a GitHub or Google account.</li>
           <li>Your grouping rules and extension settings sync to our servers (https://tabyard.jayden0.com) for use across devices. Your tab URLs and page titles are never uploaded — see the Privacy Policy.</li>
-          <li>You are responsible for keeping your sign-in account secure.</li>
+          <li>You are responsible for keeping your sign-in account and MCP API key secure. Anyone with the key can read and change your synced collection and group rules until you revoke it in settings. The key cannot move tabs that are already open.</li>
         </ul>
       </Section>
 

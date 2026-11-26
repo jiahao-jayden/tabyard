@@ -1,7 +1,7 @@
 // 网页收藏集：与配置共用版本号和锁，Pro 用户参与云同步
 import { browser } from 'wxt/browser';
 import { CONFIG_LOCK, saveConfigLocked, withLock } from '../rules';
-import { collectSchema, type Bookmark, type Folder, type CollectData } from '@tabyard/shared';
+import { collectSchema, stampCollect, type Bookmark, type Folder, type CollectData } from '@tabyard/shared';
 import { COLLECT_KEY, normalizeUrl } from './url';
 
 export type { Bookmark, Folder, CollectData, TweetSource } from '@tabyard/shared';
@@ -13,19 +13,6 @@ export async function loadCollect(): Promise<CollectData> {
   return collectSchema.parse(stored ?? { bookmarks: [], folders: [] });
 }
 
-/** 同步按记录合并，只有实际改动的记录才更新版本；删除留下标记。 */
-function markChanges<T extends { updatedAt?: number }>(
-  before: T[], after: T[], key: (item: T) => string, deleted: Record<string, number>, version: number,
-): void {
-  const previous = new Map(before.map((item) => [key(item), item]));
-  for (const item of after) {
-    const k = key(item);
-    if (JSON.stringify(previous.get(k)) !== JSON.stringify(item)) item.updatedAt = version;
-    previous.delete(k);
-  }
-  for (const k of previous.keys()) deleted[k] = version;
-}
-
 /** 读-改-写放在锁内，popup 与收藏集页面可能同时操作 */
 function mutate<T>(fn: (data: CollectData) => T): Promise<T> {
   return withLock(CONFIG_LOCK, async () => {
@@ -34,8 +21,7 @@ function mutate<T>(fn: (data: CollectData) => T): Promise<T> {
     const result = fn(data);
     const { modifiedAt = 0 } = await browser.storage.local.get('modifiedAt');
     const version = Math.max(Date.now(), (modifiedAt as number) + 1);
-    markChanges(before.bookmarks, data.bookmarks, (b) => b.url, data.deletedBookmarks, version);
-    markChanges(before.folders, data.folders, (f) => f.id, data.deletedFolders, version);
+    stampCollect(before, data, version);
     await saveConfigLocked({ collect: data });
     return result;
   });

@@ -48,7 +48,7 @@ function Pricing() {
           name={t.planPro}
           price={amount}
           note={t.oneTime}
-          features={[t.proEverything, t.proSync]}
+          features={[t.proEverything, t.proSync, t.proMcp]}
         >
           {user?.pro ? (
             <p className="flex h-11 items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-[#b8862b] to-[#e8c15a] text-sm font-medium text-white">

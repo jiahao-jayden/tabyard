@@ -36,6 +36,24 @@ export function emptyCollect(): CollectData {
   return { bookmarks: [], folders: [], deletedBookmarks: {}, deletedFolders: {} };
 }
 
+function markChanges<T extends { updatedAt?: number }>(
+  before: T[], after: T[], key: (item: T) => string, deleted: Record<string, number>, version: number,
+): void {
+  const previous = new Map(before.map((item) => [key(item), item]));
+  for (const item of after) {
+    const k = key(item);
+    if (JSON.stringify(previous.get(k)) !== JSON.stringify(item)) item.updatedAt = version;
+    previous.delete(k);
+  }
+  for (const k of previous.keys()) deleted[k] = version;
+}
+
+/** 给变更过的收藏和文件夹打上版本，并记下删除，供云同步合并使用。 */
+export function stampCollect(before: CollectData, after: CollectData, version: number): void {
+  markChanges(before.bookmarks, after.bookmarks, (b) => b.url, after.deletedBookmarks, version);
+  markChanges(before.folders, after.folders, (f) => f.id, after.deletedFolders, version);
+}
+
 /** 删除标记保留，以防离线设备把旧记录重新带回。网址是收藏的跨设备唯一键。 */
 export function mergeCollect(remote: CollectData, local: CollectData, localWins: boolean): CollectData {
   const mergeDeleted = (a: Record<string, number>, b: Record<string, number>) => {

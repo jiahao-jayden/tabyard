@@ -19,7 +19,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function Privacy() {
   return (
     <div className="mx-auto max-w-3xl px-5 py-12">
-      <p className="text-sm text-slate-500">最后更新：2026 年 11 月 17 日 · 适用产品：Tabyard Chrome 扩展</p>
+      <p className="text-sm text-slate-500">最后更新：2026 年 11 月 26 日 · 适用产品：Tabyard Chrome 扩展</p>
       <h1 className="mt-2 text-3xl font-medium tracking-tight">隐私政策</h1>
       <p className="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
         Tabyard（以下简称"我们"）是一款 Chrome 扩展，可根据你自定义的规则将标签页自动归入 Chrome
@@ -59,13 +59,16 @@ function Privacy() {
           <li>账号标识与邮箱（来自 OAuth，仅用于登录）；</li>
           <li>你的分组规则、扩展设置与收藏集（包括主动收藏的网址、标题、描述、封面图链接、已导入的 X 推文及文件夹，用于 Pro 多设备云同步）；</li>
           <li>你主动发布或分享的规则包（通过短码分享）。</li>
+          <li>
+            你在扩展设置中生成的 MCP API key。我们只保存密钥的哈希。持有该密钥的程序可以读取并修改已同步的收藏和分组规则，每月最多 1000 次工具调用。密钥只完整显示一次，可随时作废。我们不会把这些数据发给模型服务商；是否把密钥交给某个客户端由你决定。
+          </li>
         </ul>
         <p>除你主动保存并通过 Pro 同步的收藏外，我们<strong className="text-ink dark:text-slate-100">不会</strong>上传标签页网址、标题或浏览记录。X 抓取缓存保留在本机，导入收藏集后才参与同步。</p>
       </Section>
 
       <Section title="三、我们绝不做的事">
         <ul className="list-disc space-y-2 pl-5">
-          <li>不出售、出租或与第三方共享你的个人数据；</li>
+          <li>不出售、出租你的个人数据，也不把它交给广告或分析服务。你自己配置的 MCP 客户端，会用你提供的 API key 读取已同步的数据。</li>
           <li>不展示广告，不在扩展中使用第三方分析或追踪脚本；</li>
           <li>不将你的数据用于广告或用户画像。</li>
         </ul>
@@ -93,7 +96,7 @@ function Privacy() {
 
       <hr className="my-12 border-slate-200 dark:border-slate-700" />
 
-      <p className="text-sm text-slate-500">Last updated: November 17, 2026 · Applies to: Tabyard Chrome extension</p>
+      <p className="text-sm text-slate-500">Last updated: November 26, 2026 · Applies to: Tabyard Chrome extension</p>
       <h1 className="mt-2 text-3xl font-medium tracking-tight">Privacy Policy</h1>
       <p className="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
         Tabyard ("we", "our") is a Chrome extension that automatically sorts your browser tabs into native Chrome tab
@@ -148,6 +151,9 @@ function Privacy() {
           <li>Account identifier and email address (from OAuth, sign-in only);</li>
           <li>Your grouping rules, extension settings, and collection (saved URLs, titles, descriptions, cover image links, imported X posts, and folders, for Pro multi-device cloud sync);</li>
           <li>Rule packs you choose to publish or share (via short codes).</li>
+          <li>
+            The MCP API key you create in the extension settings. We store only a hash of the key. A program holding the key can read and change your synced collection and group rules, up to 1,000 tool calls per month. The full key is shown once and can be revoked. We do not send this data to model providers; you decide which client receives the key.
+          </li>
         </ul>
         <p>
           Apart from items you save to your collection and sync with Pro, we do <strong className="text-ink dark:text-slate-100">not</strong> upload tab URLs, page titles, or
@@ -157,7 +163,7 @@ function Privacy() {
 
       <Section title="3. What we never do">
         <ul className="list-disc space-y-2 pl-5">
-          <li>We do not sell, rent, or share your personal data with third parties;</li>
+          <li>We do not sell or rent your personal data, and we do not give it to advertising or analytics services. An MCP client you configure can read the synced data with the API key you give it.</li>
           <li>No ads, no third-party analytics or tracking scripts in the extension;</li>
           <li>We do not use your data for advertising or profiling.</li>
         </ul>

@@ -1,0 +1,13 @@
+CREATE TABLE mcp_key (
+  userId TEXT PRIMARY KEY REFERENCES user (id) ON DELETE CASCADE,
+  hash TEXT NOT NULL UNIQUE,
+  prefix TEXT NOT NULL,
+  createdAt INTEGER NOT NULL
+);
+
+CREATE TABLE mcp_usage (
+  userId TEXT NOT NULL REFERENCES user (id) ON DELETE CASCADE,
+  month TEXT NOT NULL,
+  count INTEGER NOT NULL,
+  PRIMARY KEY (userId, month)
+);

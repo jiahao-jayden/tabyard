@@ -227,6 +227,24 @@
     "syncing": "同步中…",
     "failed": "同步失败，请稍后重试"
   },
+  "mcp": {
+    "title": "MCP",
+    "proHint": "Pro 功能：生成 API key，让 Cursor 等客户端读取和整理云端收藏，并修改分组规则。每月 1000 次工具调用。",
+    "signInHint": "登录后即可生成 API key",
+    "usage": "本月已用 {{used}} / {{limit}} 次。只计算工具调用，下个 UTC 月重置。扩展约每 30 分钟同步一次，打开设置页会马上同步。",
+    "endpoint": "MCP 地址",
+    "header": "请求头使用 Authorization: Bearer 加上这把密钥。它操作的是已同步的收藏和分组规则，不能移动浏览器里正打开的标签。",
+    "generate": "生成密钥",
+    "regenerate": "重新生成",
+    "regenerateConfirm": "重新生成后，旧密钥会立刻失效。继续？",
+    "revoke": "作废",
+    "revokeConfirm": "作废后，正在使用这把密钥的客户端会断开。继续？",
+    "keyOnce": "这是唯一一次显示完整密钥，请现在复制。",
+    "copy": "复制",
+    "copied": "已复制",
+    "retry": "重试",
+    "failed": "操作失败，请稍后重试"
+  },
   "tabs": {
     "groups": "标签页设置",
     "collect": "收藏集",

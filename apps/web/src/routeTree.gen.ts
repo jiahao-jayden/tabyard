@@ -14,6 +14,8 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as Char123LocaleChar125RouteRouteImport } from './routes/{-$locale}/route'
 import { Route as ApiCheckoutRouteImport } from './routes/api/checkout'
+import { Route as ApiMcpRouteImport } from './routes/api/mcp'
+import { Route as ApiMcpKeyRouteImport } from './routes/api/mcp-key'
 import { Route as ApiPacksRouteImport } from './routes/api/packs'
 import { Route as ApiPlanRouteImport } from './routes/api/plan'
 import { Route as ApiPublishRouteImport } from './routes/api/publish'
@@ -52,6 +54,16 @@ const Char123LocaleChar125RouteRoute =
 const ApiCheckoutRoute = ApiCheckoutRouteImport.update({
   id: '/api/checkout',
   path: '/api/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMcpRoute = ApiMcpRouteImport.update({
+  id: '/api/mcp',
+  path: '/api/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMcpKeyRoute = ApiMcpKeyRouteImport.update({
+  id: '/api/mcp-key',
+  path: '/api/mcp-key',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPacksRoute = ApiPacksRouteImport.update({
@@ -132,6 +144,8 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/api/checkout': typeof ApiCheckoutRoute
+  '/api/mcp': typeof ApiMcpRoute
+  '/api/mcp-key': typeof ApiMcpKeyRoute
   '/api/packs': typeof ApiPacksRouteWithChildren
   '/api/plan': typeof ApiPlanRoute
   '/api/publish': typeof ApiPublishRoute
@@ -151,6 +165,8 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/api/checkout': typeof ApiCheckoutRoute
+  '/api/mcp': typeof ApiMcpRoute
+  '/api/mcp-key': typeof ApiMcpKeyRoute
   '/api/packs': typeof ApiPacksRouteWithChildren
   '/api/plan': typeof ApiPlanRoute
   '/api/publish': typeof ApiPublishRoute
@@ -172,6 +188,8 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/api/checkout': typeof ApiCheckoutRoute
+  '/api/mcp': typeof ApiMcpRoute
+  '/api/mcp-key': typeof ApiMcpKeyRoute
   '/api/packs': typeof ApiPacksRouteWithChildren
   '/api/plan': typeof ApiPlanRoute
   '/api/publish': typeof ApiPublishRoute
@@ -194,6 +212,8 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/api/checkout'
+    | '/api/mcp'
+    | '/api/mcp-key'
     | '/api/packs'
     | '/api/plan'
     | '/api/publish'
@@ -213,6 +233,8 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/api/checkout'
+    | '/api/mcp'
+    | '/api/mcp-key'
     | '/api/packs'
     | '/api/plan'
     | '/api/publish'
@@ -233,6 +255,8 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/api/checkout'
+    | '/api/mcp'
+    | '/api/mcp-key'
     | '/api/packs'
     | '/api/plan'
     | '/api/publish'
@@ -254,6 +278,8 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   TermsRoute: typeof TermsRoute
   ApiCheckoutRoute: typeof ApiCheckoutRoute
+  ApiMcpRoute: typeof ApiMcpRoute
+  ApiMcpKeyRoute: typeof ApiMcpKeyRoute
   ApiPacksRoute: typeof ApiPacksRouteWithChildren
   ApiPlanRoute: typeof ApiPlanRoute
   ApiPublishRoute: typeof ApiPublishRoute
@@ -297,6 +323,20 @@ declare module '@tanstack/react-router' {
       path: '/api/checkout'
       fullPath: '/api/checkout'
       preLoaderRoute: typeof ApiCheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/mcp': {
+      id: '/api/mcp'
+      path: '/api/mcp'
+      fullPath: '/api/mcp'
+      preLoaderRoute: typeof ApiMcpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/mcp-key': {
+      id: '/api/mcp-key'
+      path: '/api/mcp-key'
+      fullPath: '/api/mcp-key'
+      preLoaderRoute: typeof ApiMcpKeyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/packs': {
@@ -435,6 +475,8 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,
   ApiCheckoutRoute: ApiCheckoutRoute,
+  ApiMcpRoute: ApiMcpRoute,
+  ApiMcpKeyRoute: ApiMcpKeyRoute,
   ApiPacksRoute: ApiPacksRouteWithChildren,
   ApiPlanRoute: ApiPlanRoute,
   ApiPublishRoute: ApiPublishRoute,
