@@ -11,6 +11,7 @@ import { CollectSection } from './CollectSection';
 import { SearchBox, type Candidate } from './SearchBox';
 import { SettingsSheet } from './SettingsSheet';
 import { Shortcuts } from './Shortcuts';
+import { UpdateNotice } from './UpdateNotice';
 import { useStored } from './useStored';
 
 export default function App() {
@@ -49,6 +50,7 @@ export default function App() {
       <main className="flex min-h-screen flex-col items-center gap-8 px-6 pt-[12vh] pb-12">
         {settings.sections.clock && <Clock hour24={settings.clock24h} />}
         <SearchBox settings={settings} candidates={candidates} onOpenSettings={() => setSettingsOpen(true)} />
+        <UpdateNotice />
         {settings.sections.shortcuts && <Shortcuts list={shortcuts ?? []} openInNewTab={settings.openInNewTab} />}
         {/* 书签、标签组、收藏共用同一宽度，卡片网格才对得齐 */}
         <div className="flex w-full max-w-6xl flex-col gap-8">

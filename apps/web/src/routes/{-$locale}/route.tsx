@@ -148,6 +148,13 @@ function Layout() {
       <footer className="mx-auto w-full max-w-6xl px-4 py-8 text-xs text-ink/50 md:px-8 dark:text-slate-500">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <span>{t.footer}</span>
+          <Link
+            to="/{-$locale}/changelog"
+            params={{ locale: param }}
+            className="underline hover:text-ink/80 dark:hover:text-slate-300"
+          >
+            {t.navChangelog}
+          </Link>
           <a href="/privacy" className="underline hover:text-ink/80 dark:hover:text-slate-300">
             {t.privacyPolicy}
           </a>

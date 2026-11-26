@@ -2,6 +2,7 @@
 import { browser, type Browser } from 'wxt/browser';
 import { defineBackground } from 'wxt/utils/define-background';
 import type { Group } from '@tabyard/shared';
+import { markVersionSeen } from '@/utils/changelog';
 import { findBestGroup } from '@/utils/match';
 import { redirectNativeNewtab } from '@/utils/newtab';
 import { refreshPlan } from '@/utils/plan';
@@ -251,7 +252,11 @@ async function regroupAll(): Promise<void> {
 }
 
 export default defineBackground(() => {
-  browser.runtime.onInstalled.addListener(() => void groupAllTabs());
+  browser.runtime.onInstalled.addListener((details) => {
+    // 新装用户不需要看「已更新」提示
+    if (details.reason === 'install') void markVersionSeen();
+    void groupAllTabs();
+  });
   browser.runtime.onStartup.addListener(() => void groupAllTabs());
 
   browser.tabs.onCreated.addListener((tab) => {

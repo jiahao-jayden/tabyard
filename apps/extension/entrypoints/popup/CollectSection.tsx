@@ -24,7 +24,8 @@ export function CollectSection({ activeTab }: { activeTab: Browser.tabs.Tab | un
   const [page, setPage] = useState<PageInfo | null>(null);
   const [folders, setFolders] = useState<Folder[]>([]);
   const [folder, setFolder] = useState<string | null>(null);
-  const [saved, setSaved] = useState(false);
+  // undefined = 未收藏；否则为已收藏所在的文件夹（null = 未分类）
+  const [savedFolder, setSavedFolder] = useState<string | null | undefined>(undefined);
   const [busy, setBusy] = useState(false);
   useEffect(() => {
     void loadCollect().then((data) => {
@@ -35,7 +36,7 @@ export function CollectSection({ activeTab }: { activeTab: Browser.tabs.Tab | un
       void capturePage(current).then(setPage);
       const existing = data.bookmarks.find((b) => b.url === normalizeUrl(current.url));
       if (existing) {
-        setSaved(true);
+        setSavedFolder(existing.folderId);
         setFolder(existing.folderId);
       }
     });
@@ -47,15 +48,22 @@ export function CollectSection({ activeTab }: { activeTab: Browser.tabs.Tab | un
     try {
       if (!page.image && tab?.windowId != null) await captureCover(tab.windowId, page.url);
       await addBookmark({ ...page, folderId: folder });
-      setSaved(true);
+      setSavedFolder(folder);
     } finally {
       setBusy(false);
     }
   };
 
+  const isSaved = savedFolder !== undefined;
+  const unchanged = isSaved && savedFolder === folder;
+  const savedFolderName = savedFolder == null ? t('collect.unfiled') : folders.find((f) => f.id === savedFolder)?.name;
+
   return (
     <div className="space-y-3">
       {tab && <PagePreview page={page} />}
+      {isSaved && (
+        <p className="text-xs text-muted-foreground">{t('popup.collectSavedIn', { folder: savedFolderName })}</p>
+      )}
       <FolderPicker
         folders={folders}
         value={folder}
@@ -68,10 +76,16 @@ export function CollectSection({ activeTab }: { activeTab: Browser.tabs.Tab | un
         size="lg"
         className="h-9 w-full rounded-full"
         onClick={() => void save()}
-        disabled={!page || busy}
+        disabled={!page || busy || unchanged}
       >
-        {busy ? <LoaderCircle className="animate-spin" /> : saved ? <BookmarkCheck /> : <BookmarkPlus />}
-        {!tab ? t('popup.collectUnsupported') : saved ? t('popup.collectUpdate') : t('popup.collectSave')}
+        {busy ? <LoaderCircle className="animate-spin" /> : unchanged ? <BookmarkCheck /> : <BookmarkPlus />}
+        {!tab
+          ? t('popup.collectUnsupported')
+          : unchanged
+            ? t('popup.collectSaved')
+            : isSaved
+              ? t('popup.collectMove')
+              : t('popup.collectSave')}
       </Button>
     </div>
   );

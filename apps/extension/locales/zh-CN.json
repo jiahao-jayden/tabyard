@@ -106,6 +106,9 @@
     "toggleLabel": "启用自动分组",
     "collectSave": "收藏当前页",
     "collectUpdate": "更新收藏",
+    "collectSaved": "已收藏",
+    "collectMove": "移到此文件夹",
+    "collectSavedIn": "已收藏在「{{folder}}」",
     "collectUnsupported": "此页面无法收藏",
     "collectFolder": "文件夹",
     "collectOpen": "网页收藏集",
@@ -390,6 +393,7 @@
     }
   },
   "newtab": {
+    "dismissUpdate": "关闭",
     "pageTitle": "新标签页",
     "searchPlaceholder": "搜索或输入网址",
     "addShortcut": "添加快捷方式",

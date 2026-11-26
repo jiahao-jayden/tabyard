@@ -106,6 +106,9 @@
     "toggleLabel": "Enable auto grouping",
     "collectSave": "Save this page",
     "collectUpdate": "Update saved page",
+    "collectSaved": "Saved",
+    "collectMove": "Move to this folder",
+    "collectSavedIn": "Already saved in “{{folder}}”",
     "collectUnsupported": "This page can't be saved",
     "collectFolder": "Folder",
     "collectOpen": "Website collection",
@@ -390,6 +393,7 @@
     }
   },
   "newtab": {
+    "dismissUpdate": "Dismiss",
     "pageTitle": "New Tab",
     "searchPlaceholder": "Search or enter a URL",
     "addShortcut": "Add shortcut",

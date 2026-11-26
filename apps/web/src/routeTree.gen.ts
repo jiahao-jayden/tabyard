@@ -20,6 +20,7 @@ import { Route as ApiPlanRouteImport } from './routes/api/plan'
 import { Route as ApiPublishRouteImport } from './routes/api/publish'
 import { Route as ApiSyncRouteImport } from './routes/api/sync'
 import { Route as Char123LocaleChar125IndexRouteImport } from './routes/{-$locale}/index'
+import { Route as Char123LocaleChar125ChangelogRouteImport } from './routes/{-$locale}/changelog'
 import { Route as Char123LocaleChar125LoginRouteImport } from './routes/{-$locale}/login'
 import { Route as Char123LocaleChar125McpRouteImport } from './routes/{-$locale}/mcp'
 import { Route as Char123LocaleChar125PacksRouteImport } from './routes/{-$locale}/packs'
@@ -87,6 +88,12 @@ const Char123LocaleChar125IndexRoute =
     path: '/',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
+const Char123LocaleChar125ChangelogRoute =
+  Char123LocaleChar125ChangelogRouteImport.update({
+    id: '/changelog',
+    path: '/changelog',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
 const Char123LocaleChar125LoginRoute =
   Char123LocaleChar125LoginRouteImport.update({
     id: '/login',
@@ -149,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/api/plan': typeof ApiPlanRoute
   '/api/publish': typeof ApiPublishRoute
   '/api/sync': typeof ApiSyncRoute
+  '/{-$locale}/changelog': typeof Char123LocaleChar125ChangelogRoute
   '/{-$locale}/login': typeof Char123LocaleChar125LoginRoute
   '/{-$locale}/mcp': typeof Char123LocaleChar125McpRoute
   '/{-$locale}/packs': typeof Char123LocaleChar125PacksRoute
@@ -170,6 +178,7 @@ export interface FileRoutesByTo {
   '/api/plan': typeof ApiPlanRoute
   '/api/publish': typeof ApiPublishRoute
   '/api/sync': typeof ApiSyncRoute
+  '/{-$locale}/changelog': typeof Char123LocaleChar125ChangelogRoute
   '/{-$locale}/login': typeof Char123LocaleChar125LoginRoute
   '/{-$locale}/mcp': typeof Char123LocaleChar125McpRoute
   '/{-$locale}/packs': typeof Char123LocaleChar125PacksRoute
@@ -193,6 +202,7 @@ export interface FileRoutesById {
   '/api/plan': typeof ApiPlanRoute
   '/api/publish': typeof ApiPublishRoute
   '/api/sync': typeof ApiSyncRoute
+  '/{-$locale}/changelog': typeof Char123LocaleChar125ChangelogRoute
   '/{-$locale}/login': typeof Char123LocaleChar125LoginRoute
   '/{-$locale}/mcp': typeof Char123LocaleChar125McpRoute
   '/{-$locale}/packs': typeof Char123LocaleChar125PacksRoute
@@ -217,6 +227,7 @@ export interface FileRouteTypes {
     | '/api/plan'
     | '/api/publish'
     | '/api/sync'
+    | '/{-$locale}/changelog'
     | '/{-$locale}/login'
     | '/{-$locale}/mcp'
     | '/{-$locale}/packs'
@@ -238,6 +249,7 @@ export interface FileRouteTypes {
     | '/api/plan'
     | '/api/publish'
     | '/api/sync'
+    | '/{-$locale}/changelog'
     | '/{-$locale}/login'
     | '/{-$locale}/mcp'
     | '/{-$locale}/packs'
@@ -260,6 +272,7 @@ export interface FileRouteTypes {
     | '/api/plan'
     | '/api/publish'
     | '/api/sync'
+    | '/{-$locale}/changelog'
     | '/{-$locale}/login'
     | '/{-$locale}/mcp'
     | '/{-$locale}/packs'
@@ -366,6 +379,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125IndexRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
+    '/{-$locale}/changelog': {
+      id: '/{-$locale}/changelog'
+      path: '/changelog'
+      fullPath: '/{-$locale}/changelog'
+      preLoaderRoute: typeof Char123LocaleChar125ChangelogRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
     '/{-$locale}/login': {
       id: '/{-$locale}/login'
       path: '/login'
@@ -433,6 +453,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface Char123LocaleChar125RouteRouteChildren {
+  Char123LocaleChar125ChangelogRoute: typeof Char123LocaleChar125ChangelogRoute
   Char123LocaleChar125LoginRoute: typeof Char123LocaleChar125LoginRoute
   Char123LocaleChar125McpRoute: typeof Char123LocaleChar125McpRoute
   Char123LocaleChar125PacksRoute: typeof Char123LocaleChar125PacksRoute
@@ -444,6 +465,7 @@ interface Char123LocaleChar125RouteRouteChildren {
 
 const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChildren =
   {
+    Char123LocaleChar125ChangelogRoute: Char123LocaleChar125ChangelogRoute,
     Char123LocaleChar125LoginRoute: Char123LocaleChar125LoginRoute,
     Char123LocaleChar125McpRoute: Char123LocaleChar125McpRoute,
     Char123LocaleChar125PacksRoute: Char123LocaleChar125PacksRoute,

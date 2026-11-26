@@ -26,6 +26,10 @@ export function packsUrl(language: string): string {
   return `${API_URL}${language.startsWith('zh') ? '/zh' : ''}/packs`;
 }
 
+export function changelogUrl(language: string): string {
+  return `${API_URL}${language.startsWith('zh') ? '/zh' : ''}/changelog`;
+}
+
 export function mcpUrl(language: string): string {
   return `${API_URL}${language.startsWith('zh') ? '/zh' : ''}/mcp`;
 }
