@@ -20,8 +20,9 @@ function readPage() {
   const meta = (key: string) =>
     document.querySelector(`meta[property="${key}"], meta[name="${key}"]`)?.getAttribute('content')?.trim() || '';
   const absolute = (value: string) => {
+    if (!value) return '';
     try {
-      const u = new URL(value, location.href);
+      const u = new URL(value, document.baseURI);
       return /^https?:$/.test(u.protocol) ? u.href : '';
     } catch {
       return '';
@@ -30,7 +31,9 @@ function readPage() {
   return {
     title: meta('og:title') || document.title,
     description: meta('og:description') || meta('description'),
-    image: absolute(meta('og:image') || meta('twitter:image')),
+    image: document.contentType.startsWith('image/')
+      ? location.href
+      : absolute(meta('og:image')) || absolute(meta('twitter:image')),
   };
 }
 

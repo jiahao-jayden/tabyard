@@ -10,12 +10,34 @@ const COVER_WIDTH = 640;
 const COVER_ASPECT = 16 / 10;
 
 export async function makeCover(image: Blob): Promise<Blob> {
+  if (image.type.startsWith('image/svg+xml')) {
+    const url = URL.createObjectURL(image);
+    try {
+      const img = new Image();
+      img.src = url;
+      await img.decode();
+      return drawCover(img, img.naturalWidth, img.naturalHeight);
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
   const bitmap = await createImageBitmap(image);
-  const srcHeight = Math.min(bitmap.height, Math.round(bitmap.width / COVER_ASPECT));
-  const width = Math.min(COVER_WIDTH, bitmap.width);
-  const height = Math.round((srcHeight * width) / bitmap.width);
+  try {
+    return drawCover(bitmap, bitmap.width, bitmap.height);
+  } finally {
+    bitmap.close();
+  }
+}
+
+function drawCover(image: CanvasImageSource, srcWidth: number, srcFullHeight: number): Promise<Blob> {
+  const srcHeight = Math.min(srcFullHeight, Math.max(1, Math.round(srcWidth / COVER_ASPECT)));
+  const width = Math.min(COVER_WIDTH, srcWidth);
+  const height = Math.max(1, Math.round((srcHeight * width) / srcWidth));
   const canvas = new OffscreenCanvas(width, height);
-  canvas.getContext('2d')!.drawImage(bitmap, 0, 0, bitmap.width, srcHeight, 0, 0, width, height);
+  const ctx = canvas.getContext('2d')!;
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, width, height);
+  ctx.drawImage(image, 0, 0, srcWidth, srcHeight, 0, 0, width, height);
   return canvas.convertToBlob({ type: 'image/jpeg', quality: 0.85 });
 }
 

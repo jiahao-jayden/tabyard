@@ -13,6 +13,26 @@ export interface ChangelogEntry {
 /** 更新日志，最新在前。扩展升级提示和官网 /changelog 共用；发版时在最前面加一条，版本号与扩展 package.json 一致；应用店上架状态由官网实时查询，不用在这里维护 */
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '1.7.5',
+    date: '2026-11-28',
+    zh: {
+      title: '自动补全收藏卡片的封面',
+      items: [
+        '浏览新标签页或设置页的收藏卡片时，缺少封面或封面失效的旧收藏会尝试从原网页取图。图片直链可直接生成封面，无需重新收藏。',
+        '滚动到卡片附近时才会补图，生成的缩略图会保存在本机，方便下次打开时直接显示。',
+        '从弹窗收藏没有预览图的网页时，会尝试用当前页面的截图作封面。通过 MCP 添加收藏时也可以传入封面和网站图标。',
+      ],
+    },
+    en: {
+      title: 'Automatic covers for saved pages',
+      items: [
+        'Collection cards on the new tab and in settings can recover missing or broken covers from the original page. Direct image links get a thumbnail too, without having to save them again.',
+        'Covers load as you scroll near a card. Generated thumbnails are cached on this device for your next visit.',
+        'Saving a page without a preview image from the popup now tries to capture a screenshot. MCP imports can also include a cover image and site icon.',
+      ],
+    },
+  },
+  {
     version: '1.7.4',
     date: '2026-11-27',
     zh: {

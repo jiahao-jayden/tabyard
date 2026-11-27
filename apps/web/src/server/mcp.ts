@@ -160,11 +160,14 @@ function viewBookmark(bookmark: Bookmark) {
 }
 
 const folderFilter = z.string().min(1).max(128).nullable().optional();
+const imageUrl = z.url({ protocol: /^https?$/ }).max(16_384);
 
 const bookmarkInput = z.object({
   url: z.string().min(1).max(16_384),
   title: z.string().max(16_384).optional(),
   description: z.string().max(100_000).optional(),
+  image: imageUrl.optional().describe('Page preview image URL, when known.'),
+  favicon: imageUrl.optional().describe('Site icon URL, when known.'),
   folderId: z.string().min(1).max(128).nullable().optional(),
 });
 
@@ -270,6 +273,8 @@ function buildServer(userId: string): McpServer {
         if (existing) {
           if (item.title !== undefined) existing.title = item.title;
           if (item.description !== undefined) existing.description = item.description;
+          if (item.image !== undefined) existing.image = item.image;
+          if (item.favicon !== undefined) existing.favicon = item.favicon;
           if (item.folderId !== undefined) existing.folderId = item.folderId;
           updated++;
           bookmarks.push({ id: existing.id, url, folderId: existing.folderId });
@@ -280,8 +285,8 @@ function buildServer(userId: string): McpServer {
           url,
           title: item.title?.trim() || url,
           description: item.description ?? '',
-          image: '',
-          favicon: '',
+          image: item.image ?? '',
+          favicon: item.favicon ?? '',
           folderId: item.folderId ?? null,
           createdAt: Date.now(),
         };

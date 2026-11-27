@@ -168,3 +168,42 @@ test('server gates plans, validates payloads and preserves collection from older
   assert.equal((await api.getSync('user')).data.collect.bookmarks.length, 0);
   db.close();
 });
+
+test('MCP imports preserve provided preview URLs and keep them on subsequent edits', async () => {
+  let snapshot = record(collection(), 1);
+  const tools = new Map();
+  class McpServer {
+    registerTool(name, config, call) { tools.set(name, { config, call }); }
+  }
+  const api = load('apps/web/src/server/mcp.ts', {
+    '@modelcontextprotocol/server': {
+      McpServer,
+      createMcpHandler(build) { return { async fetch() { build(); return new Response(); }, close() {} }; },
+    },
+    'cloudflare:workers': { env: { DB: { prepare(sql) { return { bind(body, modifiedAt) {
+      return { async run() {
+        if (sql.includes('UPDATE sync SET')) snapshot = { data: JSON.parse(body), modifiedAt };
+        return { meta: { changes: 1 } };
+      } };
+    } }; } } } },
+    './billing': {},
+    './sync': { getSync: async () => snapshot },
+  });
+  await api.handleMcp(new Request('https://example.com/api/mcp'), 'user');
+  const { config, call } = tools.get('add_bookmarks');
+  const url = 'https://example.com/page';
+  const image = 'https://example.com/cover.png';
+  const favicon = 'https://example.com/icon.svg';
+  const save = async (item) => {
+    const result = await call(config.inputSchema.parse({ items: [{ url, ...item }] }));
+    assert.ok(!result.isError, result.content[0].text);
+  };
+  await save({ image, favicon });
+  await save({ title: 'Renamed' });
+  assert.equal(snapshot.data.collect.bookmarks.length, 1);
+  assert.equal(snapshot.data.collect.bookmarks[0].image, image);
+  assert.equal(snapshot.data.collect.bookmarks[0].favicon, favicon);
+  await save({ image: image + '?v=2' });
+  assert.equal(snapshot.data.collect.bookmarks[0].image, image + '?v=2');
+  assert.equal(config.inputSchema.safeParse({ items: [{ url, image: 'file:///cover.png' }] }).success, false);
+});
