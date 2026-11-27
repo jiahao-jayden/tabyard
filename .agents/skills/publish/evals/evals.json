@@ -1,0 +1,37 @@
+{
+  "skill_name": "publish",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "收藏封面修复已经验过了。发个版本吧。上次发的是 2.3.4，本次还没升版；工作区另有未完成的搜索改动。",
+      "expected_output": "按补丁版 2.3.5 发布修复，隔离搜索改动，生成双语 changelog 和 ZIP，推送 main 与标签，发布 GitHub Release 并部署、验证官网。",
+      "files": [],
+      "expectations": [
+        "采用补丁版本 2.3.5 并隔离无关搜索改动。",
+        "推送 main 与标签，发布含 ZIP 的 GitHub Release。",
+        "写入双语 changelog，直接部署并核验官网。"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "$publish 继续发 2.3.5。远端 main 和标签已是同一发布提交，GitHub Release 已公开但还缺 ZIP，官网还是旧日志。本地已经有这次验证过的 ZIP。",
+      "expected_output": "核对已发状态、补上传现有 ZIP、更新及核验官网，复用版本和提交。",
+      "files": [],
+      "expectations": [
+        "沿用 2.3.5、现有标签与 Release。",
+        "补上传本次 ZIP 并核对附件。",
+        "部署并核验当次官网日志。"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "$publish 这次只打个本地 ZIP 给我测试，版本号先留着。",
+      "expected_output": "使用现有版本构建并验证本地 ZIP，交付路径；保持 Git、GitHub 和生产环境原样。",
+      "files": [],
+      "expectations": [
+        "沿用当前版本，交付经过验证的本地 ZIP。",
+        "不推送、不发 Release、不部署。"
+      ]
+    }
+  ]
+}

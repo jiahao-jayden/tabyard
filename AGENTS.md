@@ -69,6 +69,7 @@ npx wrangler d1 migrations apply DB --local
 
 ## 安全边界
 
+- 用户在本项目说“发版”或调用 `$publish`，即明确要求按[项目发布流程](.agents/skills/publish/SKILL.md)提交并推送本次改动、打包扩展、发布 GitHub Release、部署官网中英文更新日志。用户明确限定渠道或步骤时以当次请求为准。
 - 不提交密钥、令牌、Cookie、用户数据或本地环境文件。`.env.*` 不一定被现有 `.gitignore` 覆盖，提交前务必检查暂存内容。
 - 未经用户明确要求，不执行生产部署、远程 D1 迁移、生产数据修改、真实支付操作或扩展商店发布。`npm run deploy -w @tabyard/web` 会构建并部署到生产，不是本地验证命令。
 - 不擅自增加扩展权限、改动生产域名或扩大跨域访问范围；确有需要时说明原因和影响。
