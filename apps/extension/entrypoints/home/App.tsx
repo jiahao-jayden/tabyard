@@ -61,7 +61,14 @@ export default function App() {
               openInNewTab={settings.openInNewTab}
             />
           )}
-          {settings.sections.collect && collect && <CollectSection data={collect} openInNewTab={settings.openInNewTab} />}
+          {settings.sections.collect && collect && (
+            <CollectSection
+              data={collect}
+              mode={settings.collectMode}
+              onModeChange={(collectMode) => void mutateNewtabSettings((s) => ({ ...s, collectMode }))}
+              openInNewTab={settings.openInNewTab}
+            />
+          )}
         </div>
       </main>
       <SettingsSheet open={settingsOpen} onClose={() => setSettingsOpen(false)} settings={settings} />

@@ -13,6 +13,24 @@ export interface ChangelogEntry {
 /** 更新日志，最新在前。扩展升级提示和官网 /changelog 共用；发版时在最前面加一条，版本号与扩展 package.json 一致；应用店上架状态由官网实时查询，不用在这里维护 */
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '1.7.4',
+    date: '2026-11-27',
+    zh: {
+      title: '新标签页收藏支持卡片视图',
+      items: [
+        '点击收藏区「查看全部」旁的图标，可在紧凑视图和卡片视图之间切换。卡片显示封面、标题、来源网站和收藏日期。',
+        '切换视图时会保留当前文件夹，下次打开新标签页也会沿用上次选择的视图。',
+      ],
+    },
+    en: {
+      title: 'Card view for your new-tab collection',
+      items: [
+        'Use the icons next to “View all” to switch between compact and card views. Each card shows a cover, title, site, and date saved.',
+        'Switching views keeps your current folder selected. The next new tab opens with your last view.',
+      ],
+    },
+  },
+  {
     version: '1.7.3',
     date: '2026-11-26',
     zh: {

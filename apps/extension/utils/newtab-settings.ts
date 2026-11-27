@@ -52,6 +52,7 @@ const settingsSchema = z.object({
     clock: z.boolean(),
   }),
   bookmarksMode: z.enum(BOOKMARKS_MODES),
+  collectMode: z.enum(['compact', 'cards']).catch('compact'),
   clock24h: z.boolean(),
   theme: z.enum(['auto', 'light', 'dark']),
   wallpaper: wallpaperSchema.catch(DEFAULT_WALLPAPER),
@@ -70,6 +71,7 @@ export type NewtabSettings = z.infer<typeof settingsSchema>;
 export const DEFAULT_NEWTAB_SETTINGS: NewtabSettings = {
   sections: { shortcuts: true, bookmarks: true, collect: true, clock: true },
   bookmarksMode: 'folders',
+  collectMode: 'compact',
   clock24h: true,
   theme: 'auto',
   wallpaper: DEFAULT_WALLPAPER,
